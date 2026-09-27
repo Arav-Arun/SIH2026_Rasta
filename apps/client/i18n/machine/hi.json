@@ -3,6 +3,26 @@
   "provider": "Sarvam Translate",
   "model": "sarvam-translate:v1",
   "strings": {
+    "alerts.expired": {
+      "source_sha256": "7e9fd2147c31598dc7c49bb921910d8aca60b6e3a8682d2a398a63bd39249ef5",
+      "output_sha256": "a02f7ec107638ac807de207800f455a42c1e9fa969ef4810c1124038b24527d8",
+      "translated_at": "2026-09-27T04:40:36+00:00"
+    },
+    "deliveries.noReceipt": {
+      "source_sha256": "5ffdfd04d06a79a9b54ea908e3bc149bb9e853f05c5121836ff52ca037f7467f",
+      "output_sha256": "c7d6cb0ad4977b334b57e6f569f69d87439b2bd56561429a67e28c50c672ac4c",
+      "translated_at": "2026-09-27T04:40:36+00:00"
+    },
+    "driverTrips.noGeometry": {
+      "source_sha256": "bec0e0c339c13b73813233fbb55dd8387d229d6638fd6a49e06a4763d48a5c6a",
+      "output_sha256": "a87c844509fe66db7c8aa268c99a919dd405c11aada83b9682aa0da1ba9051a5",
+      "translated_at": "2026-09-27T04:40:38+00:00"
+    },
+    "fieldHome.lede": {
+      "source_sha256": "46c382185345e2619a0239133a092b1bf79ab2b11833298a25137f446a66df6d",
+      "output_sha256": "57a6ad3b693c3afc0176eb77e938f4d32611df9bcf6f6c176e664f186407742a",
+      "translated_at": "2026-09-27T04:40:38+00:00"
+    },
     "fleet.coordinates": {
       "source_sha256": "bce1af9ade7044b90c30fae2e246f5c5cabff7764b6c42123be7c4509136f322",
       "output_sha256": "bce1af9ade7044b90c30fae2e246f5c5cabff7764b6c42123be7c4509136f322",
@@ -12,6 +32,11 @@
       "source_sha256": "3ac483217e193455ea2c71273634dabf702ed46c9b82c475e154aa5c7c99d829",
       "output_sha256": "3ac483217e193455ea2c71273634dabf702ed46c9b82c475e154aa5c7c99d829",
       "translated_at": "2026-09-26T16:24:46+00:00"
+    },
+    "health.pushConfigured": {
+      "source_sha256": "db875c3dfb4d844c6d1f728f4b6d62fcd19a77705b31fa670fccc7544a1d419c",
+      "output_sha256": "16e8ba60499bf09d5435c3bd22feb2005c3cb89e9893bd5bfd705db505f5228b",
+      "translated_at": "2026-09-27T04:40:36+00:00"
     },
     "health.riskModelNotTrained": {
       "source_sha256": "29234be7f56d48885bf5524c42f48139c2b7125645cb45b517920166465bf02f",
@@ -583,10 +608,20 @@
       "output_sha256": "3e0c52fa179b620bf480a756d866e4310966ce9bc569598660c3f247b1b8151b",
       "translated_at": "2026-09-26T16:25:52+00:00"
     },
+    "report.lede": {
+      "source_sha256": "70040f8c6521cbd9144682aab73e8a239b8640ce46973f17764069507b80590d",
+      "output_sha256": "d52f9f42e9a542b895e3cf0fbc5141209292f808660fed68ff677d920baa3c63",
+      "translated_at": "2026-09-27T04:40:37+00:00"
+    },
     "settings.pack.downloading": {
       "source_sha256": "02a35530e04af183a0107910fdd7a9931e94f0502cb5231402eeea14543f1e9f",
       "output_sha256": "02a35530e04af183a0107910fdd7a9931e94f0502cb5231402eeea14543f1e9f",
       "translated_at": "2026-09-26T16:25:52+00:00"
+    },
+    "settings.pack.staleExplainer": {
+      "source_sha256": "385b57a77094b0aa82febbb4f993fbdb477ca56fa40338c8b68b52fcf8012143",
+      "output_sha256": "0b27b53ec331e85b4e94a4a041a6d435d439968ad836b7797fcb5ef1ce9c1883",
+      "translated_at": "2026-09-27T04:40:37+00:00"
     },
     "status.review.confirmed": {
       "source_sha256": "fe00b67b6dd1143f383553116b83dadce3502fb0282c3ec4ddaa99f756119626",

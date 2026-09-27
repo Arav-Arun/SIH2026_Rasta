@@ -5,14 +5,14 @@
     "nativeLabel": "മലയാളം",
     "reviewed": false,
     "reviewedBy": null,
-    "notes": "Machine-drafted from the English catalogue with Sarvam Translate and not reviewed by a native speaker. Strings that could not be translated safely are left in English and listed in fallbackKeys. Do not claim support for this language until reviewed is true.",
+    "notes": "Machine-drafted from the English catalogue with Sarvam Translate and not reviewed by a native speaker. Strings that could not be translated safely are left in English and listed in fallbackKeys. Do not claim support for this language until reviewed is true. freshness.source was entered by hand: Sarvam Translate returned the English.",
     "script": "Mlym",
     "dir": "ltr",
     "machine": {
       "provider": "Sarvam Translate",
       "model": "sarvam-translate:v1",
-      "strings": 844,
-      "generatedAt": "2026-09-27T03:24:16Z"
+      "strings": 763,
+      "generatedAt": "2026-09-27T05:00:29Z"
     }
   },
   "app": {
@@ -137,7 +137,7 @@
     "stale": "പഴകിയ",
     "never": "പുതുക്കിയതല്ല",
     "timezone": "IST",
-    "source": "Source: {source}"
+    "source": "ഉറവിടം: {source}"
   },
   "offline": {
     "title": "അവസാനമായി സേവ് ചെയ്ത ഡാറ്റയിൽ നിന്ന് പ്രവർത്തിക്കുന്നു.",
@@ -149,7 +149,7 @@
   "error": {
     "title": "ഡാറ്റ ലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല.",
     "body": "നിങ്ങളുടെ ഇൻപുട്ട് ഈ സ്ക്രീനിൽ സൂക്ഷിച്ചിട്ടുണ്ട്.",
-    "requestId": "Request ID {id}",
+    "requestId": "അഭ്യർത്ഥന ഐഡി {id}",
     "retry": "വീണ്ടും ശ്രമിക്കൂ",
     "dismiss": "തള്ളുക"
   },
@@ -526,7 +526,7 @@
     "startedAt": "{when} ആരംഭിച്ചു",
     "notStarted": "തുടങ്ങിയിട്ടില്ല",
     "receiptHeading": "രസീത്",
-    "noReceipt": "ഇതുവരെ ഒന്നും ലഭിച്ചിട്ടില്ല. ഡെലിവറി സ്വീകരിച്ച വ്യക്തി രസീത് രേഖപ്പെടുത്തുന്നു; എത്തിയത് കൊണ്ടുമാത്രം രസീത് ഉണ്ടാകുന്നില്ല.",
+    "noReceipt": "ഇതുവരെ ഒന്നും ലഭിച്ചിട്ടില്ല.",
     "receivedBy": "{who} സ്വീകരിച്ചു.",
     "receivedAt": "{when} ലഭിച്ചു.",
     "shortBy": "{amount} {unit} കുറവ്",
@@ -700,7 +700,7 @@
     "acknowledge": "അംഗീകരിക്കുക",
     "acknowledged": "അംഗീകരിച്ചിരിക്കുന്നു",
     "validUntil": "{when} വരെ സാധുതയുള്ളത്",
-    "expired": "ഈ അറിയിപ്പിന്റെ കാലാവധി കഴിഞ്ഞിരിക്കുന്നു. ഇത് മറയ്ക്കുന്നതിനു പകരം ഇവിടെ സൂക്ഷിച്ചിരിക്കുന്നു, അതിനാൽ കാലഹരണപ്പെട്ട ഒരു ഇൻബോക്സ് ഒഴിഞ്ഞതായി തോന്നാതിരിക്കാൻ.",
+    "expired": "ഈ അറിയിപ്പ് കാലഹരണപ്പെട്ടു.",
     "notReplaced": "നിങ്ങളുടെ റൂട്ട് പിൻവലിച്ചു, മാറ്റിസ്ഥാപിച്ചില്ല. ഒരു ഡിസ്പാച്ചർ ഒരു പുതിയ റൂട്ട് ആസൂത്രണം ചെയ്യുകയും അംഗീകരിക്കുകയും വേണം.",
     "severity": {
       "critical": "ഗുരുതരം",
@@ -751,7 +751,7 @@
     "riskModelHeading": "റിസ്ക് മോഡൽ",
     "riskModel": "പ്രവർത്തനക്ഷമമായ മോഡൽ: {version}",
     "riskModelNotTrained": "പരിശീലനം സിദ്ധിച്ച മോഡലല്ല, നിയമങ്ങളെ അടിസ്ഥാനമാക്കിയുള്ള വെയിറ്റിംഗ്.",
-    "pushConfigured": "പുഷ് ക്രമീകരിച്ചിരിക്കുന്നു ({sender}). ഒരു അറിയിപ്പ് വന്നാലും ഇല്ലെങ്കിലും ഇൻബോക്സിൽ അറിയിപ്പുകൾ ദൃശ്യമാകും.",
+    "pushConfigured": "പുഷ് കോൺഫിഗർ ചെയ്തിരിക്കുന്നു ({sender}).",
     "pushNotConfigured": "ഈ വിന്യാസത്തിൽ പുഷ് ക്രമീകരിച്ചിട്ടില്ല. എല്ലാ അലേർട്ടുകളും ഇൻബോക്സിലാണ്.",
     "sourceState": {
       "live": "ജീവിക്കുക",
@@ -800,7 +800,7 @@
       "age": "പ്രായം",
       "ageDays": "{days} ദിവസം പ്രായമുള്ള",
       "stale": "കാലഹരണപ്പെട്ടത്",
-      "staleExplainer": "ഈ പാക്ക് വിശ്വസിക്കാൻ കൊള്ളാത്തത്ര പഴക്കമുള്ളതാണ്. ഇത് ഇപ്പോഴും പ്രവർത്തിക്കുന്നു, കാണിക്കുന്നുമുണ്ട്, കാരണം വിശദീകരണമില്ലാത്ത ഒരു മാപ്പ് നഷ്ടപ്പെടുന്നതാണ് ഇതിലും മോശം. സാധിക്കുമ്പോൾ പുതിയൊരെണ്ണം ഡൗൺലോഡ് ചെയ്യുക.",
+      "staleExplainer": "ഈ പാക്ക് കാലഹരണപ്പെട്ടു. സാധിക്കുമ്പോൾ പുതിയൊരെണ്ണം ഡൗൺലോഡ് ചെയ്യുക.",
       "contents": "ഉള്ളടക്കം",
       "counts": "{edges} റോഡ് ഭാഗങ്ങൾ, {facilities} സൗകര്യങ്ങൾ",
       "checksum": "ചെക്ക്സം",
@@ -816,7 +816,7 @@
   },
   "report": {
     "title": "പുതിയ ഫീൽഡ് റിപ്പോർട്ട്",
-    "lede": "ഇവിടെയുള്ളതെല്ലാം നിങ്ങൾ ടൈപ്പ് ചെയ്യുമ്പോൾ ഈ ഉപകരണത്തിൽ സൂക്ഷിക്കുന്നു, ഫോട്ടോ ഉൾപ്പെടെ, കൺട്രോൾ റൂമിൽ എത്തുന്നതുവരെ. സിഗ്നൽ നഷ്ടപ്പെട്ടാലും ഒന്നും നഷ്ടപ്പെടുന്നില്ല.",
+    "lede": "കൺട്രോൾ റൂമിൽ എത്തുന്നതുവരെ, നിങ്ങൾ ടൈപ്പ് ചെയ്യുമ്പോൾ തന്നെ ഈ ഉപകരണത്തിൽ സേവ് ചെയ്യപ്പെടുന്നു.",
     "typeLabel": "നീ എന്താണ് കണ്ടത്?",
     "typePlaceholder": "തിരഞ്ഞെടുക്കുക...",
     "locationHeading": "എവിടെ",
@@ -883,7 +883,7 @@
   "fieldHome": {
     "title": "എൻ്റെ ഫീൽഡ് വർക്ക്",
     "heading": "നിങ്ങൾക്ക് നൽകിയത്",
-    "lede": "ഒരു ടാസ്‌ക് സ്വീകരിക്കുകയും ആരംഭിക്കുകയും സമർപ്പിക്കുകയും ചെയ്യുന്നത് എല്ലാം സിഗ്നൽ ഇല്ലാതെയാണ്: ഓരോ നീക്കവും ഈ ഉപകരണത്തിൽ സൂക്ഷിക്കുകയും ക്രമത്തിൽ ഒരു തവണ അയയ്ക്കുകയും ചെയ്യുന്നു.",
+    "lede": "സിഗ്നൽ ഇല്ലാതെ പ്രവർത്തിക്കുന്നു. ഓരോ മാറ്റവും ഒരു കണക്ഷൻ തിരിച്ചെത്തുമ്പോൾ ഒരു തവണ അയയ്ക്കുന്നു.",
     "newReport": "പുതിയ റിപ്പോർട്ട്",
     "openQueue": "ക്യൂ സമന്വയിപ്പിക്കുക",
     "assignedHeading": "തുറന്ന ജോലികൾ",
@@ -916,7 +916,7 @@
     "startedAt": "{when} ആരംഭിച്ചു",
     "noRoute": "ഈ യാത്രക്ക് കൺട്രോൾ റൂം ഒരു റൂട്ട് അംഗീകരിച്ചിട്ടില്ല. അംഗീകരിച്ചതുപോലെ മറ്റൊരു റൂട്ടും പിന്തുടരരുത്.",
     "routeError": "റൂട്ട് ലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല.",
-    "noGeometry": "അംഗീകൃത റൂട്ടിൽ ഡ്രോ ചെയ്യാവുന്ന ലൈൻ ഇല്ലാത്തതിനാൽ അറ്റങ്ങൾക്കിടയിൽ ഒരു നേർരേഖയ്ക്ക് പകരം ഒന്നും കാണിക്കുന്നില്ല.",
+    "noGeometry": "അംഗീകൃത റൂട്ടിൽ വരയ്ക്കാനായി മാപ്പ് ലൈൻ ഇല്ല.",
     "approvedSummary": "{distance}, {low} മുതൽ {high} വരെ ആസൂത്രകയുടെ കണക്കനുസരിച്ച്",
     "approvedAgainst": "നെറ്റ്‌വർക്ക് പതിപ്പ് {version}-നെതിരെ {when} അംഗീകരിച്ചു.",
     "planState": {

@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import re
 import ssl
 import tempfile
 import threading
@@ -108,9 +109,11 @@ class MessageStructureTest(unittest.TestCase):
         source = "{shown, plural, one {# segment in view} other {# segments in view}} of {total} in scope"
         units = tc.message_units(source)
         self.assertEqual(units[0], "{0} of {1} in scope")
-        result = tc.translate_message(source, lambda text: text.replace("of", "OF"))
-        self.assertIn("OF {total}", result)
-        self.assertTrue(result.startswith("{shown, plural, one {# segment in view}"))
+        result = tc.translate_message(
+            source, lambda text: text.replace("of", "OF").replace("in", "IN")
+        )
+        self.assertIn("OF {total} IN scope", result)
+        self.assertTrue(result.startswith("{shown, plural, one {# segment IN view}"))
 
     def test_a_lost_placeholder_retries_with_another_token_style_then_refuses(self):
         styles: list[str] = []
@@ -126,6 +129,64 @@ class MessageStructureTest(unittest.TestCase):
 
         with self.assertRaises(tc.TranslationRejected):
             tc.translate_message("Updated {when}", lambda text: "nothing kept")
+
+    def test_a_count_kept_only_as_a_number_is_put_back(self):
+        # Some languages drop every token but keep a number where one stood.
+        def drops_tokens(text: str) -> str:
+            return re.sub(r"\{\d+\}|<x\d+/>", "", text).upper()
+
+        self.assertEqual(
+            tc.translate_message("Options ({count})", drops_tokens),
+            "OPTIONS ({count})",
+        )
+        self.assertEqual(
+            tc.translate_message(
+                "{n, plural, one {# item waiting} other {# items waiting}}",
+                drops_tokens,
+            ),
+            "{n, plural, one {# ITEM WAITING} other {# ITEMS WAITING}}",
+        )
+        # A word is never stood in for by a number.
+        with self.assertRaises(tc.TranslationRejected):
+            tc.translate_message("Updated {when}", drops_tokens)
+
+    def test_a_malformed_answer_is_asked_again_through_the_fallback(self):
+        def wraps(text: str) -> str:
+            return "{'title': 'Female', 'enum': ['" + text + "']}"
+
+        self.assertEqual(
+            tc.translate_message(
+                "Updated {when}", wraps, fallback=lambda text: text.upper()
+            ),
+            "UPDATED {when}",
+        )
+        with self.assertRaises(tc.TranslationRejected):
+            tc.translate_message("Updated {when}", wraps)
+
+    def test_english_given_back_is_not_taken_as_a_translation(self):
+        # Echoed in one token style, translated in the other.
+        def echoes_braces(text: str) -> str:
+            return text if "{" in text else text.replace("Consignment", "खेप")
+
+        self.assertEqual(
+            tc.translate_message("Consignment {reference}", echoes_braces),
+            "खेप {reference}",
+        )
+
+        # Echoed as a label, translated as a sentence; the added stop goes.
+        def translates_sentences(text: str) -> str:
+            return (
+                text.replace("Deployment mode.", "मोड।") if text.endswith(".") else text
+            )
+
+        self.assertEqual(
+            tc.translate_message("Deployment mode", translates_sentences), "मोड"
+        )
+
+        # English every time is refused; an abbreviation may stay as it is.
+        with self.assertRaises(tc.TranslationRejected):
+            tc.translate_message("Deployment mode", lambda text: text)
+        self.assertEqual(tc.translate_message("ETA", lambda text: text), "ETA")
 
     def test_native_digits_in_a_token_are_still_recognised(self):
         result = tc.translate_message("Updated {when}", lambda text: "अद्यतन {०}")

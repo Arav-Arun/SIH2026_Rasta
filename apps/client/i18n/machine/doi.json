@@ -54,9 +54,9 @@
       "translated_at": "2026-09-26T16:14:00+00:00"
     },
     "alerts.expired": {
-      "source_sha256": "18bab9c1c949c10a8fb52710f5a6375761fcb3eaba2f1e2b708a834058c39b02",
-      "output_sha256": "cdf800b8cca3a3e73a7776941e4716e49f73cbbbf015b6d36329946d31e11abe",
-      "translated_at": "2026-09-26T16:14:00+00:00"
+      "source_sha256": "7e9fd2147c31598dc7c49bb921910d8aca60b6e3a8682d2a398a63bd39249ef5",
+      "output_sha256": "928d338c914f4874c05a033e125a32469c7cdbfe9d7c84bf39c2d5b168879142",
+      "translated_at": "2026-09-27T04:40:34+00:00"
     },
     "alerts.filterUnacknowledged": {
       "source_sha256": "5658a6d8685d369778876312f277149268b8ee8c8fa95e1a368acaccbe575cc2",
@@ -409,9 +409,9 @@
       "translated_at": "2026-09-26T16:12:14+00:00"
     },
     "deliveries.noReceipt": {
-      "source_sha256": "8f4fbd05633b7d81c55645ca0f93a29ae471317b26594924c4b5b54380f62286",
-      "output_sha256": "2c80f722525c7f92f18d79739652b44733efcd4b9a458a2e4dc4ccb2ba74c1ee",
-      "translated_at": "2026-09-26T16:12:22+00:00"
+      "source_sha256": "5ffdfd04d06a79a9b54ea908e3bc149bb9e853f05c5121836ff52ca037f7467f",
+      "output_sha256": "adc37d0ab6a22a94168d2a4b28835796224685acbd5d64b8680346c54709a010",
+      "translated_at": "2026-09-27T04:40:34+00:00"
     },
     "deliveries.noTrip": {
       "source_sha256": "e9e2bd31be89bec2f62546c88bd1a5d2eed32048de962812bc3442c3b0e7cb33",
@@ -534,9 +534,9 @@
       "translated_at": "2026-09-26T16:16:10+00:00"
     },
     "driverTrips.noGeometry": {
-      "source_sha256": "4636b923bf40447e8f4b327d2d3281777f9168189a09912d2811dfe91deb6b2f",
-      "output_sha256": "ad03c8cd7be8868a1c4c3fc906ae68929e59e76c2a2438e3af159de3bec02a12",
-      "translated_at": "2026-09-26T16:16:10+00:00"
+      "source_sha256": "bec0e0c339c13b73813233fbb55dd8387d229d6638fd6a49e06a4763d48a5c6a",
+      "output_sha256": "7b03a8a13aafaaa4161de4ae30de5b13e01b6fa2c08d2e676ddf45ac1fdeb506",
+      "translated_at": "2026-09-27T04:40:35+00:00"
     },
     "driverTrips.noReference": {
       "source_sha256": "2080c028302aabcf4df9ec19f7285dcc1362e391050716c2eb2bb1a600ff7b08",
@@ -664,9 +664,9 @@
       "translated_at": "2026-09-26T16:15:41+00:00"
     },
     "fieldHome.lede": {
-      "source_sha256": "a1c599d835c64497d96f4930fbef055097b741a72da02e3c7e25781d5c5e4c5b",
-      "output_sha256": "1a9e80e793886078f24ab019530f9b978ac7a0f54c4ebd195ca83a6da9df58a3",
-      "translated_at": "2026-09-26T16:15:41+00:00"
+      "source_sha256": "46c382185345e2619a0239133a092b1bf79ab2b11833298a25137f446a66df6d",
+      "output_sha256": "b542f0e0c059fd25eb6f0beb7f34fe0bf7d08643627770abdc590476e84cd314",
+      "translated_at": "2026-09-27T04:40:35+00:00"
     },
     "fieldHome.moveNeedsAttention": {
       "source_sha256": "e6791df8b1fe1c3c4195f7738cf033aa33b6fa6609b8533014afd91d344151ed",
@@ -1049,9 +1049,9 @@
       "translated_at": "2026-09-26T16:14:40+00:00"
     },
     "health.pushConfigured": {
-      "source_sha256": "7d16f9354cc413c5e3fca4156c0d37512179e87e24bacd4640295c888cd10100",
-      "output_sha256": "56009fb6b386d25b01c0aa7bcc5b4ac033431bc602d4aa6330270941ff9382ab",
-      "translated_at": "2026-09-26T16:14:34+00:00"
+      "source_sha256": "db875c3dfb4d844c6d1f728f4b6d62fcd19a77705b31fa670fccc7544a1d419c",
+      "output_sha256": "3e880c2bac108cbba6795125d027dedb37c7cfa75f14224aab9e5a484c88e3c5",
+      "translated_at": "2026-09-27T04:40:34+00:00"
     },
     "health.pushHeading": {
       "source_sha256": "788011833a5a0f22db90c91e8eb7bd8e9f5cd423354ff5ef8c338e7895f44ba9",
@@ -2974,9 +2974,9 @@
       "translated_at": "2026-09-26T16:15:32+00:00"
     },
     "report.lede": {
-      "source_sha256": "9548a243456dc53cafb9c09cc4f25b39a3cb991a0a4ca3670cb60829589856ac",
-      "output_sha256": "84fd590b99cbf439d10c7fc528a17d5bc82aa0f4ac219257aff151f49ad94fe6",
-      "translated_at": "2026-09-26T16:15:05+00:00"
+      "source_sha256": "70040f8c6521cbd9144682aab73e8a239b8640ce46973f17764069507b80590d",
+      "output_sha256": "4872731386717219a0638a230b9e282ce115c0a32abfb35815c27902e9a49631",
+      "translated_at": "2026-09-27T04:40:34+00:00"
     },
     "report.locating": {
       "source_sha256": "cbef1441ccff923e7ce79b4537b81fed8f90cc88dfc89e48448c489caed6f976",

@@ -228,6 +228,13 @@ def signature(nodes: list[Node]) -> list[Any]:
 
 TOKEN_STYLES: tuple[tuple[str, str], ...] = (("{", "}"), ("<x", "/>"))
 
+#: Arguments that always hold a number, as do plural selectors and `#`.
+NUMERIC_ARGUMENTS = frozenset({"count", "total"})
+
+#: Numbers sent in place of numeric arguments when no token style survives:
+#: some languages keep a number where they drop or rewrite a token.
+SAMPLE_NUMBERS: tuple[tuple[int, ...], ...] = ((12, 25, 37, 48), (3, 8, 14, 19))
+
 
 @dataclass
 class Unit:
@@ -246,6 +253,19 @@ class Unit:
     def is_translatable(self) -> bool:
         visible = re.sub(r"\u0000\d+\u0000", "", self.text)
         return bool(re.search(r"[A-Za-z]", visible))
+
+    def with_samples(self, samples: tuple[int, ...]) -> str | None:
+        """The text with each argument as a sample number, or None if one would be ambiguous."""
+
+        if not self.tokens or len(self.tokens) > len(samples):
+            return None
+        visible = re.sub(r"\u0000\d+\u0000", " ", self.text)
+        if any(re.search(rf"(?<!\d){n}(?!\d)", visible) for n in samples):
+            return None
+        out = self.text
+        for number in range(len(self.tokens)):
+            out = out.replace(f"\u0000{number}\u0000", str(samples[number]))
+        return out
 
 
 def build_unit(nodes: list[Node], nested: list[Plural]) -> Unit:
@@ -302,6 +322,57 @@ def restore_unit(unit: Unit, translated: str, style: int = 0) -> list[Node] | No
     return nodes
 
 
+def restore_samples(
+    unit: Unit, translated: str, samples: tuple[int, ...]
+) -> list[Node] | None:
+    """Put the arguments back where their sample numbers ended up, or None."""
+
+    translated = latin_digits(translated)
+    found: list[tuple[int, int, int]] = []
+    for index in range(len(unit.tokens)):
+        matches = list(re.finditer(rf"(?<!\d){samples[index]}(?!\d)", translated))
+        if len(matches) != 1:
+            return None
+        found.append((matches[0].start(), matches[0].end(), index))
+    nodes: list[Node] = []
+    position = 0
+    for start, end, index in sorted(found):
+        if start > position:
+            nodes.append(Text(translated[position:start]))
+        nodes.append(unit.tokens[index])
+        position = end
+    if position < len(translated):
+        nodes.append(Text(translated[position:]))
+    remainder = "".join(node.value for node in nodes if isinstance(node, Text))
+    if "{" in remainder or "}" in remainder:
+        return None
+    if "#" in remainder and "#" not in unit.text:
+        return None
+    return nodes
+
+
+def is_echo(unit: Unit, restored: list[Node]) -> bool:
+    """The translator gave the English back. Abbreviations (ETA, IST) may stay."""
+
+    source = re.sub(r"\u0000\d+\u0000", "", unit.text).strip()
+    answer = "".join(node.value for node in restored if isinstance(node, Text)).strip()
+    return answer == source and bool(re.search(r"[a-z]{3,}", source))
+
+
+#: A full stop in any of the target scripts, as a translator may return one.
+_ADDED_STOP = re.compile(r"\s*[.\u0964\u0965\u06d4\u1c7e\uabeb]\s*$")
+
+
+def plural_names(nodes: list[Node]) -> set[str]:
+    names: set[str] = set()
+    for node in nodes:
+        if isinstance(node, Plural):
+            names.add(node.name)
+            for _, branch in node.branches:
+                names |= plural_names(branch)
+    return names
+
+
 Translator = Callable[[str], str]
 
 
@@ -309,14 +380,27 @@ class TranslationRejected(Exception):
     """The translator's answer could not be used safely."""
 
 
-def translate_nodes(nodes: list[Node], translator: Translator) -> list[Node]:
-    """Translate a parsed message, keeping every argument and plural branch."""
+def translate_nodes(
+    nodes: list[Node],
+    translator: Translator,
+    *,
+    fallback: Translator | None = None,
+    numeric: frozenset[str] = NUMERIC_ARGUMENTS,
+) -> list[Node]:
+    """Translate a parsed message, keeping every argument and plural branch.
+
+    `fallback` is asked last, the same way, when nothing else kept the message's
+    structure; every answer is checked before it is used.
+    """
 
     nested: list[Plural] = []
     unit = build_unit(nodes, nested)
     for plural in nested:
         plural.branches = [
-            (selector, translate_nodes(branch, translator))
+            (
+                selector,
+                translate_nodes(branch, translator, fallback=fallback, numeric=numeric),
+            )
             for selector, branch in plural.branches
         ]
     if not unit.is_translatable():
@@ -327,16 +411,52 @@ def translate_nodes(nodes: list[Node], translator: Translator) -> list[Node]:
             for part in re.split(r"(\u0000\d+\u0000)", unit.text)
             if part
         ]
+
+    def usable(restored: list[Node] | None) -> bool:
+        return restored is not None and not is_echo(unit, restored)
+
     for style in range(len(TOKEN_STYLES)):
         restored = restore_unit(unit, translator(unit.masked(style)).strip(), style)
-        if restored is not None:
+        if usable(restored):
             return restored
-    raise TranslationRejected("the translation lost or altered a placeholder")
+    if all(
+        isinstance(token, Pound)
+        or (isinstance(token, Placeholder) and token.name in numeric)
+        for token in unit.tokens
+    ):
+        for samples in SAMPLE_NUMBERS:
+            sent = unit.with_samples(samples)
+            if sent is None:
+                continue
+            restored = restore_samples(unit, translator(sent).strip(), samples)
+            if usable(restored):
+                return restored
+    if fallback is not None:
+        for style in range(len(TOKEN_STYLES)):
+            restored = restore_unit(unit, fallback(unit.masked(style)).strip(), style)
+            if usable(restored):
+                return restored
+    # A short label is sometimes given back in English, where the same words as
+    # a sentence are translated. The added full stop is taken off again.
+    if not _ADDED_STOP.search(unit.text):
+        for style in range(len(TOKEN_STYLES)):
+            answer = translator(unit.masked(style) + ".").strip()
+            restored = restore_unit(unit, _ADDED_STOP.sub("", answer), style)
+            if usable(restored):
+                return restored
+    raise TranslationRejected("the translation lost a placeholder or stayed in English")
 
 
-def translate_message(source: str, translator: Translator) -> str:
+def translate_message(
+    source: str, translator: Translator, *, fallback: Translator | None = None
+) -> str:
     nodes = parse_message(source)
-    translated = translate_nodes(parse_message(source), translator)
+    translated = translate_nodes(
+        parse_message(source),
+        translator,
+        fallback=fallback,
+        numeric=NUMERIC_ARGUMENTS | plural_names(nodes),
+    )
     if signature(translated) != signature(nodes):
         raise TranslationRejected("the translation changed the message structure")
     return render_message(translated)
@@ -408,23 +528,26 @@ class SarvamClient:
         self.characters_sent = 0
         self.requests = 0
 
-    def translate(self, text: str, target: str) -> str:
+    def translate(
+        self, text: str, target: str, *, speaker_gender: str | None = None
+    ) -> str:
         if len(text) > MAX_INPUT_CHARS:
             raise SarvamError(
                 f"input of {len(text)} characters is over the per-request limit"
             )
-        body = json.dumps(
-            {
-                "input": text,
-                "source_language_code": SOURCE_LANGUAGE,
-                "target_language_code": target,
-                "model": self.model,
-                "mode": "formal",
-                # Figures stay in Latin digits, as the app renders them.
-                "numerals_format": "international",
-                "enable_preprocessing": False,
-            }
-        ).encode("utf-8")
+        request_body: dict[str, Any] = {
+            "input": text,
+            "source_language_code": SOURCE_LANGUAGE,
+            "target_language_code": target,
+            "model": self.model,
+            "mode": "formal",
+            # Figures stay in Latin digits, as the app renders them.
+            "numerals_format": "international",
+            "enable_preprocessing": False,
+        }
+        if speaker_gender:
+            request_body["speaker_gender"] = speaker_gender
+        body = json.dumps(request_body).encode("utf-8")
         for attempt in range(1, self._max_attempts + 1):
             request = urllib.request.Request(
                 self._url,
@@ -845,7 +968,14 @@ def translate_language(
             return path, None, f"skipped: {breaker.reason}"
         try:
             translated = translate_message(
-                source, lambda text: client.translate(text, plan.sarvam)
+                source,
+                lambda text: client.translate(text, plan.sarvam),
+                # When it cannot tell who is speaking, Sarvam can answer with
+                # a gendered schema instead of a translation. Naming a
+                # speaker gets a plain answer, which is still checked.
+                fallback=lambda text: client.translate(
+                    text, plan.sarvam, speaker_gender="Male"
+                ),
             )
             breaker.success()
             return path, translated, None

@@ -11,18 +11,9 @@
     "machine": {
       "provider": "Sarvam Translate",
       "model": "sarvam-translate:v1",
-      "strings": 134,
-      "generatedAt": "2026-09-27T03:22:27Z"
-    },
-    "fallbackKeys": [
-      "alerts.expired",
-      "deliveries.noReceipt",
-      "driverTrips.noGeometry",
-      "fieldHome.lede",
-      "health.pushConfigured",
-      "report.lede",
-      "settings.pack.staleExplainer"
-    ]
+      "strings": 133,
+      "generatedAt": "2026-09-27T04:56:52Z"
+    }
   },
   "app": {
     "name": "RASTA",
@@ -535,7 +526,7 @@
     "startedAt": "{when} ত আৰম্ভ",
     "notStarted": "আৰম্ভ হোৱা নাই",
     "receiptHeading": "ৰচিদ",
-    "noReceipt": "Nothing has been received yet.",
+    "noReceipt": "এতিয়ালৈকে একো পোৱা হোৱা নাই।",
     "receivedBy": "{who} এ বুজি ল'লে",
     "receivedAt": "{when} ত পোৱা গ'ল",
     "shortBy": "{amount} {unit} কম",
@@ -709,7 +700,7 @@
     "acknowledge": "স্বীকাৰ কৰক",
     "acknowledged": "স্বীকৃত",
     "validUntil": "{when}লৈ বৈধ",
-    "expired": "This alert has expired.",
+    "expired": "এই সতৰ্কবাণীটোৰ ম্যাদ উকলি গৈছে।",
     "notReplaced": "আপোনাৰ পথ প্ৰত্যাহাৰ কৰা হৈছে, সলনি কৰা হোৱা নাই। ডিস্পেচাৰে নতুন পথ অনুমোদন কৰিব লাগিব।",
     "severity": {
       "critical": "গুৰুতৰ",
@@ -760,7 +751,7 @@
     "riskModelHeading": "বিপদ মডেল",
     "riskModel": "সক্ৰিয় মডেল: {version}",
     "riskModelNotTrained": "নিয়ম-ভিত্তিক ভাৰ, কোনো প্ৰশিক্ষিত মডেল নহয়।",
-    "pushConfigured": "Push is configured ({sender}).",
+    "pushConfigured": "পুছ কনফিগাৰ কৰা হৈছে ({sender})।",
     "pushNotConfigured": "এই প্ৰয়োগত পুশ ছেট কৰা হোৱা নাই। প্ৰতিটো সতৰ্কবাণী ইনবক্সত আছে।",
     "sourceState": {
       "live": "জীৱন্ত",
@@ -809,7 +800,7 @@
       "age": "বয়স",
       "ageDays": "{days} দিন পুৰণি",
       "stale": "পুৰণি",
-      "staleExplainer": "This pack is out of date. Download a newer one when you can.",
+      "staleExplainer": "এই পেকেটটোৰ ম্যাদ উকলি গৈছে। পাৰিলে এটা নতুন পেকেট ডাউনলোড কৰক।",
       "contents": "সমগ্ৰী",
       "counts": "{edges} পথ খণ্ড, {facilities} সুবিধা",
       "checksum": "চেকছাম",
@@ -825,7 +816,7 @@
   },
   "report": {
     "title": "নতুন ক্ষেত্ৰ প্ৰতিবেদন",
-    "lede": "Saved on this device as you type, until the control room has it.",
+    "lede": "আপুনি টাইপ কৰাৰ লগে লগে এই ডিভাইচটোত সেভ কৰা হৈছে, যেতিয়ালৈকে নিয়ন্ত্ৰণ কক্ষটোত ইয়াক পোৱা নাযায়।",
     "typeLabel": "আপুনি কি দেখিলে?",
     "typePlaceholder": "বাছক…",
     "locationHeading": "ক'ত",
@@ -892,7 +883,7 @@
   "fieldHome": {
     "title": "মোৰ ক্ষেত্ৰ কাম",
     "heading": "আপোনাক অৰ্পণ কৰা",
-    "lede": "Works without signal. Each change is sent once a connection returns.",
+    "lede": "ছিগনেল নোহোৱাকৈ কাম কৰে। সংযোগ ঘূৰি অহাৰ লগে লগে প্ৰতিটো পৰিৱৰ্তন এবাৰকৈ প্ৰেৰণ কৰা হয়।",
     "newReport": "নতুন প্ৰতিবেদন",
     "openQueue": "ছিংক শাৰী",
     "assignedHeading": "মুকলি কাম",
@@ -925,7 +916,7 @@
     "startedAt": "{when}ত আৰম্ভ",
     "noRoute": "নিয়ন্ত্ৰণ কক্ষই এই যাত্ৰাৰ বাবে কোনো পথ অনুমোদন কৰা নাই। আন কোনো পথক অনুমোদিত বুলি ধৰি নাযাব।",
     "routeError": "পথ ল'ড কৰিব পৰা নগ'ল",
-    "noGeometry": "The approved route has no map line to draw.",
+    "noGeometry": "অনুমোদিত পথটোত আঁকিবলৈ কোনো মানচিত্রৰ ৰেখা নাই।",
     "approvedSummary": "{distance}, পৰিকল্পকৰ অনুমান অনুসৰি {low}ৰ পৰা {high}",
     "approvedAgainst": "নেটৱৰ্ক সংস্কৰণ {version}ৰ ভিত্তিত {when}ত অনুমোদিত",
     "planState": {

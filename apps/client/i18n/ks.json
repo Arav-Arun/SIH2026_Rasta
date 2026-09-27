@@ -5,20 +5,15 @@
     "nativeLabel": "کٲشُر",
     "reviewed": false,
     "reviewedBy": null,
-    "notes": "Machine-drafted from the English catalogue with Sarvam Translate and not reviewed by a native speaker. Strings that could not be translated safely are left in English and listed in fallbackKeys. Do not claim support for this language until reviewed is true.",
+    "notes": "Machine-drafted from the English catalogue with Sarvam Translate and not reviewed by a native speaker. Strings that could not be translated safely are left in English and listed in fallbackKeys. Do not claim support for this language until reviewed is true. alerts.evidence.consignment was entered by hand: Sarvam Translate returned the English.",
     "script": "Arab",
     "dir": "rtl",
     "machine": {
       "provider": "Sarvam Translate",
       "model": "sarvam-translate:v1",
-      "strings": 842,
-      "generatedAt": "2026-09-27T03:23:23Z"
-    },
-    "fallbackKeys": [
-      "health.pushConfigured",
-      "planner.coverage.unobserved_network",
-      "planner.showOptions"
-    ]
+      "strings": 763,
+      "generatedAt": "2026-09-27T05:00:24Z"
+    }
   },
   "app": {
     "name": "RASTA",
@@ -93,7 +88,7 @@
       "queued": "سوزنہٕ خٲطرٕ قطارس منٛز تھاونہٕ آمُت۔"
     },
     "consignment": {
-      "label": "Consignment status",
+      "label": "سوزنہٕ آمٕژ چیزٕچ حٲلت",
       "draft": "مسودٕ",
       "planned": "منصوٗبہٕ بند",
       "assigned": "مُقرر",
@@ -531,7 +526,7 @@
     "startedAt": "شروٗع گٔیہِ {when}",
     "notStarted": "شروٗع گژھِتھ نہٕ",
     "receiptHeading": "رٔسیٖد",
-    "noReceipt": "أز تام چھُنہٕ کینٛہہ تہِ موصول گومُت۔ رسید چھےٚ تٔمِس زنانہِ دٔسۍ رِیکارڈ کرنہٕ یِوان ییٚمۍ ڈیلیوری حٲصِل کٔر۔ صِرِف واتُن چھُنہٕ اَکھ بَناوان۔",
+    "noReceipt": "وُنیُک تام چھُنہٕ کینٛہہ تہِ رَسِتھ آمُت۔",
     "receivedBy": "{who} سٕنٛدِ دٔسۍ موصول گژھِتھ۔",
     "receivedAt": "مِیوٗل {when}",
     "shortBy": "{amount} {unit} سٕنٛدِ طرفہٕ مختصر۔",
@@ -619,7 +614,7 @@
     "planning": "منصوٗبہٕ بندی...",
     "replan": "دُبارٕ منصوٗبہٕ بنٲوِو۔",
     "alternativesHeading": "مُتبٲدِل",
-    "showOptions": "Options ({count})",
+    "showOptions": "اختیارات ({count})",
     "hideOptions": "مُخفِف چھُ:",
     "noFacilities": "اتھ ضلعس منٛز چھنہٕ کانٛہہ تہ سہولت روٹنگ نوڈس سۭتۍ، لہذا چھنہٕ کنہ جایہ منصوبہٕ بندی کرنہٕ خٲطرٕ۔",
     "sameFacility": "زٕ مُختٔلِف سہوٗلِیات ژٲرِو۔",
@@ -675,7 +670,7 @@
       "origin_has_no_usable_road": "یِہِ گٲڑِ چھےٚ  آگرٕ پیٹھ نیرن واجینہِ پرٛٮ۪تھ سڑکہِ بند یا ناقابل استعمال بناوان ۔"
     },
     "coverage": {
-      "unobserved_network": "{count, plural, one {# segment in this district has no observed state} other {# segments in this district have no observed state}}. Routes across them are computed, not confirmed."
+      "unobserved_network": "{count, plural, one {اَتھ ضِلعس منٛز چھُنہٕ # حِصس کانٛہہ مُشٲہِدٕ رِیاسَتھ۔} other {اَتھ ضِلعس منٛز چھِ نہٕ # حِصَن ہٕنٛز کانٛہہ تہِ مُشٲہِدٕ شُدٕ رِیاسَتھ۔}}. یمن منز چھِ  وتہِ  حساب كرنہٕ یوان ، تصدیق چھٗنہٕ سپدان ۔"
     },
     "warning": {
       "unknown_constraint": "اتھ وتہ پیٹھ چھنہٕ زانٛہہ تہِ لوڈٕچ حد مقرر کرنہٕ آمٕژ۔",
@@ -705,7 +700,7 @@
     "acknowledge": "تسلیم کٔرِو",
     "acknowledged": "تسلیم کٔرِتھ",
     "validUntil": "{when} تام چھُ یہِ صٔحیٖح۔",
-    "expired": "اَمہِ الرٹٕچ توثیق گٔیہِ ختم۔ یہِ چھُ ییٚتہِ تھاونہٕ آمُت نہٕ زِ لُکاونہٕ، تاکہِ اَکھ اِن باکس یُس پرٛون گٔیہِ چھُنہٕ خٲلی باسان۔",
+    "expired": "یہِ الرٹ چھُ ختم گومُت۔",
     "notReplaced": "تُہُنٛد وَتھ آو واپس نِنہٕ، بدلاونہٕ آو نہٕ۔ أکِس ڈسپیچرَس پَزِ اَکھ نوٚو وَتھ منصوٗبہٕ بنٲوِتھ مَنٛزوٗر کَرُن۔",
     "severity": {
       "critical": "اہم",
@@ -714,7 +709,7 @@
     },
     "evidence": {
       "segments": "{count} سڑکہِ ہٕنٛدۍ حِصہٕ چھِ مُتٲثِر گٔمٕتۍ۔",
-      "consignment": "Consignment {reference}",
+      "consignment": "کنسائنمنٹ {reference}",
       "blocked": "{count, plural, one {منظوٗر شُدٕ وَتہِ ہُنٛد # حِصہٕ چھُ رُکاونہٕ آمُت۔} other {منظوٗر شُدٕ وَتہِ ہِنٛدۍ # حِصہٕ چھِ رُکاونہٕ آمٕتۍ۔}}",
       "facility": "سہوٗلَت: {facility}",
       "reasons": "وجوہات: {reasons}"
@@ -756,7 +751,7 @@
     "riskModelHeading": "خطرٕک نموٗنہٕ",
     "riskModel": "فعال ماڈل: {version}",
     "riskModelNotTrained": "قٲعدس پیٹھ مبنی وزن، نہٕ کانٛہہ تربیت یافتہٕ ماڈل۔",
-    "pushConfigured": "Push is configured ({sender}). Alerts still appear in the inbox whether or not a notification arrives.",
+    "pushConfigured": "پُش چھُ ترتیب دِنہٕ آمُت ({sender})۔",
     "pushNotConfigured": "اتھ تعیناتس منٛز چھُنہٕ پُش ترتیب دِنہٕ آمُت۔ پرٛٮ۪تھ اِطلاع چھُ اِن باکسَس منٛز۔",
     "sourceState": {
       "live": "زِنٛدٕ روٗزِو۔",
@@ -805,7 +800,7 @@
       "age": "عمر",
       "ageDays": "{days} دۄہ پرٛانۍ",
       "stale": "فرٛیٖژمٕژ۔",
-      "staleExplainer": "یہ پیک چھُ وٲنٛسہِ کھۄتہٕ زیٛادٕ پوٗرٕ یَتھ پٮ۪ٹھ بھروسہٕ کَرُن چھُ۔ یہ چھُ وُنہِ تہِ کٲم کَران تہٕ چھُ وُنہِ تہِ ہاونہٕ یِوان، کِیاہ کہِ اکھ غٲیِب نقشہٕ بغٲر کُنہِ وضاحتہِ چھُ زیٛادٕ خراب۔ ییٚلہِ تہِ ہیٚکِو تُہۍ کٔرِو اکھ نوٚو ڈاون لوڈ۔",
+      "staleExplainer": "یہِ پیک چھُ پرٛانُک۔ ییٚلہِ توہہِ  ہٮ۪کِو تیٚلہِ کٔرِو نوٚو ڈاون لوڈ۔",
       "contents": "مَواد",
       "counts": "{edges} سڑکہِ ہٕنٛدۍ حِصہٕ، {facilities} سہوٗلِیات",
       "checksum": "چیک سم",
@@ -821,7 +816,7 @@
   },
   "report": {
     "title": "نوٚو فیلڈ رِپورٹ",
-    "lede": "ییٚتہِ چُھ سٲری چیز تَتھ ڈیوایسَس پٮ۪ٹھ تھاونہٕ یِوان ییٚلہِ تُہۍ ٹایپ کَران چھِو، فوٹو تہِ شٲمِل، یوٚتام کنٹرول روٗمس نَہ مِلہِ۔ سگنل گُم گژھنہٕ سۭتۍ چھُنہٕ کینٛہہ تہِ گُم گژھان۔",
+    "lede": "یہِ آلہٕ پیٹھ بچاوِتھ ییٚلہِ تُہۍ ٹایِپ کٔرِو، یوٚتام کنٹرول روٗمس یہِ میلہِ۔",
     "typeLabel": "تۄہہ کیٛاہ وُچھ؟",
     "typePlaceholder": "ژٲرِو...",
     "locationHeading": "کَتہِ؟",
@@ -888,7 +883,7 @@
   "fieldHome": {
     "title": "میون فیلڈ ورک",
     "heading": "تۄہہِ دِنہٕ آمُت۔",
-    "lede": "قبوٗل کرُن، شروع کرُن تہٕ دِنہٕ خٲطرٕ کٲم چھِ سٲری سگنل ورٲے کٲم کران: پرٛیتھ حرکت چھِ اَتھ آلہِ پیٹھ تھاونہٕ یِوان تہٕ ترتیب وار اکہِ لٹہِ سوزنہٕ یِوان۔",
+    "lede": "سگنل ورٲے کٲم کران ۔ پرٛیتھ تبدیلی چھےٚ کنیکشن واپس ینہٕ پتہٕ اکہ لٹہ سوزنہٕ یوان ۔",
     "newReport": "نوٚو رِپورٹ",
     "openQueue": "سِنک کیوٗ",
     "assignedHeading": "کھوٗلِتھ کٲم",
@@ -921,7 +916,7 @@
     "startedAt": "شروٗع گٔیہِ {when}",
     "noRoute": "کنٹرول روٗمن چھُنہٕ اَمہِ سفرٕ خٲطرٕ کانٛہہ وَتھ مَنظوٗر کٔرمٕژ۔ بیٚیہِ کانٛہہ وَتھ ما پَروِو یِتھ کٔنۍ زَن یہِ آسہِ مَنظوٗر کَرنہٕ آمٕژ۔",
     "routeError": "یہِ وَتھ ہیٚکہِ نہٕ لوڈ گژھِتھ۔",
-    "noGeometry": "منظوٗر شٗدٕ وتہِ منٛز چھےٚ نہٕ کانٛہہ ڈرٲوِبل لٲنہِ ، لہذا چھنہٕ کنن درمیان سیو٘د لٲنہِ بجایہ کانٛہہ تہِ ہاونہٕ آمٗت ۔",
+    "noGeometry": "منظوٗر شٗدٕ وتہِ منٛز چھنہٕ کٗنہِ تہِ نقشہٕ ہنز لٲنہِ  تہِ بناونہٕ یوان ۔",
     "approvedSummary": "منصوٗبہٕ ساز سٕنٛدِ اندازٕ مُطٲبِق {distance}، {low} پٮ۪ٹھٕ {high} تام۔",
     "approvedAgainst": "نیٹ ورک ورجن {version} خلاف منظور کرنہٕ آو {when}",
     "planState": {

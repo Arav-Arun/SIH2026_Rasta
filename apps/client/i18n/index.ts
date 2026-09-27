@@ -25,4 +25,6 @@ export const CATALOGUE_LOADERS: Record<string, () => Promise<{ default: unknown 
   sat: () => import('./sat.json'),
   sd: () => import('./sd.json'),
   ta: () => import('./ta.json'),
+  te: () => import('./te.json'),
+  ur: () => import('./ur.json'),
 };

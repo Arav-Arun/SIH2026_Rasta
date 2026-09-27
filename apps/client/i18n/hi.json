@@ -11,18 +11,9 @@
     "machine": {
       "provider": "Sarvam Translate",
       "model": "sarvam-translate:v1",
-      "strings": 135,
-      "generatedAt": "2026-09-27T03:22:41Z"
-    },
-    "fallbackKeys": [
-      "alerts.expired",
-      "deliveries.noReceipt",
-      "driverTrips.noGeometry",
-      "fieldHome.lede",
-      "health.pushConfigured",
-      "report.lede",
-      "settings.pack.staleExplainer"
-    ]
+      "strings": 134,
+      "generatedAt": "2026-09-27T04:56:52Z"
+    }
   },
   "app": {
     "name": "RASTA",
@@ -535,7 +526,7 @@
     "startedAt": "{when} को शुरू",
     "notStarted": "शुरू नहीं हुई",
     "receiptHeading": "रसीद",
-    "noReceipt": "Nothing has been received yet.",
+    "noReceipt": "अभी तक कुछ भी प्राप्त नहीं हुआ है।",
     "receivedBy": "{who} ने प्राप्त किया",
     "receivedAt": "{when} को प्राप्त",
     "shortBy": "{amount} {unit} कम",
@@ -709,7 +700,7 @@
     "acknowledge": "स्वीकार करें",
     "acknowledged": "स्वीकृत",
     "validUntil": "{when} तक वैध",
-    "expired": "This alert has expired.",
+    "expired": "यह अलर्ट समाप्त हो गया है।",
     "notReplaced": "आपका मार्ग वापस लिया गया है, बदला नहीं गया। डिस्पैचर को नया मार्ग बनाकर स्वीकृत करना होगा।",
     "severity": {
       "critical": "गंभीर",
@@ -760,7 +751,7 @@
     "riskModelHeading": "जोखिम मॉडल",
     "riskModel": "सक्रिय मॉडल: {version}",
     "riskModelNotTrained": "नियम-आधारित भार, प्रशिक्षित मॉडल नहीं।",
-    "pushConfigured": "Push is configured ({sender}).",
+    "pushConfigured": "पुश कॉन्फ़िगर किया गया है ({sender})।",
     "pushNotConfigured": "इस परिनियोजन में पुश कॉन्फ़िगर नहीं है। हर अलर्ट इनबॉक्स में है।",
     "sourceState": {
       "live": "लाइव",
@@ -809,7 +800,7 @@
       "age": "आयु",
       "ageDays": "{days} दिन पुराना",
       "stale": "पुराना",
-      "staleExplainer": "This pack is out of date. Download a newer one when you can.",
+      "staleExplainer": "यह पैक पुराना हो गया है। जब हो सके तो एक नया डाउनलोड करें।",
       "contents": "सामग्री",
       "counts": "{edges} सड़क खंड, {facilities} सुविधाएँ",
       "checksum": "चेकसम",
@@ -825,7 +816,7 @@
   },
   "report": {
     "title": "नई फ़ील्ड रिपोर्ट",
-    "lede": "Saved on this device as you type, until the control room has it.",
+    "lede": "इस उपकरण पर आपके टाइप करते ही सहेजा जाता है, जब तक कि नियंत्रण कक्ष को यह नहीं मिल जाता।",
     "typeLabel": "आपने क्या देखा?",
     "typePlaceholder": "चुनें…",
     "locationHeading": "कहाँ",
@@ -892,7 +883,7 @@
   "fieldHome": {
     "title": "मेरा फ़ील्ड कार्य",
     "heading": "आपको सौंपा गया",
-    "lede": "Works without signal. Each change is sent once a connection returns.",
+    "lede": "बिना सिग्नल के काम करता है। कनेक्शन वापस आने पर प्रत्येक परिवर्तन एक बार भेजा जाता है।",
     "newReport": "नई रिपोर्ट",
     "openQueue": "सिंक कतार",
     "assignedHeading": "खुले कार्य",
@@ -925,7 +916,7 @@
     "startedAt": "{when} को शुरू",
     "noRoute": "नियंत्रण कक्ष ने इस यात्रा के लिए कोई मार्ग स्वीकृत नहीं किया है। किसी अन्य मार्ग को स्वीकृत मानकर न चलें।",
     "routeError": "मार्ग लोड नहीं हो सका",
-    "noGeometry": "The approved route has no map line to draw.",
+    "noGeometry": "स्वीकृत मार्ग पर खींचने के लिए कोई मानचित्र रेखा नहीं है।",
     "approvedSummary": "{distance}, योजनाकार के अनुमान से {low} से {high}",
     "approvedAgainst": "नेटवर्क संस्करण {version} के आधार पर {when} को स्वीकृत",
     "planState": {

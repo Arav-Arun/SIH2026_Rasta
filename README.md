@@ -60,7 +60,7 @@ Mapped to the problem statement's requirements (a) to (h).
 | **(e) Automated alerts** | Alerts for road closures and restrictions, withdrawn routes and isolated facilities, with de-duplication, per-person acknowledgement and optional web push. |
 | **(f) Geo-tagged field reports** | Photo, location, accuracy and time captured on the phone or in the browser, uploaded to private storage and checked against a SHA-256 checksum before it counts as evidence. |
 | **(g) Central dashboards** | District connectivity overview, deliveries (requests, consignments, receipts, shortfalls), fleet positions, incidents, inspections, alerts and data health. |
-| **(h) Multilingual and offline** | Web interface in English and 20 of the 22 Eighth Schedule languages, drafted with Sarvam Translate; Telugu and Urdu follow. Offline outbox with safe retries, conflict handling, cached routes and downloadable map data packs. |
+| **(h) Multilingual and offline** | Web interface in English and all 22 Eighth Schedule languages, drafted with Sarvam Translate. Offline outbox with safe retries, conflict handling, cached routes and downloadable map data packs. |
 
 Supporting the expected solution:
 
@@ -289,17 +289,15 @@ each reset the local database and start the services they need. See
 
 ## Languages
 
-The web client covers English plus all 22 languages of the Eighth Schedule:
+The web client ships English plus all 22 languages of the Eighth Schedule:
 Assamese, Bengali, Bodo, Dogri, Gujarati, Hindi, Kannada, Kashmiri, Konkani,
 Maithili, Malayalam, Manipuri (Meetei Mayek), Marathi, Nepali, Odia, Punjabi,
 Sanskrit, Santali (Ol Chiki), Sindhi (Devanagari), Tamil, Telugu and Urdu
 ([registry](apps/client/i18n/languages.json)). Urdu and Kashmiri render right to
-left. A language is offered once no more than 5% of its catalogue is still in
-English: twenty are offered today, and Telugu and Urdu appear when a translation
-run completes them. The app makes no translation request at runtime: English is
-the source, and the other catalogues are drafted with
-`scripts/tools/translate_catalogues.py` (Sarvam Translate). Each is marked
-unreviewed until a native speaker checks it.
+left. The app makes no translation request at runtime: English is the source,
+and the other catalogues are drafted with `scripts/tools/translate_catalogues.py`
+(Sarvam Translate). Each is marked unreviewed until a native speaker checks it,
+and a catalogue is offered only while no more than 5% of it is still in English.
 
 ```bash
 services/api/.venv/bin/python scripts/tools/translate_catalogues.py --dry-run
@@ -307,7 +305,9 @@ services/api/.venv/bin/python scripts/tools/translate_catalogues.py
 ```
 
 A run sends only strings that are new, changed, or left in English by an earlier
-failed run; strings a person edited are never overwritten. The key is read from
+failed run, and checks every answer: placeholders and plural forms must survive,
+and English given back is not accepted as a translation. Strings a person edited
+are never overwritten. The key is read from
 `SARVAM_API_KEY` in the environment or the repository's `.env`.
 
 ## Current status
@@ -323,8 +323,7 @@ delivery receipts. Still to do:
 - Automatic alerts for high-risk corridors and delayed deliveries.
 - A trained risk model, once real outcome labels exist. The current score is a
   documented weighting, not a fitted model.
-- Finish the Telugu and Urdu catalogues, then native-speaker review of all
-  non-English catalogues.
+- Native-speaker review of the non-English catalogues.
 - An administrator screen for issuing accounts and role grants. Today accounts
   are created through the Supabase admin API.
 
