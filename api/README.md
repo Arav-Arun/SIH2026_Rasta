@@ -15,8 +15,8 @@ api/.venv/bin/python -m uvicorn app.main:app --app-dir api --reload
 ```
 
 `GET /health` is the health check and `GET /openapi.json` is the schema. Copy
-`.env.example` to `.env` for the database and Supabase settings;
-`scripts/local_demo.py up` writes it for you. `ALLOWED_ORIGINS` must be an
+`.env.example` to `.env` for the database and Supabase settings.
+`ALLOWED_ORIGINS` must be an
 explicit comma-separated list; wildcards are rejected.
 
 ## Layout

@@ -21,8 +21,7 @@ supabase start
 supabase db reset
 ```
 
-`python3 scripts/local_demo.py up` does all of this and loads the pilot road
-network. Never run the synthetic seed against a pilot or production project.
+Never run the synthetic seed against a pilot or production project.
 
 ## Access model
 

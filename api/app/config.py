@@ -64,7 +64,7 @@ class Settings(BaseSettings):
     # Per-caller limits on costly writes (app/ratelimit.py). Off only for a
     # load test that means to exceed them.
     rate_limits_enabled: bool = True
-    # Telemetry kept for completed trips; see scripts/tools/apply_retention.py.
+    # Telemetry kept for completed trips; older positions are removed nightly by pg_cron.
     telemetry_retention_days: int = 30
 
     @property

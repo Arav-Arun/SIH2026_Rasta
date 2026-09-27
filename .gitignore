@@ -34,8 +34,7 @@ api/.venv/
 *.iml
 .DS_Store
 
-# Local state and generated output: demo accounts, backups, test reports
-# and screenshots written by the scripts in scripts/.
+# Local state and generated output: demo accounts, backups and reports.
 artifacts/
 *.sqlite
 *.db
@@ -48,5 +47,5 @@ apps/client/dist/
 .expo/
 apps/mobile/.expo/
 
-# Trained model files (scripts/ml/train_random_forest.py); nothing ships them.
+# Trained model files; nothing ships them.
 models/

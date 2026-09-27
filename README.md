@@ -136,25 +136,35 @@ Pilot area: central Shillong, East Khasi Hills, Meghalaya.
 
 ## Architecture
 
-```
-  Web control room and field web app (React, MapLibre)
-  Android app for field officers and drivers (Expo / React Native)
-                 |
-                 |  HTTPS + JSON, Supabase JWT
-                 v
-  RASTA API (FastAPI)
-    field reports and evidence review    constrained route planning
-    road state and risk engine           logistics, trips, receipts
-    alerts and web push                  GPS telemetry, audit, retention
-                 |
-                 v
-  PostgreSQL + PostGIS (Supabase)          Private evidence storage
-  road graph, facilities, trips,           photos with checksums
-  audit events, versioned state
-                 ^
-                 |
-  Inputs: OpenStreetMap road graph, IMD rainfall, NDMA SACHET alerts,
-          field reports, trip GPS
+```mermaid
+flowchart LR
+    subgraph clients["Clients"]
+        web["Web control room<br/>and field web app<br/>React, MapLibre"]
+        app["Android app<br/>field officers and drivers<br/>Expo, React Native"]
+    end
+
+    subgraph inputs["Data sources"]
+        imd["IMD rainfall<br/>forecasts"]
+        sachet["NDMA SACHET<br/>CAP alerts"]
+        osm["OpenStreetMap<br/>road network"]
+    end
+
+    api["RASTA API (FastAPI)<br/>field reports and evidence review<br/>road state and risk engine<br/>constrained route planning<br/>consignments, trips and receipts<br/>alerts, GPS telemetry and audit"]
+
+    subgraph supabase["Supabase"]
+        auth["Auth<br/>roles and district scope"]
+        db[("PostgreSQL + PostGIS<br/>road graph, facilities,<br/>trips, audit trail")]
+        storage[("Private evidence storage<br/>photos with checksums")]
+    end
+
+    web -- "HTTPS + JSON" --> api
+    app -- "HTTPS + JSON" --> api
+    imd --> api
+    sachet --> api
+    osm -- "road graph" --> api
+    api -- "verifies sessions" --> auth
+    api --> db
+    api --> storage
 ```
 
 ## Tech stack
@@ -189,7 +199,6 @@ api/            FastAPI backend: reports, road state, routing, risk, logistics
 supabase/       Database migrations and seed data
 contracts/      OpenAPI schema and generated TypeScript types
 data/           Pilot road network, facilities and recorded samples
-scripts/        Local demo, data pipeline and tools
 Screenshots/    Screenshots used in this README
 ```
 
@@ -200,18 +209,21 @@ Node 22 and Python 3.12 or newer.
 
 ```bash
 npm ci
-python3.12 -m venv api/.venv
-api/.venv/bin/python -m pip install -e './api[dev]'
-python3 scripts/local_demo.py up
-```
+supabase start && supabase db reset          # database schema and seed data
 
-This starts the database, loads the pilot network, creates demo accounts, and
-starts the API and web app. It prints the sign-ins and the web address.
+python3.12 -m venv api/.venv
+api/.venv/bin/pip install -e ./api
+cp api/.env.example api/.env                 # database and Supabase settings
+api/.venv/bin/uvicorn app.main:app --app-dir api --port 8000
+
+cp apps/client/.env.example apps/client/.env.local
+npm run dev --workspace apps/client          # http://localhost:3000
+```
 
 For the Android app:
 
 ```bash
-cp apps/mobile/.env.example apps/mobile/.env   # fill in the API and Supabase URLs
+cp apps/mobile/.env.example apps/mobile/.env   # API and Supabase addresses
 npm run mobile:start
 ```
 

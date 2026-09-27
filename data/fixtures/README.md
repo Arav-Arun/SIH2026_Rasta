@@ -14,11 +14,5 @@ The fixture does not claim any real closure, warning, trip, delivery, or bridge
 capacity. Scenario S6 explicitly overlays a demonstration weight limit because the
 selected source bridge has no recorded limit.
 
-Rebuild from the repository root:
-
-```bash
-python3 scripts/pipeline/generate_scenarios.py
-```
-
-The generator uses seed `26002`. Repeated runs against the same graph produce
+The scenarios are generated with seed `26002`, so the same graph always yields
 identical fixture and manifest file hashes.

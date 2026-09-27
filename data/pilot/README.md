@@ -16,14 +16,6 @@ The graph has 1,236 nodes and 2,860 directed edges. All baseline passability is
 them. Constraints and events are added only as clearly labelled simulated
 scenario overlays.
 
-## Rebuild
-
-Run from the repository root:
-
-```bash
-python3 scripts/pipeline/import_osm_pilot.py
-```
-
 Output files are deterministic for the same raw source, query, and importer
 version.
 

@@ -1,4 +1,10 @@
-"""Copies of the recorded source documents, re-dated to the moment of a run."""
+"""Copies of the recorded IMD and SACHET documents, re-dated to the moment of a run.
+
+Until live feeds are configured, the API reads these recorded samples. They are
+re-dated at every start so the risk engine never treats them as stale:
+
+    python api/app/recorded_samples.py /tmp/rasta-sources
+"""
 
 from __future__ import annotations
 
@@ -52,8 +58,7 @@ def redate_recorded_sources(
     shift = (moment - ISSUED_BEFORE_NOW) - max(issued.values())
     stamp = moment.replace(microsecond=0).isoformat().replace("+00:00", "Z")
     label = (
-        f"Re-dated by scripts/pipeline/recorded_sources.py at {stamp}: every time shifted by the "
-        "same amount, values unchanged."
+        f"Re-dated at {stamp}: every time shifted by the same amount, values unchanged."
     )
 
     target.mkdir(parents=True, exist_ok=True)
@@ -78,7 +83,7 @@ def redate_recorded_sources(
     )
     (target / "sachet_cap.xml").write_text(shifted_cap, encoding="utf-8")
 
-    # Anything else (the malformed document, the README) is copied as it is.
+    # Anything else (the README) is copied as it is.
     for path in source.iterdir():
         if path.is_file() and path.name not in issued:
             shutil.copy2(path, target / path.name)
@@ -95,3 +100,9 @@ def redate_recorded_sources(
             for name, when in issued.items()
         },
     }
+
+
+if __name__ == "__main__":
+    import sys
+
+    print(redate_recorded_sources(Path(sys.argv[1]))["redated_at"])

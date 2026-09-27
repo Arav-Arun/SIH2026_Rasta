@@ -11,7 +11,7 @@ services:
     # risk recompute; there is no health check path, because a busy worker
     # missing a check would otherwise get the service restarted mid-request.
     startCommand: >-
-      python -c "from pathlib import Path; from scripts.pipeline.recorded_sources import redate_recorded_sources; redate_recorded_sources(Path('/tmp/rasta-sources'))"
+      python api/app/recorded_samples.py /tmp/rasta-sources
       && exec python -m uvicorn app.main:app --app-dir api --host 0.0.0.0 --port $PORT --workers 2
     autoDeploy: true
     envVars:

@@ -1,5 +1,5 @@
 {
-  "_comment": "Every language RASTA offers. English is the source; every other catalogue is drafted with Sarvam Translate by scripts/tools/translate_catalogues.py, which also creates apps/client/i18n/<code>.json. `code` is the BCP-47 tag used for lang and Intl; `sarvam` is the Sarvam Translate language code; `dir` is the default text direction, which a generated catalogue's _meta.dir overrides once its actual script is known.",
+  "_comment": "Every language RASTA offers. English is the source; every other catalogue is drafted with Sarvam Translate into apps/client/i18n/<code>.json. `code` is the BCP-47 tag used for lang and Intl; `sarvam` is the Sarvam Translate language code; `dir` is the default text direction, which a generated catalogue's _meta.dir overrides once its actual script is known.",
   "languages": [
     {"code": "en", "sarvam": "en-IN", "english": "English", "native": "English", "dir": "ltr"},
     {"code": "as", "sarvam": "as-IN", "english": "Assamese", "native": "অসমীয়া", "dir": "ltr"},
