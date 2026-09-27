@@ -610,7 +610,7 @@ def load_api_key() -> str | None:
         return value
     for candidate in (
         REPOSITORY_ROOT / ".env",
-        REPOSITORY_ROOT / "services" / "api" / ".env",
+        REPOSITORY_ROOT / "api" / ".env",
     ):
         if not candidate.exists():
             continue

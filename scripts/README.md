@@ -1,7 +1,7 @@
 # Scripts
 
 Run everything from the repository root. Scripts that touch the database need
-the local Supabase stack and the API virtualenv (`services/api/.venv`). Output
+the local Supabase stack and the API virtualenv (`api/.venv`). Output
 goes to the gitignored `artifacts/` folder.
 
 | Path | Purpose |

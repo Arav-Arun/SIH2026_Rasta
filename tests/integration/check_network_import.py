@@ -17,7 +17,7 @@ import httpx
 import psycopg
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPOSITORY_ROOT / "services" / "api"))
+sys.path.insert(0, str(REPOSITORY_ROOT / "api"))
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from scripts.pipeline.import_pilot_network import (  # noqa: E402

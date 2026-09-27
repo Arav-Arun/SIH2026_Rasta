@@ -92,23 +92,23 @@ network from OpenStreetMap, with a synthetic consignment, vehicle and trip.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/web-sign-in.png" alt="Sign-in" /><br />Sign-in</td>
-    <td align="center"><img src="docs/screenshots/web-overview.png" alt="Overview" /><br />Overview</td>
+    <td align="center"><img src="Screenshots/web-sign-in.png" alt="Sign-in" /><br />Sign-in</td>
+    <td align="center"><img src="Screenshots/web-overview.png" alt="Overview" /><br />Overview</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/web-map.png" alt="Accessibility map" /><br />Accessibility map</td>
-    <td align="center"><img src="docs/screenshots/web-planner.png" alt="Route planner with ranked options" /><br />Route planner with ranked options</td>
+    <td align="center"><img src="Screenshots/web-map.png" alt="Accessibility map" /><br />Accessibility map</td>
+    <td align="center"><img src="Screenshots/web-planner.png" alt="Route planner with ranked options" /><br />Route planner with ranked options</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/web-incidents.png" alt="Field report under review" /><br />Field report under review</td>
-    <td align="center"><img src="docs/screenshots/web-deliveries.png" alt="Deliveries: manifest, trip and receipt" /><br />Deliveries: manifest, trip and receipt</td>
+    <td align="center"><img src="Screenshots/web-incidents.png" alt="Field report under review" /><br />Field report under review</td>
+    <td align="center"><img src="Screenshots/web-deliveries.png" alt="Deliveries: manifest, trip and receipt" /><br />Deliveries: manifest, trip and receipt</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/web-fleet.png" alt="Fleet and trips" /><br />Fleet and trips</td>
-    <td align="center"><img src="docs/screenshots/web-data-health.png" alt="Data health" /><br />Data health</td>
+    <td align="center"><img src="Screenshots/web-fleet.png" alt="Fleet and trips" /><br />Fleet and trips</td>
+    <td align="center"><img src="Screenshots/web-data-health.png" alt="Data health" /><br />Data health</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/web-overview-hindi.png" alt="The same overview in Hindi" /><br />The same overview in Hindi</td>
+    <td align="center"><img src="Screenshots/web-overview-hindi.png" alt="The same overview in Hindi" /><br />The same overview in Hindi</td>
     <td></td>
   </tr>
 </table>
@@ -117,8 +117,8 @@ network from OpenStreetMap, with a synthetic consignment, vehicle and trip.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/pwa-field-home.png" width="280" alt="Assigned tasks" /><br />Assigned tasks</td>
-    <td align="center"><img src="docs/screenshots/pwa-field-report.png" width="280" alt="New field report, saved on the device as it is typed" /><br />New field report, saved on the device as it is typed</td>
+    <td align="center"><img src="Screenshots/pwa-field-home.png" width="280" alt="Assigned tasks" /><br />Assigned tasks</td>
+    <td align="center"><img src="Screenshots/pwa-field-report.png" width="280" alt="New field report, saved on the device as it is typed" /><br />New field report, saved on the device as it is typed</td>
   </tr>
 </table>
 
@@ -126,13 +126,13 @@ network from OpenStreetMap, with a synthetic consignment, vehicle and trip.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/app-intro.png" width="240" alt="Introduction" /><br />Introduction</td>
-    <td align="center"><img src="docs/screenshots/app-driver-route.png" width="240" alt="Driver: approved route" /><br />Driver: approved route</td>
-    <td align="center"><img src="docs/screenshots/app-driver-load.png" width="240" alt="Driver: load and position reporting" /><br />Driver: load and position reporting</td>
+    <td align="center"><img src="Screenshots/app-intro.png" width="240" alt="Introduction" /><br />Introduction</td>
+    <td align="center"><img src="Screenshots/app-driver-route.png" width="240" alt="Driver: approved route" /><br />Driver: approved route</td>
+    <td align="center"><img src="Screenshots/app-driver-load.png" width="240" alt="Driver: load and position reporting" /><br />Driver: load and position reporting</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/app-observer-capture.png" width="240" alt="Observer: report a disruption" /><br />Observer: report a disruption</td>
-    <td align="center"><img src="docs/screenshots/app-sos.png" width="240" alt="SOS and helplines" /><br />SOS and helplines</td>
+    <td align="center"><img src="Screenshots/app-observer-capture.png" width="240" alt="Observer: report a disruption" /><br />Observer: report a disruption</td>
+    <td align="center"><img src="Screenshots/app-sos.png" width="240" alt="SOS and helplines" /><br />SOS and helplines</td>
     <td></td>
   </tr>
 </table>
@@ -210,11 +210,11 @@ Every value on screen is marked as live, recorded or synthetic.
 apps/
   client/               Web control room and field PWA (React, Vinext, MapLibre)
   mobile/               Field officer and driver app (Expo, React Native)
-services/api/           FastAPI backend and its unit tests
+api/                    FastAPI backend and its unit tests
 supabase/               Migrations, seed data and schema checks
-packages/contracts/     Generated OpenAPI schema and TypeScript types
+contracts/              Generated OpenAPI schema and TypeScript types
 data/                   Pilot road graph, facilities, scenarios, recorded samples
-docs/screenshots/       Screenshots used in this README
+Screenshots/            Screenshots used in this README
 scripts/
   local_demo.py         One-command local demo
   pipeline/             Build and validate the pilot data
@@ -234,8 +234,8 @@ Node 22 and Python 3.12 or newer.
 
 ```bash
 npm ci
-python3.12 -m venv services/api/.venv
-services/api/.venv/bin/python -m pip install -e './services/api[dev]'
+python3.12 -m venv api/.venv
+api/.venv/bin/python -m pip install -e './api[dev]'
 python3 scripts/local_demo.py up
 ```
 
@@ -273,9 +273,9 @@ Unit tests and static checks need no database or network:
 ```bash
 npm run lint && npm run typecheck && npm test
 npm run format:check
-services/api/.venv/bin/python -m pytest -q services/api/tests
-services/api/.venv/bin/python -m ruff check services/api scripts tests
-services/api/.venv/bin/python -m unittest discover -s tests/scripts
+api/.venv/bin/python -m pytest -q api/tests
+api/.venv/bin/python -m ruff check api scripts tests
+api/.venv/bin/python -m unittest discover -s tests/scripts
 python3 scripts/pipeline/validate_pilot_graph.py
 python3 scripts/pipeline/validate_scenarios.py
 python3 scripts/pipeline/verify_routing.py
@@ -300,8 +300,8 @@ and the other catalogues are drafted with `scripts/tools/translate_catalogues.py
 and a catalogue is offered only while no more than 5% of it is still in English.
 
 ```bash
-services/api/.venv/bin/python scripts/tools/translate_catalogues.py --dry-run
-services/api/.venv/bin/python scripts/tools/translate_catalogues.py
+api/.venv/bin/python scripts/tools/translate_catalogues.py --dry-run
+api/.venv/bin/python scripts/tools/translate_catalogues.py
 ```
 
 A run sends only strings that are new, changed, or left in English by an earlier

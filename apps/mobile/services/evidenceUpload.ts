@@ -5,7 +5,7 @@ import { supabase } from './supabase';
 
 /** Evidence upload, in the order the server requires: */
 
-/** Must match `EVIDENCE_BUCKET` in services/api/app/evidence.py. */
+/** Must match `EVIDENCE_BUCKET` in api/app/evidence.py. */
 const EVIDENCE_BUCKET = 'evidence';
 
 export interface PhotoBytes {

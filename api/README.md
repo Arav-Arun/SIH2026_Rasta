@@ -9,9 +9,9 @@ district scope to every request, and writes an audit event for every change.
 From the repository root:
 
 ```bash
-python3.12 -m venv services/api/.venv
-services/api/.venv/bin/python -m pip install -e './services/api[dev]'
-services/api/.venv/bin/python -m uvicorn app.main:app --app-dir services/api --reload
+python3.12 -m venv api/.venv
+api/.venv/bin/python -m pip install -e './api[dev]'
+api/.venv/bin/python -m uvicorn app.main:app --app-dir api --reload
 ```
 
 `GET /health` is the health check and `GET /openapi.json` is the schema. Copy
@@ -36,8 +36,8 @@ explicit comma-separated list; wildcards are rejected.
 ## Checks
 
 ```bash
-services/api/.venv/bin/python -m pytest -q services/api/tests
-services/api/.venv/bin/python -m ruff check services/api/app services/api/tests
+api/.venv/bin/python -m pytest -q api/tests
+api/.venv/bin/python -m ruff check api/app api/tests
 ```
 
 The unit tests need no database, network or credentials.

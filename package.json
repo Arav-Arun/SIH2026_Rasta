@@ -4,7 +4,7 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "contracts"
   ],
   "scripts": {
     "lint": "npm run lint --workspace apps/client && npm run lint --workspace apps/mobile",

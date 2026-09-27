@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-API_ROOT = REPOSITORY_ROOT / "services" / "api"
+API_ROOT = REPOSITORY_ROOT / "api"
 
 
 def build_openapi_document() -> dict[str, Any]:
@@ -39,7 +39,7 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=Path,
-        default=REPOSITORY_ROOT / "packages" / "contracts" / "openapi.json",
+        default=REPOSITORY_ROOT / "contracts" / "openapi.json",
         help="Path for the deterministic OpenAPI JSON document.",
     )
     args = parser.parse_args()

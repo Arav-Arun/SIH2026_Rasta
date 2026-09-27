@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-VENV_PYTHON = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+VENV_PYTHON = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
 
 
 def main() -> int:

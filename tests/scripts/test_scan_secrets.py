@@ -88,14 +88,14 @@ class Reporting(unittest.TestCase):
                 [
                     ".env",
                     "apps/mobile/.env.local",
-                    "services/api/.env",
+                    "api/.env",
                     "apps/mobile/.env.example",
                     "README.md",
                 ]
             )
         }
         self.assertEqual(
-            flagged, {".env", "apps/mobile/.env.local", "services/api/.env"}
+            flagged, {".env", "apps/mobile/.env.local", "api/.env"}
         )
 
 

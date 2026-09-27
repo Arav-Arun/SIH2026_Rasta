@@ -7,7 +7,7 @@
     "**/*.json",
     "**/*.md",
     "**/*.yaml",
-    "packages/contracts/src/openapi.d.ts",
+    "contracts/src/openapi.d.ts",
     "apps/client/i18n/index.ts",
     "apps/client/public/packs/**"
   ]

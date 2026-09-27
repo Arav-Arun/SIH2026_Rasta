@@ -60,7 +60,7 @@ def main() -> int:
     require_free_port(CLIENT_PORT, what="client dev server")
     for tool in ("supabase", "npm", "npx"):
         require_tool(tool)
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
 
     run_command(["supabase", "start"])
     run_command(["supabase", "db", "reset"])
@@ -95,7 +95,7 @@ def main() -> int:
                     "--port",
                     API_PORT,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )

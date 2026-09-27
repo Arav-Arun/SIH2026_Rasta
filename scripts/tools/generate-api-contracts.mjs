@@ -24,7 +24,6 @@ const openapiGenerator = resolve(
 // must be one the service is installed into.
 const serviceVenvPython = join(
   repositoryRoot,
-  'services',
   'api',
   '.venv',
   process.platform === 'win32' ? 'Scripts' : 'bin',
@@ -69,7 +68,7 @@ function generate(outputDirectory) {
 }
 
 if (mode === '--write') {
-  generate(resolve(repositoryRoot, 'packages', 'contracts'));
+  generate(resolve(repositoryRoot, 'contracts'));
   process.stdout.write(
     'Generated OpenAPI snapshot and TypeScript contracts.\n',
   );
@@ -81,13 +80,11 @@ if (mode === '--write') {
     const expected = {
       snapshotPath: resolve(
         repositoryRoot,
-        'packages',
         'contracts',
         'openapi.json',
       ),
       typesPath: resolve(
         repositoryRoot,
-        'packages',
         'contracts',
         'src',
         'openapi.d.ts',

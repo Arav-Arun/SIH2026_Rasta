@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-VENV = REPOSITORY_ROOT / "services" / "api" / ".venv"
+VENV = REPOSITORY_ROOT / "api" / ".venv"
 
 # The helpers below need the API's packages (httpx, psycopg).
 if Path(sys.prefix).resolve() != VENV.resolve() and (VENV / "bin" / "python").exists():
@@ -60,7 +60,7 @@ DEMO_SOURCES = DEMO_DIR / "sources"
 #: restarts, so restarting the API does not cut off a driver mid-trip.
 TELEMETRY_SECRET_PATH = DEMO_DIR / "telemetry_token_secret"
 LOG_DIR = DEMO_DIR / "logs"
-API_PYTHON = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+API_PYTHON = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
 API_PORT = "8000"
 CLIENT_PORT = "3000"
 EXPO_WEB_PORT = "8081"
@@ -502,7 +502,7 @@ def service_environment(host: str) -> tuple[dict[str, str], dict[str, str]]:
             f"NEXT_PUBLIC_API_BASE_URL=http://{host}:{API_PORT}",
         )
         client_env.write_text(text, encoding="utf-8")
-        api_env = REPOSITORY_ROOT / "services" / "api" / ".env"
+        api_env = REPOSITORY_ROOT / "api" / ".env"
         lines = [
             f"ALLOWED_ORIGINS={runtime['ALLOWED_ORIGINS']}"
             if line.startswith("ALLOWED_ORIGINS=")
@@ -556,8 +556,8 @@ def command_up(args: argparse.Namespace) -> int:
         require_tool(tool)
     if not API_PYTHON.exists():
         print(
-            "API virtualenv missing: python3.12 -m venv services/api/.venv && "
-            "services/api/.venv/bin/python -m pip install -e './services/api[dev]'"
+            "API virtualenv missing: python3.12 -m venv api/.venv && "
+            "api/.venv/bin/python -m pip install -e './api[dev]'"
         )
         return 2
     command_down(args, quiet=True)
@@ -595,7 +595,7 @@ def command_up(args: argparse.Namespace) -> int:
             "--port",
             API_PORT,
         ],
-        cwd=REPOSITORY_ROOT / "services" / "api",
+        cwd=REPOSITORY_ROOT / "api",
         env=service_env,
     )
     write_state(state)

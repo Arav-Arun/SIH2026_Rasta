@@ -40,9 +40,9 @@ def main() -> int:
     for tool in ("supabase", "npm", "npx"):
         require_tool(tool)
 
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
     if not api_python.exists():
-        raise RuntimeError("API virtualenv not found under services/api/.venv.")
+        raise RuntimeError("API virtualenv not found under api/.venv.")
 
     run_command(["supabase", "start"])
     run_command(["supabase", "db", "reset"])
@@ -83,7 +83,7 @@ def main() -> int:
                     "--port",
                     API_PORT,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )

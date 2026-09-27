@@ -25,7 +25,7 @@ __pycache__/
 .mypy_cache/
 .venv/
 venv/
-services/api/.venv/
+api/.venv/
 *.egg-info/
 
 # Local IDE files

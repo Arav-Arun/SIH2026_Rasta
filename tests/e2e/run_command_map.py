@@ -41,11 +41,11 @@ def main() -> int:
     require_tool("npm")
     require_tool("npx")
 
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
     if not api_python.exists():
         raise RuntimeError(
             "API virtualenv not found. Create it with "
-            "python3.12 -m venv services/api/.venv && pip install -e './services/api[dev]'"
+            "python3.12 -m venv api/.venv && pip install -e './api[dev]'"
         )
 
     # Playwright's bundled Chromium is a large download that is not always reachable;
@@ -113,7 +113,7 @@ def main() -> int:
                     "--port",
                     API_PORT,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )

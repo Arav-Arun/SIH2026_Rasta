@@ -906,7 +906,7 @@ def run_checks(env: dict[str, str], identities: dict[str, Any], api_log: Path) -
         points_for(database_url, running_trip),
     )
 
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
     retention_env = {**os.environ, "DATABASE_URL": database_url}
     dry = subprocess.run(
         [str(api_python), "scripts/tools/apply_retention.py", "--dry-run"],
@@ -1052,9 +1052,9 @@ def run_checks(env: dict[str, str], identities: dict[str, Any], api_log: Path) -
 
 def main() -> int:
     require_tool("supabase")
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
     if not api_python.exists():
-        raise RuntimeError("API virtualenv not found under services/api/.venv.")
+        raise RuntimeError("API virtualenv not found under api/.venv.")
     for port in (API_PORT, SECOND_API_PORT):
         with socket.socket() as probe:
             if probe.connect_ex(("127.0.0.1", int(port))) == 0:
@@ -1105,7 +1105,7 @@ def main() -> int:
                     "--port",
                     API_PORT,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )
@@ -1122,7 +1122,7 @@ def main() -> int:
                     "--port",
                     SECOND_API_PORT,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )

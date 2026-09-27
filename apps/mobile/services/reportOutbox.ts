@@ -19,9 +19,9 @@ import type {
 
 /** The phone's outbox: how a saved report reaches the control room. */
 
-/** Must match MAX_ATTACHMENT_BYTES in services/api/app/evidence.py. */
+/** Must match MAX_ATTACHMENT_BYTES in api/app/evidence.py. */
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
-/** Must match ALLOWED_MIME_TYPES in services/api/app/evidence.py. */
+/** Must match ALLOWED_MIME_TYPES in api/app/evidence.py. */
 const ACCEPTED_PHOTO_TYPES: readonly string[] = [
   'image/jpeg',
   'image/png',

@@ -940,9 +940,9 @@ def _break_a_source(
 
 def main() -> int:
     require_tool("supabase")
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
     if not api_python.exists():
-        raise RuntimeError("API virtualenv not found under services/api/.venv.")
+        raise RuntimeError("API virtualenv not found under api/.venv.")
     require_free_port(int(API_PORT), what="the API")
 
     run_command(["supabase", "start"])
@@ -950,7 +950,7 @@ def main() -> int:
     env = supabase_status_env()
     runtime_env = write_env_files(env, api_port=API_PORT)
     service_env = {**os.environ.copy(), **runtime_env}
-    sys.path.insert(0, str(REPOSITORY_ROOT / "services" / "api"))
+    sys.path.insert(0, str(REPOSITORY_ROOT / "api"))
     os.environ.update(runtime_env)
 
     subprocess.run(
@@ -1005,7 +1005,7 @@ def main() -> int:
                     "--port",
                     API_PORT,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )

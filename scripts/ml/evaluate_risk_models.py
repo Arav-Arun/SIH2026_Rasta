@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPOSITORY_ROOT / "services" / "api"))
+sys.path.insert(0, str(REPOSITORY_ROOT / "api"))
 
 CARD_PATH = REPOSITORY_ROOT / "artifacts" / "models" / "baseline_vs_supervised.md"
 REPORT_PATH = REPOSITORY_ROOT / "artifacts" / "models" / "label_audit.json"
@@ -161,7 +161,7 @@ Decision: **{decision}**
 
 ## What ships
 
-`baseline-v1` in `services/api/app/risk_engine.py`: a documented weighting over
+`baseline-v1` in `api/app/risk_engine.py`: a documented weighting over
 five normalised features, which reports every feature's contribution, lists the
 inputs it did not have, drops inputs that are out of date, and refuses to
 produce a number at all when there is no weather evidence. It caps its own

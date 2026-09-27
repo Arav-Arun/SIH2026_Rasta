@@ -76,7 +76,7 @@ class Settings(BaseSettings):
         candidate = Path(self.source_fixture_root)
         if candidate.is_absolute():
             return candidate
-        repository_root = Path(__file__).resolve().parents[3]
+        repository_root = Path(__file__).resolve().parents[2]
         return repository_root / candidate
 
     @field_validator("api_prefix")

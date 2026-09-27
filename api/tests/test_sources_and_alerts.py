@@ -16,7 +16,7 @@ from app.sources import (
     redact,
 )
 
-FIXTURES = Path(__file__).resolve().parents[3] / "data" / "fixtures" / "sources"
+FIXTURES = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "sources"
 NOW = datetime(2026, 9, 26, 10, 30, tzinfo=UTC)
 
 

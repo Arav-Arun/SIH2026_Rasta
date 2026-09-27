@@ -429,7 +429,7 @@ def run_checks(
 
 def main() -> int:
     require_tool("supabase")
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
     require_free_port(int(API_PORT), what="the API")
 
     run_command(["supabase", "start"])
@@ -481,7 +481,7 @@ def main() -> int:
                     "--port",
                     API_PORT,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )

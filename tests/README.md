@@ -7,11 +7,11 @@
 | `e2e/` | Browser tests of the web client (Playwright), each with a runner that starts the stack | Docker, Supabase CLI, Chromium |
 
 Unit tests for the API, web client and mobile app live next to their code
-(`services/api/tests`, `*.test.ts`).
+(`api/tests`, `*.test.ts`).
 
 ```bash
-services/api/.venv/bin/python -m unittest discover -s tests/scripts
-services/api/.venv/bin/python tests/integration/check_security.py
+api/.venv/bin/python -m unittest discover -s tests/scripts
+api/.venv/bin/python tests/integration/check_security.py
 npm run test:e2e:install && npm run test:e2e:planner
 ```
 

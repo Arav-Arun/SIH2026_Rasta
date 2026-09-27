@@ -8,10 +8,10 @@ import type { MediaRecord } from './types';
  * A field report filed from the browser, including when there is no network.
  */
 
-/** Matches `MAX_ATTACHMENT_BYTES` in services/api/app/incidents.py. */
+/** Matches `MAX_ATTACHMENT_BYTES` in api/app/incidents.py. */
 export const MAX_EVIDENCE_BYTES = 5 * 1024 * 1024;
 
-/** Matches `ALLOWED_MIME_TYPES` in services/api/app/evidence.py. */
+/** Matches `ALLOWED_MIME_TYPES` in api/app/evidence.py. */
 const EVIDENCE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 
 export const INCIDENT_TYPES = [

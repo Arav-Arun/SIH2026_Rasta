@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
-    "@rasta/contracts": "file:../../packages/contracts",
+    "@rasta/contracts": "file:../../contracts",
     "@supabase/supabase-js": "^2.115.0",
     "@tanstack/react-query": "^5.103.1",
     "class-variance-authority": "0.7.1",

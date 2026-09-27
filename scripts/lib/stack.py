@@ -20,7 +20,7 @@ from urllib.request import urlopen
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 IDENTITY_FIXTURE = REPOSITORY_ROOT / "artifacts" / "e2e" / "e2e_identities.json"
 CLIENT_ENV_PATH = REPOSITORY_ROOT / "apps" / "client" / ".env.local"
-API_ENV_PATH = REPOSITORY_ROOT / "services" / "api" / ".env"
+API_ENV_PATH = REPOSITORY_ROOT / "api" / ".env"
 
 
 def redact_identity_payload(payload: dict[str, Any]) -> dict[str, Any]:
@@ -196,7 +196,7 @@ def stop_services(services: list[ServiceProcess]) -> None:
 def fresh_stack_with_api(api_port: str) -> Iterator[dict[str, str]]:
     """A database reset from the migrations, the pilot network, and this checkout's API."""
 
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
     require_tool("supabase")
     require_free_port(api_port, what="the API")
     run_command(["supabase", "start"])
@@ -226,7 +226,7 @@ def fresh_stack_with_api(api_port: str) -> Iterator[dict[str, str]]:
                     "--port",
                     api_port,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )

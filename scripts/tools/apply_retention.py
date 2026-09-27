@@ -20,7 +20,7 @@ def database_url() -> str:
     value = os.environ.get("DATABASE_URL", "").strip()
     if value:
         return value
-    sys.path.insert(0, str(REPOSITORY_ROOT / "services" / "api"))
+    sys.path.insert(0, str(REPOSITORY_ROOT / "api"))
     from app.config import Settings  # noqa: PLC0415
 
     return Settings().database_url

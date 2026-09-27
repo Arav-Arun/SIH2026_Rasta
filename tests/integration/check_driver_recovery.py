@@ -348,9 +348,9 @@ def main() -> int:
     require_tool("supabase")
     require_tool("npx")
 
-    api_python = REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"
+    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
     if not api_python.exists():
-        raise RuntimeError("API virtualenv not found under services/api/.venv.")
+        raise RuntimeError("API virtualenv not found under api/.venv.")
 
     with socket.socket() as probe:
         if probe.connect_ex(("127.0.0.1", int(API_PORT))) == 0:
@@ -401,7 +401,7 @@ def main() -> int:
                     "--port",
                     API_PORT,
                 ],
-                cwd=REPOSITORY_ROOT / "services" / "api",
+                cwd=REPOSITORY_ROOT / "api",
                 env=service_env,
             )
         )

@@ -1,6 +1,6 @@
 import { getSupabaseBrowserClient } from '@/lib/auth/supabase';
 
-/** Must match `EVIDENCE_BUCKET` in services/api/app/evidence.py. */
+/** Must match `EVIDENCE_BUCKET` in api/app/evidence.py. */
 const EVIDENCE_BUCKET = 'evidence';
 
 /** How long a generated link stays usable. Short: these are viewed, not shared. */

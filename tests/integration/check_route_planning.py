@@ -83,7 +83,7 @@ def request(
 
 def bootstrap(role: str, district_id: str | None = None) -> dict[str, Any]:
     args = [
-        str(REPOSITORY_ROOT / "services" / "api" / ".venv" / "bin" / "python"),
+        str(REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"),
         "tests/integration/demo_identity.py",
         "--role",
         role,

@@ -2,7 +2,7 @@
 
 **Nothing in this folder is live or official data.** These are recorded
 documents whose only purpose is to exercise the adapter pipeline in
-`services/api/app/sources.py`: conditional reuse, checksums, parse failure and
+`api/app/sources.py`: conditional reuse, checksums, parse failure and
 run provenance.
 
 | File | Shape | What it proves |
