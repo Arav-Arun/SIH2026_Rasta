@@ -1,6 +1,6 @@
 import unittest
 
-from services.api.app.routing import route_scenario
+from api.app.routing import route_scenario
 
 
 def edge(
