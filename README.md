@@ -17,6 +17,18 @@ essential supplies before a disruption turns into a shortage.
 | **Organisation** | Ministry of Development of North Eastern Region (MDoNER) |
 | **Theme / category** | Transportation & Logistics / Software |
 
+## Live demo
+
+| | |
+|---|---|
+| **Website and control room** | https://rasta-client.aravarun.workers.dev |
+| **Android app (APK)** | [Download rasta.apk](https://github.com/Arav-Arun/SIH2026_Rasta/releases/latest/download/rasta.apk) |
+| **API** | https://rasta-api.onrender.com/health |
+| **Pitch video** | https://youtu.be/SZnwSxY7NMA |
+
+The API runs on a free plan that sleeps when idle, so the first request after a
+quiet spell can take up to a minute. Accounts are issued, not self-registered.
+
 ## The problem
 
 Landslides, floods and heavy rain cut roads across the North Eastern Region
@@ -312,11 +324,10 @@ are never overwritten. The key is read from
 
 ## Current status
 
-The full workflow runs end to end on the local stack: field report, offline
-sync, review, road state, alerts, route planning and approval, trips, GPS and
-delivery receipts. Still to do:
+The full workflow runs end to end, both on the local stack and on the hosted
+deployment above: field report, offline sync, review, road state, alerts, route
+planning and approval, trips, GPS and delivery receipts. Still to do:
 
-- Hosted deployment (the demo currently runs locally).
 - Live IMD and SACHET access; the adapters run on recorded samples today.
 - A native Android background location service. The mobile app tracks while it
   is open.

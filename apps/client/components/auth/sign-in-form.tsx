@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CircleAlert, LoaderCircle, RefreshCw } from 'lucide-react';
 
@@ -31,6 +31,9 @@ export function SignInForm() {
   const [error, setError] = useState<string>();
   // Set while the person decides what to do about work not yet sent.
   const [unsentOnSignOut, setUnsentOnSignOut] = useState<number | null>(null);
+  // Set by a sign-in on this page, so the workspace opens once the server has
+  // verified it. A session that was already here still waits for "Continue".
+  const [justSignedIn, setJustSignedIn] = useState(false);
 
   /**
    * Signing out deletes this person's drafts and queued work from the device
@@ -63,6 +66,7 @@ export function SignInForm() {
       setError(t('signIn.rejected'));
       return;
     }
+    setJustSignedIn(true);
   }
 
   // One title and one line per identity state, in the reader's language.
@@ -74,6 +78,12 @@ export function SignInForm() {
   const isWorkspaceReady =
     (bootstrapStatus === 'ready' || bootstrapStatus === 'offline') &&
     workspace !== null;
+
+  useEffect(() => {
+    if (justSignedIn && isWorkspaceReady && workspace) {
+      router.replace(homePathFor(workspace.identity));
+    }
+  }, [justSignedIn, isWorkspaceReady, workspace, router]);
 
   return (
     <main className="flex min-h-svh items-center justify-center bg-background px-4 py-10 text-foreground">

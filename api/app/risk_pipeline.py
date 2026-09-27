@@ -248,6 +248,7 @@ def run_pipeline(
 
     assessments: list[RiskAssessment] = []
     levels: dict[str, int] = {}
+    updates: list[dict[str, Any]] = []
     for segment in segments:
         features = list(district_features.values())
         hits = incidents.get(segment["id"], 0)
@@ -270,17 +271,7 @@ def run_pipeline(
         else:
             result.segments_scored += 1
 
-        connection.execute(
-            """
-            update public.segment_current_state
-            set risk_level = %(level)s::public.risk_level,
-                risk_score = %(score)s,
-                risk_model_version = %(model)s,
-                risk_computed_at = %(at)s,
-                risk_explanation = %(explanation)s,
-                updated_at = now()
-            where organization_id = %(org)s::uuid and segment_id = %(segment)s::uuid
-            """,
+        updates.append(
             {
                 "org": organization_id,
                 "segment": segment["id"],
@@ -291,7 +282,24 @@ def run_pipeline(
                 "model": MODEL_VERSION,
                 "at": assessment.computed_at,
                 "explanation": Jsonb(assessment.as_json()),
-            },
+            }
+        )
+
+    # One pipelined batch rather than a round trip per segment: a district has
+    # thousands of segments, and a hosted database is tens of milliseconds away.
+    with connection.cursor() as cursor:
+        cursor.executemany(
+            """
+            update public.segment_current_state
+            set risk_level = %(level)s::public.risk_level,
+                risk_score = %(score)s,
+                risk_model_version = %(model)s,
+                risk_computed_at = %(at)s,
+                risk_explanation = %(explanation)s,
+                updated_at = now()
+            where organization_id = %(org)s::uuid and segment_id = %(segment)s::uuid
+            """,
+            updates,
         )
 
     result.levels = levels

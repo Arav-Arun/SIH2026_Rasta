@@ -88,6 +88,12 @@ export async function expectWorkspaceVerified(page: Page) {
 }
 
 export async function continueToWorkspace(page: Page, path = '/overview') {
-  await page.getByRole('button', { name: 'Continue to workspace' }).click();
+  // A fresh sign-in opens the workspace by itself; a returning session shows
+  // the button. Whichever happens first is fine.
+  const button = page.getByRole('button', { name: 'Continue to workspace' });
+  await Promise.race([
+    page.waitForURL(`**${path}`),
+    button.click().catch(() => undefined),
+  ]);
   await page.waitForURL(`**${path}`);
 }
