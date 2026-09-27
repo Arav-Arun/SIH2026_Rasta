@@ -3,7 +3,7 @@
 Until live feeds are configured, the API reads these recorded samples. They are
 re-dated at every start so the risk engine never treats them as stale:
 
-    python api/app/recorded_samples.py /tmp/rasta-sources
+    PYTHONPATH=api python -m app.recorded_samples /tmp/rasta-sources
 """
 
 from __future__ import annotations
