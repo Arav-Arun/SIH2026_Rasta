@@ -618,6 +618,31 @@
       "output_sha256": "3f02d279cd0766d5f57a7e378c617be18748edc2ef3b054dc19a4e6ce8626256",
       "translated_at": "2026-09-27T04:40:30+00:00"
     },
+    "signIn.demoDispatcher": {
+      "source_sha256": "4b81e91f9ab6083b8b7a0e339ae4543010a9f0ee1fe812532180c282d6fd1447",
+      "output_sha256": "414343257a926e83c1434281f38f88d4e4b61046e30d18c5db5b6186337bbe76",
+      "translated_at": "2026-09-27T09:05:44+00:00"
+    },
+    "signIn.demoDriver": {
+      "source_sha256": "e6b0f6bdbcde01592dea6db33aba36c6fcb841fdb8570d1719c9fcba8d301539",
+      "output_sha256": "a0614a5fd73ec45898dfd852f84edf7f5a9ffe5e7249fe151acf8765a27648df",
+      "translated_at": "2026-09-27T09:05:45+00:00"
+    },
+    "signIn.demoOfficer": {
+      "source_sha256": "cf692e47615084be3acbf6a285bcb67bee0c214706d8a6f5dfcfaf48d5c76ed4",
+      "output_sha256": "36eb12fd45fe3164808ec04a20f7ea0c817738731f463496e2500a330f1b8c0d",
+      "translated_at": "2026-09-27T09:05:44+00:00"
+    },
+    "signIn.demoText": {
+      "source_sha256": "2389a666fab562c6cd0ee628bd54eab501bf010a8b910fc5bd48031e18d817e8",
+      "output_sha256": "2e51460aac726ced2a227a520b58ede1094abe6858b8f4ee7aa85ce1a12d54dc",
+      "translated_at": "2026-09-27T09:05:44+00:00"
+    },
+    "signIn.demoTitle": {
+      "source_sha256": "6e5fe4ca7c07142fa81eef400c342dea7f8ba0422aa331c3880e6604db8d52a7",
+      "output_sha256": "0df7de7e26ff6a36188ac37f25e18a4a3487d874700754663a86d648a011e550",
+      "translated_at": "2026-09-27T09:05:44+00:00"
+    },
     "status.review.confirmed": {
       "source_sha256": "fe00b67b6dd1143f383553116b83dadce3502fb0282c3ec4ddaa99f756119626",
       "output_sha256": "ba095ccacf55eb04b97053c6a94b66d24aa7f37035be0eee2fb629926a2aaa02",

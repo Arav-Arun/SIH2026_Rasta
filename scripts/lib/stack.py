@@ -2,49 +2,17 @@
 
 from __future__ import annotations
 
-import contextlib
-import os
 import shutil
-import signal
 import socket
 import subprocess
 import time
-from collections.abc import Iterator
-from contextlib import contextmanager
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 from urllib.error import URLError
 from urllib.request import urlopen
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-IDENTITY_FIXTURE = REPOSITORY_ROOT / "artifacts" / "e2e" / "e2e_identities.json"
 CLIENT_ENV_PATH = REPOSITORY_ROOT / "apps" / "client" / ".env.local"
 API_ENV_PATH = REPOSITORY_ROOT / "api" / ".env"
-
-
-def redact_identity_payload(payload: dict[str, Any]) -> dict[str, Any]:
-    identities = []
-    for identity in payload.get("identities", []):
-        identities.append(
-            {key: value for key, value in identity.items() if key != "password"}
-        )
-    return {
-        "organization_id": payload.get("organization_id"),
-        "district_id": payload.get("district_id"),
-        "identity_count": len(identities),
-        "identity_keys": [identity.get("key") for identity in identities],
-        "identities": identities,
-    }
-
-
-@dataclass
-class ServiceProcess:
-    name: str
-    process: subprocess.Popen[str]
-    #: Where the service's output goes (gitignored). Read it after the run.
-    log_path: Path | None = None
-    log_file: Any = None
 
 
 def require_tool(name: str) -> None:
@@ -81,7 +49,7 @@ def require_free_port(port: str | int, *, what: str) -> None:
         if probe.connect_ex(("127.0.0.1", int(port))) == 0:
             raise RuntimeError(
                 f"Port {port} is already in use, so the {what} started by this run "
-                "would not be the one under test. Stop that process and try again."
+                "could not listen on it. Stop that process and try again."
             )
 
 
@@ -139,98 +107,3 @@ def write_env_files(
         encoding="utf-8",
     )
     return {**api_values, **client_values}
-
-
-def start_service(
-    name: str,
-    command: list[str],
-    *,
-    cwd: Path,
-    env: dict[str, str],
-) -> ServiceProcess:
-    # Output goes straight to a file. A pipe nobody reads fills at 64 KB and
-    # then blocks the service mid-request, which a long browser run reaches.
-    log_path = REPOSITORY_ROOT / "artifacts" / "e2e" / "logs" / f"{name}.log"
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    log_file = log_path.open("w", encoding="utf-8")
-    process = subprocess.Popen(
-        command,
-        cwd=cwd,
-        env=env,
-        stdout=log_file,
-        stderr=subprocess.STDOUT,
-        text=True,
-        # Its own process group, so stopping it stops everything it started:
-        # `npm run dev` does not pass SIGTERM on to the dev server it spawned,
-        # which was left holding the port and failed the next run.
-        start_new_session=True,
-    )
-    return ServiceProcess(
-        name=name, process=process, log_path=log_path, log_file=log_file
-    )
-
-
-def _signal_group(process: subprocess.Popen[str], sig: int) -> None:
-    # start_new_session made the service its group's leader, so the group id is
-    # its pid, and stays valid after the leader itself has exited and been
-    # reaped (os.getpgid would then fail and miss the children still running).
-    with contextlib.suppress(ProcessLookupError, PermissionError):
-        os.killpg(process.pid, sig)
-
-
-def stop_services(services: list[ServiceProcess]) -> None:
-    for service in services:
-        _signal_group(service.process, signal.SIGTERM)
-    deadline = time.time() + 15
-    for service in services:
-        remaining = max(0.0, deadline - time.time())
-        with contextlib.suppress(subprocess.TimeoutExpired):
-            service.process.wait(timeout=remaining)
-        # Whatever the group leader did, nothing it started may outlive the run.
-        _signal_group(service.process, signal.SIGKILL)
-        if service.log_file is not None:
-            service.log_file.close()
-
-
-@contextmanager
-def fresh_stack_with_api(api_port: str) -> Iterator[dict[str, str]]:
-    """A database reset from the migrations, the pilot network, and this checkout's API."""
-
-    api_python = REPOSITORY_ROOT / "api" / ".venv" / "bin" / "python"
-    require_tool("supabase")
-    require_free_port(api_port, what="the API")
-    run_command(["supabase", "start"])
-    run_command(["supabase", "db", "reset"])
-    env = supabase_status_env()
-    service_env = {**os.environ.copy(), **write_env_files(env, api_port=api_port)}
-    subprocess.run(
-        [str(api_python), "scripts/pipeline/import_pilot_network.py"],
-        cwd=REPOSITORY_ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-        env=service_env,
-    )
-    services: list[ServiceProcess] = []
-    try:
-        services.append(
-            start_service(
-                "api",
-                [
-                    str(api_python),
-                    "-m",
-                    "uvicorn",
-                    "app.main:app",
-                    "--host",
-                    "127.0.0.1",
-                    "--port",
-                    api_port,
-                ],
-                cwd=REPOSITORY_ROOT / "api",
-                env=service_env,
-            )
-        )
-        wait_for_url(f"http://127.0.0.1:{api_port}/health")
-        yield env
-    finally:
-        stop_services(services)

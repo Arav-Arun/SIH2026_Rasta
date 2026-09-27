@@ -96,7 +96,7 @@ SKIP_SUFFIXES = {
 }
 SKIP_NAMES = {"package-lock.json"}
 #: This file names the patterns, and its tests exercise them.
-SKIP_PATHS = {"scripts/tools/scan_secrets.py", "tests/scripts/test_scan_secrets.py"}
+SKIP_PATHS = {"scripts/tools/scan_secrets.py"}
 
 
 @dataclass(frozen=True)

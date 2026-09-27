@@ -10,7 +10,6 @@ applies them in filename order and then loads `seed.sql`.
 |---|---|
 | `migrations/` | Schema, row-level security, private evidence storage, retention jobs |
 | `seed.sql` | A synthetic `local_demo` organisation and district; no users or operational records |
-| `tests/schema_contract.sql` | Read-only checks that RLS, policies, constraints and triggers are in place |
 | `config.toml` | Local stack configuration |
 
 ## Run locally
@@ -20,8 +19,6 @@ Requires Docker and the [Supabase CLI](https://supabase.com/docs/guides/local-de
 ```bash
 supabase start
 supabase db reset
-psql "$(supabase status -o env | sed -n 's/^DB_URL=//p')" \
-  -v ON_ERROR_STOP=1 -f supabase/tests/schema_contract.sql
 ```
 
 `python3 scripts/local_demo.py up` does all of this and loads the pilot road
@@ -44,5 +41,4 @@ network. Never run the synthetic seed against a pilot or production project.
   driver, and trip locations older than the retention window are removed
   nightly by `pg_cron`.
 
-RLS is a second barrier behind the API's own checks, which are exercised by
-`tests/integration/check_database.py` and `tests/integration/check_security.py`.
+RLS is a second barrier behind the API's own role, scope and version checks.

@@ -112,8 +112,6 @@ const ROUTE_ROLES: ReadonlyArray<{
     prefix: '/sync',
     roles: ['district_dispatcher', 'field_officer', 'driver'],
   },
-  { prefix: '/permissions', roles: ['field_officer', 'driver'] },
-  { prefix: '/demo', roles: ['admin'] },
 ];
 
 function matchesPath(path: string, prefix: string) {

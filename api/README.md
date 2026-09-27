@@ -32,12 +32,3 @@ explicit comma-separated list; wildcards are rejected.
 | `alerts.py`, `push.py` | Alert inbox and optional web push |
 | `auth.py`, `supabase_jwt.py`, `scope.py`, `identity.py` | Authentication and access scope |
 | `audit.py`, `idempotency.py`, `ratelimit.py`, `middleware.py` | Audit trail, safe retries, limits, headers |
-
-## Checks
-
-```bash
-api/.venv/bin/python -m pytest -q api/tests
-api/.venv/bin/python -m ruff check api/app api/tests
-```
-
-The unit tests need no database, network or credentials.

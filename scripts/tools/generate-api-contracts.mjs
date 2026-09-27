@@ -78,17 +78,8 @@ if (mode === '--write') {
   try {
     const actual = generate(temporaryDirectory);
     const expected = {
-      snapshotPath: resolve(
-        repositoryRoot,
-        'contracts',
-        'openapi.json',
-      ),
-      typesPath: resolve(
-        repositoryRoot,
-        'contracts',
-        'src',
-        'openapi.d.ts',
-      ),
+      snapshotPath: resolve(repositoryRoot, 'contracts', 'openapi.json'),
+      typesPath: resolve(repositoryRoot, 'contracts', 'src', 'openapi.d.ts'),
     };
 
     for (const key of Object.keys(expected)) {

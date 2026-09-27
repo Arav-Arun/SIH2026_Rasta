@@ -15,6 +15,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+/**
+ * Demo accounts offered as one-click sign-ins. The password is only compiled in
+ * when a build sets NEXT_PUBLIC_DEMO_PASSWORD, so other builds show no buttons.
+ */
+const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD ?? '';
+const DEMO_ACCOUNTS = [
+  { email: 'dispatcher@demo.rasta.test', label: 'signIn.demoDispatcher' },
+  { email: 'officer@demo.rasta.test', label: 'signIn.demoOfficer' },
+  { email: 'driver@demo.rasta.test', label: 'signIn.demoDriver' },
+] as const;
+
 export function SignInForm() {
   const router = useRouter();
   const {
@@ -54,12 +65,16 @@ export function SignInForm() {
   }
 
   async function submit(form: FormData) {
-    setError(undefined);
-    setSubmitting(true);
     const emailValue = form.get('email');
     const passwordValue = form.get('password');
     const email = typeof emailValue === 'string' ? emailValue.trim() : '';
     const password = typeof passwordValue === 'string' ? passwordValue : '';
+    await signInAs(email, password);
+  }
+
+  async function signInAs(email: string, password: string) {
+    setError(undefined);
+    setSubmitting(true);
     const result = await signInWithPassword(email, password);
     setSubmitting(false);
     if (!result.ok) {
@@ -232,6 +247,30 @@ export function SignInForm() {
                   ) : null}
                   {submitting ? t('signIn.signingIn') : t('signIn.submit')}
                 </Button>
+                {DEMO_PASSWORD ? (
+                  <div className="space-y-2 border-t pt-4">
+                    <p className="text-sm font-medium">
+                      {t('signIn.demoTitle')}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {t('signIn.demoText')}
+                    </p>
+                    {DEMO_ACCOUNTS.map((account) => (
+                      <Button
+                        key={account.email}
+                        className="w-full"
+                        type="button"
+                        variant="outline"
+                        disabled={status === 'loading' || submitting}
+                        onClick={() =>
+                          void signInAs(account.email, DEMO_PASSWORD)
+                        }
+                      >
+                        {t(account.label)}
+                      </Button>
+                    ))}
+                  </div>
+                ) : null}
               </form>
             )}
           </CardContent>

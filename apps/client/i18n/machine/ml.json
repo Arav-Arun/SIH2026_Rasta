@@ -2033,11 +2033,6 @@
       "output_sha256": "ddfd8700b45665685abd8b514375e950e667d7ac9b68f934ef55366a7141b4b3",
       "translated_at": "2026-09-26T23:51:10+00:00"
     },
-    "nav.permissions": {
-      "source_sha256": "aae9f330fc33a0837c35928ab3633135c20103a521b24b54106363e24af8ef5a",
-      "output_sha256": "0e925ac8e3c9a335733f0ad62bfe295ee53eb24cef4c575e0225fe07e5d0f26b",
-      "translated_at": "2026-09-26T23:51:12+00:00"
-    },
     "nav.planner": {
       "source_sha256": "0ae61596f182317bb9e228a3e6d7b618c1eda2aef92823953b95e5b00db3fabf",
       "output_sha256": "e556f9aacede7c5ef1989b290ba197b7d2ae05a6d52bd7b47dd3abe18b997d59",
@@ -2382,141 +2377,6 @@
       "source_sha256": "ff4100cb752678c63d182f56ae9c4cf08a31e8059c86b2f6c9afa5263fae1770",
       "output_sha256": "37d9f8ee7c6a835bce359054c4fe6946c3856946163372f26b913f78b372806a",
       "translated_at": "2026-09-26T23:53:33+00:00"
-    },
-    "permissions.camera.idle": {
-      "source_sha256": "3aec43a0528f5da8cb599d49e9c7a8e3cbcaa2ab2c05abb4fa3727acefa3b172",
-      "output_sha256": "2159a61eca41317104d6cb0cd1845924653d7ec83c11f709e77239281622a7bd",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.camera.none": {
-      "source_sha256": "b6fd2c20e64ebc8749d412003a1582cff0c5cc9fe593a4fafec47f669e2d1ea5",
-      "output_sha256": "f9218e49e83c4e54b1c07bdaf93115b6986c2459f0fd0a16a13ca18de23c1425",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.camera.passed": {
-      "source_sha256": "5d1100dcb64edd682ad6be6d219b3b5824f06e38416b64496dc2b0bfad195b72",
-      "output_sha256": "3d5fa37b96d3b1d1ea3bca8c80a69675464b6aa9a479b1877c72b99ccb731b6a",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.camera.previewAlt": {
-      "source_sha256": "94595026c889c8711eb3219c07cdf678f122fc3af5149109650372cb00ca4f37",
-      "output_sha256": "d33e35c748db280e6358ce784b06c00ae93e018321a661b489e1a11cace6a5b3",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.camera.running": {
-      "source_sha256": "92a55e442de8b1ada5d8fea84982425b47e3e3953eb58721569cd91845de7d44",
-      "output_sha256": "6dd0ae1bc5ca8ac8fd7cc320f97479c2b55a980e64aa7c8da6acabcb093ac8f3",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.camera.test": {
-      "source_sha256": "693354be0383045c40a1e4c496ca47b3da02b6211697dd96402b4352c41561b3",
-      "output_sha256": "65d69509716e2ee507379609cfdfa3e2540f0079578c12b67700497b0f09d679",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.camera.title": {
-      "source_sha256": "03494b0d1f803522a3497d751eaaf6f987883cd4fe0b0e66baf67a662ae231b2",
-      "output_sha256": "37828522b7918cf8e45e80507289c4fea36a280fcfe85eed03b2410a2db6ff00",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.checksBody": {
-      "source_sha256": "748e549b757ce918cc6237db8fb0a855240c23727368111a604925353ce0b569",
-      "output_sha256": "f6b78ae842cafa68ffa7ab10169783489fee91e1e7f736fff2e58d88dbfc3907",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.checksHeading": {
-      "source_sha256": "6a50257da4db29ab15e6de64b7449e66f7b0e6aa5e13b478b616e901ebb1cf1e",
-      "output_sha256": "ec4cc3c99b6769ac02b8c8242385eceb4b2b6a80701288622b01f8a422726468",
-      "translated_at": "2026-09-26T23:59:11+00:00"
-    },
-    "permissions.error.camera_unavailable": {
-      "source_sha256": "7d078e26b3c6dc6f2f80f6f0d6712a0575b38f71302699f07efee76430b41104",
-      "output_sha256": "1139fddf76038234c20d9860a9cde54ddc9092fdd1cc93635d362aa7f78a1d9a",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.error.location_failed": {
-      "source_sha256": "bc5db746fad9e7549dc639b03ff24128adbaacd4952964ede5741458b77f56af",
-      "output_sha256": "a01624b1f7a6a75887ed7c7c610613a66e7bff73f7a07589f6612f5752bee79f",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.error.location_unavailable": {
-      "source_sha256": "9162939cc0af3af35ee980e26b3518a8f0f3f156d0999e893908c1a64545176f",
-      "output_sha256": "402c8d1148b66bc54545bbe79c85c40333fdf672b158524622e03a016a8a5fe3",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.error.permission_denied": {
-      "source_sha256": "9e8d3763c2b0728284c730327413bdc1e365911b0067ea3df1756bddf838268d",
-      "output_sha256": "3b2b689ecd418dbecfacd6c3d0d2898690ce3e37119263363a87d37961a09ec5",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.error.request_cancelled": {
-      "source_sha256": "cef7146670a6d11003372017fa0eef1b781433f67ffcfd61db389470d26aaf00",
-      "output_sha256": "4db7155f9a89e2858eeb349e8951f3290dc4ef785ee4cbb55dd953431de9f4ab",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.error.unknown": {
-      "source_sha256": "931da1d86b0249f52d665d281ae9f311abf537ec79fc5182de62e048efcc8dc3",
-      "output_sha256": "26f9bb5eba13da86b309df35400e60ca9982a9d5aa8fd70729e404f003f564e6",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.lede": {
-      "source_sha256": "53b999eb2f809bd1cedac95a66836719e655b0fa2f86dd7ea673c49d90ea5c94",
-      "output_sha256": "babad3c9c76f9d14f5f45db436d1f44ade4bfca23fced8fcaf4874007cab9f76",
-      "translated_at": "2026-09-26T23:59:11+00:00"
-    },
-    "permissions.localOnlyBody": {
-      "source_sha256": "ed56be9c1fee869c7af9ecc61b54f7830bda9746ac3271d143e681a0953fd7f1",
-      "output_sha256": "09c8eb561408f31aff656412d860bc395943d66913f11d7468da604f68321aa8",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.localOnlyTitle": {
-      "source_sha256": "8c4ad92ef8d132f9153afc7d1a576f73226e936bd563d1e520a6d249cd6ef982",
-      "output_sha256": "1bc919dfe51b5ab136cd4cc8cab8ca83a35320ac318bfb9854e139894cbe3ba9",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.location.idle": {
-      "source_sha256": "31cf3eef342360dabba3d3786a989e572033d529ed318809ff385730ee469cc5",
-      "output_sha256": "57a8d9c1e304a1c19ea49b0c1cad5c3633e69b4f18ba359aa5074eaede858d46",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.location.noCoordinates": {
-      "source_sha256": "f192000f71b2990128b84b43c52066b765e19d205c8ec7d43f9166f79cce402c",
-      "output_sha256": "b13e886f58e3c7f7e97e3ef81f9e698f102110812fbd690814faedd7bacb2d71",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.location.passed": {
-      "source_sha256": "3080b5ff098f5c0bce794e37b3a519e3dfe585974669e70b3268415a6f3659e6",
-      "output_sha256": "e897d27ec9230e54abb87b271a09be3d1510cb95fd8fd74ec41d4eab3c003afa",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.location.passedWithAccuracy": {
-      "source_sha256": "e90a548c5349c559df026c76770ec912cc8bf0a16bd0ab8e9a41a72a8ef40f6d",
-      "output_sha256": "3d76a2184978a3c9d980a68c821f9d8c7491479097f048772a4a282a26a47a4c",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.location.received": {
-      "source_sha256": "cb1d205c09113042c2d34e086bacd3fe3ff18e6dd599aea5e9c0dbea460ac459",
-      "output_sha256": "f28d57684992cdd64f41d4778edbf697edd562c288dd62b305e5852e25085500",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.location.running": {
-      "source_sha256": "1ef435052f66494eb154caa5aa7a9ed1a886b38af305153ca67f71564217c81c",
-      "output_sha256": "4664057ae407ae46f323d50998bcdc947e7dea3e51453690e3b5a8db02dc80d7",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.location.test": {
-      "source_sha256": "9fc73da2990b26ab8483e1a00c3b2b56d327d694235f5239ba7c8c359753fc34",
-      "output_sha256": "6deb15ac1a7b0dfc5d7f2129951ac384c1c00f179975ce1641ffbe8c9b7de868",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.location.title": {
-      "source_sha256": "cf8c8078d8db95505b5fb5c7ffc5d06ca57e590803572283eb30578bcdf8d1ea",
-      "output_sha256": "50d4950af9702a0e4aa4d9986cc3e6707fc385b15a6719d92ce67f5f06990278",
-      "translated_at": "2026-09-26T23:59:33+00:00"
-    },
-    "permissions.title": {
-      "source_sha256": "aae9f330fc33a0837c35928ab3633135c20103a521b24b54106363e24af8ef5a",
-      "output_sha256": "0e925ac8e3c9a335733f0ad62bfe295ee53eb24cef4c575e0225fe07e5d0f26b",
-      "translated_at": "2026-09-26T23:59:11+00:00"
     },
     "planner.actionsHeading": {
       "source_sha256": "f42148c5762e904b9a58eb75bf0058593e9f2684eb44c43723f2348db1ef852e",
@@ -3432,6 +3292,31 @@
       "source_sha256": "1a1fbea1930507347b6de24f2e6b1690e279f5ecf7cfd9a842799dba495923b5",
       "output_sha256": "3a692cc46b3f5f9cd159bdd4daa672dc9a9864f3ab02eb3172232d81cfa5da9e",
       "translated_at": "2026-09-26T23:52:50+00:00"
+    },
+    "signIn.demoDispatcher": {
+      "source_sha256": "4b81e91f9ab6083b8b7a0e339ae4543010a9f0ee1fe812532180c282d6fd1447",
+      "output_sha256": "b38807e5deeda823257ad8ab4e016b4ccb8018aa72232bb2d3c81867ba1aa826",
+      "translated_at": "2026-09-27T09:05:57+00:00"
+    },
+    "signIn.demoDriver": {
+      "source_sha256": "e6b0f6bdbcde01592dea6db33aba36c6fcb841fdb8570d1719c9fcba8d301539",
+      "output_sha256": "ed6bcf765f27a5838fcfaa9d5cf8adf9e65bf460f369e46035a98e669156f3b9",
+      "translated_at": "2026-09-27T09:05:57+00:00"
+    },
+    "signIn.demoOfficer": {
+      "source_sha256": "cf692e47615084be3acbf6a285bcb67bee0c214706d8a6f5dfcfaf48d5c76ed4",
+      "output_sha256": "cf931deaa8b953e17ae4bf4a2a77e0db08a05f0a72c2e987e3acb4609c1364bf",
+      "translated_at": "2026-09-27T09:05:57+00:00"
+    },
+    "signIn.demoText": {
+      "source_sha256": "2389a666fab562c6cd0ee628bd54eab501bf010a8b910fc5bd48031e18d817e8",
+      "output_sha256": "e1766a29f8555d18a3acfc9df1d6a2bcbfbc22db0e0943b2ba7a02d1d881677e",
+      "translated_at": "2026-09-27T09:05:57+00:00"
+    },
+    "signIn.demoTitle": {
+      "source_sha256": "6e5fe4ca7c07142fa81eef400c342dea7f8ba0422aa331c3880e6604db8d52a7",
+      "output_sha256": "adad4a94a2ea5dd69a5624f4e40a294756967b31743c9ac221ea7f2d89191218",
+      "translated_at": "2026-09-27T09:05:57+00:00"
     },
     "signIn.discardAndSignOut": {
       "source_sha256": "5e2f8a5b5f8f67a1ad84081b505453aa1e5d7fb2e34e73edc28f7e31001ac415",

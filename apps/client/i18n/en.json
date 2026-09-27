@@ -29,8 +29,7 @@
     "fieldHome": "My field work",
     "newReport": "New report",
     "myTrips": "My trips",
-    "syncQueue": "Sync queue",
-    "permissions": "Device check"
+    "syncQueue": "Sync queue"
   },
   "locale": {
     "label": "Language",
@@ -204,6 +203,11 @@
     "password": "Password",
     "submit": "Sign in",
     "signingIn": "Signing in…",
+    "demoTitle": "Try the demo",
+    "demoText": "One-click sign-in to demo accounts with sample data from the Shillong pilot.",
+    "demoDispatcher": "Sign in as dispatcher",
+    "demoOfficer": "Sign in as field officer",
+    "demoDriver": "Sign in as driver",
     "bootstrap": {
       "error": {
         "title": "Operational access could not be verified",
@@ -916,41 +920,6 @@
       "superseded": "This route was replaced by a newer one. Do not follow it; open the driver app for the current route.",
       "invalidated": "The control room withdrew this route because the road changed. Do not follow it; wait for a new route.",
       "rejected": "This route was rejected. Do not follow it; wait for the control room."
-    }
-  },
-  "permissions": {
-    "title": "Device check",
-    "lede": "Find out before you are on the road whether this device will let the app take a photo and a position.",
-    "checksHeading": "Device checks",
-    "checksBody": "Each permission is requested only when you start its check.",
-    "localOnlyTitle": "Local check only",
-    "localOnlyBody": "These checks do not create a report, start tracking, or send a photo or position to any server.",
-    "camera": {
-      "title": "Camera",
-      "idle": "No camera request has been made.",
-      "running": "Waiting for the camera or file chooser.",
-      "passed": "A photo was taken on this device. It has not been uploaded or saved.",
-      "none": "No photo taken",
-      "previewAlt": "Photo from the camera check, kept on this device",
-      "test": "Test camera"
-    },
-    "location": {
-      "title": "Current location",
-      "idle": "No location request has been made.",
-      "running": "Asking the device for one position fix.",
-      "passed": "A position was received at {time}. It stays on this device.",
-      "passedWithAccuracy": "A position was received at {time}, accurate to ±{accuracy} m. It stays on this device.",
-      "received": "Position received",
-      "noCoordinates": "Coordinates are deliberately not shown on this check.",
-      "test": "Test current location"
-    },
-    "error": {
-      "camera_unavailable": "This device or browser offers no camera to the app.",
-      "location_unavailable": "This browser does not offer location to the app.",
-      "permission_denied": "Permission was not granted. Allow it in the device settings and try again.",
-      "request_cancelled": "The request was cancelled.",
-      "location_failed": "No position was received before the request ended.",
-      "unknown": "The device check failed without a recognised answer."
     }
   },
   "gate": {

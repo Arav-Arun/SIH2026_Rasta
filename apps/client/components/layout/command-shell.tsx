@@ -18,7 +18,6 @@ import {
   RadioTower,
   Route,
   Settings,
-  Smartphone,
   Truck,
 } from 'lucide-react';
 
@@ -74,7 +73,6 @@ const fieldWork = [
   { key: 'nav.newReport', href: '/field/report', icon: FilePlus2 },
   { key: 'nav.myTrips', href: '/driver/trip', icon: Truck },
   { key: 'nav.syncQueue', href: '/sync', icon: ListChecks },
-  { key: 'nav.permissions', href: '/permissions', icon: Smartphone },
 ] as const;
 
 type CommandShellProps = {
