@@ -258,3 +258,13 @@ body {
     }
   }
 }
+
+/* The landing page's control room tabs: a bar that fills while a screen is shown. */
+@keyframes landing-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

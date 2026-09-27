@@ -1,10 +1,5 @@
-import { RouteAccessGate } from '@/components/auth/route-access-gate';
-import { OverviewScreen } from '@/components/overview/overview-screen';
+import { LandingPage } from '@/components/landing/landing-page';
 
 export default function Home() {
-  return (
-    <RouteAccessGate path="/overview">
-      <OverviewScreen />
-    </RouteAccessGate>
-  );
+  return <LandingPage />;
 }

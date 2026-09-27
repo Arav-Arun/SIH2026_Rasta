@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: rasta-api
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install ./api
+    # The recorded IMD and SACHET samples are re-dated at every start, so the
+    # risk engine never sees them as stale after the service wakes up.
+    startCommand: >-
+      python -c "from pathlib import Path; from scripts.pipeline.recorded_sources import redate_recorded_sources; redate_recorded_sources(Path('/tmp/rasta-sources'))"
+      && exec python -m uvicorn app.main:app --app-dir api --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: APP_MODE
+        value: hosted_demo
+      - key: SOURCE_FIXTURE_ROOT
+        value: /tmp/rasta-sources
+      - key: TELEMETRY_TOKEN_SECRET
+        generateValue: true
+      # Filled in on the Render dashboard when the blueprint is created.
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
