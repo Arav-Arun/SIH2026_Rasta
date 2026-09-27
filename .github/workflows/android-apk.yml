@@ -64,9 +64,11 @@ jobs:
 
       - name: Build the release APK
         working-directory: apps/mobile/android
+        # Prebuild leaves gradle.properties without a final newline, so start with one;
+        # otherwise the setting is glued onto the last line and breaks it.
         run: |
-          echo "org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g" >> gradle.properties
-          ./gradlew assembleRelease --no-daemon --stacktrace -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+          printf '\norg.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g\n' >> gradle.properties
+          ./gradlew assembleRelease --no-daemon --stacktrace --console=plain -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
 
       - name: Keep the Gradle problems report
         if: failure()
