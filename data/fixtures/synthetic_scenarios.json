@@ -1,0 +1,288 @@
+{
+  "fixture_set_id": "sih26002-core-scenarios-v1",
+  "generator_version": "scenario-generator-v1",
+  "graph_version": "osm-shillong-4d449d18c4666431",
+  "mode": "synthetic",
+  "network_policy": {
+    "default_passability": "open",
+    "mode": "synthetic",
+    "notice": "Passability and fallback speeds are simulation assumptions. They do not describe current Shillong roads.",
+    "road_class_speed_kph": {
+      "motorway": 50,
+      "primary": 35,
+      "residential": 18,
+      "secondary": 30,
+      "service": 12,
+      "tertiary": 25,
+      "trunk": 40,
+      "unclassified": 20
+    }
+  },
+  "notice": "Every event, vehicle, consignment, weather value, closure, and constraint in this file is synthetic. OSM supplies topology and facility references only.",
+  "scenarios": [
+    {
+      "expected": {
+        "claim_scope": "routing behavior only",
+        "closed_segments_used": 0,
+        "route_status": "feasible"
+      },
+      "id": "S1",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [],
+        "segment_states": []
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-3431260100",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Normal medicine delivery",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "simulated closure handling",
+        "excluded_segment_ids": [
+          "osm-way-278209079-segment-2"
+        ],
+        "route_status": "feasible_replan"
+      },
+      "id": "S2",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [],
+        "segment_states": [
+          {
+            "cause": "landslide_debris",
+            "observed_at": "2000-01-01T00:10:00Z",
+            "passability": "closed",
+            "review_status": "approved",
+            "segment_id": "osm-way-278209079-segment-2",
+            "source_mode": "synthetic"
+          }
+        ]
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-3431260100",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Reviewed landslide closure",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "risk rendering, not a closure prediction",
+        "future_risk_visible": true,
+        "passability_change": false
+      },
+      "id": "S3",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [
+          {
+            "observation_type": "forecast_rainfall",
+            "rainfall_intensity_mm_h": 45,
+            "segment_id": "osm-way-44769004-segment-1",
+            "source_mode": "synthetic",
+            "source_name": "SIMULATED_WEATHER_ADAPTER",
+            "valid_from": "2000-01-01T00:15:00Z",
+            "valid_until": "2000-01-01T06:15:00Z",
+            "warning_severity": "orange"
+          }
+        ],
+        "segment_states": []
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-3431260100",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Forecast-only heavy rainfall",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "simulated graph reachability",
+        "disconnected_graph_nodes": 1,
+        "facility_id": "osm-node-7577517054",
+        "facility_name": "Memorial Clinic",
+        "reachability": "isolated"
+      },
+      "id": "S4",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [],
+        "segment_states": [
+          {
+            "cause": "flooding",
+            "observed_at": "2000-01-01T00:10:00Z",
+            "passability": "closed",
+            "review_status": "approved",
+            "segment_id": "osm-way-1055022051-segment-0",
+            "source_mode": "synthetic"
+          }
+        ]
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-9694609520",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Closure isolates a monitored facility",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "buffered_upload_unique_inserts": 1,
+        "claim_scope": "offline queue and idempotency behavior",
+        "vehicle_state_after_timeout": "stale"
+      },
+      "id": "S5",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [],
+        "segment_states": []
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-3431260100",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "telemetry": {
+        "buffered_upload_event_ids": [
+          "sim-position-03",
+          "sim-position-03"
+        ],
+        "offline_after": "2000-01-01T00:08:00Z",
+        "points": [
+          {
+            "accuracy_m": 10.4,
+            "event_id": "sim-position-01",
+            "latitude": 25.5848649,
+            "longitude": 91.8754496,
+            "recorded_at": "2000-01-01T00:02:00Z",
+            "source_mode": "synthetic"
+          },
+          {
+            "accuracy_m": 7.6,
+            "event_id": "sim-position-02",
+            "latitude": 25.5799868,
+            "longitude": 91.8770876,
+            "recorded_at": "2000-01-01T00:04:00Z",
+            "source_mode": "synthetic"
+          },
+          {
+            "accuracy_m": 9.5,
+            "event_id": "sim-position-03",
+            "latitude": 25.5752023,
+            "longitude": 91.8846555,
+            "recorded_at": "2000-01-01T00:06:00Z",
+            "source_mode": "synthetic"
+          }
+        ],
+        "stale_after_seconds": 600,
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Vehicle temporarily stops reporting",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "constraint enforcement only",
+        "reason_code": "vehicle_exceeds_max_weight",
+        "route_uses_constrained_segment": false
+      },
+      "id": "S6",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [],
+        "segment_constraints": [
+          {
+            "max_weight_t": 5.0,
+            "notice": "Test-only constraint because the OSM source limit is unknown.",
+            "segment_id": "osm-way-132319025-segment-0",
+            "source_mode": "synthetic"
+          }
+        ],
+        "segment_states": []
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-1455779682",
+        "origin_node_id": "osm-node-1455779684",
+        "vehicle_id": "SIM-TRUCK-08T"
+      },
+      "title": "Vehicle exceeds a simulated bridge limit",
+      "ui_label": "SIMULATED SCENARIO"
+    }
+  ],
+  "schema_version": "synthetic-scenarios-v1",
+  "seed": 26002,
+  "simulation_epoch": "2000-01-01T00:00:00Z",
+  "ui_label": "SIMULATED SCENARIO",
+  "vehicles": {
+    "SIM-LCV-01": {
+      "capacity_kg": 1200,
+      "gross_weight_t": 3.5,
+      "synthetic": true,
+      "vehicle_class": "light_commercial",
+      "vehicle_id": "SIM-LCV-01"
+    },
+    "SIM-TRUCK-08T": {
+      "capacity_kg": 5000,
+      "gross_weight_t": 8.0,
+      "synthetic": true,
+      "vehicle_class": "medium_truck",
+      "vehicle_id": "SIM-TRUCK-08T"
+    }
+  }
+}

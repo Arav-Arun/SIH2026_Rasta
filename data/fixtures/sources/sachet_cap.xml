@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RECORDED FIXTURE, NOT LIVE DATA. Valid CAP 1.2 for pipeline testing only. -->
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>FIXTURE-CAP-0001</identifier>
+  <sender>fixture@example.test</sender>
+  <sent>2026-09-26T01:00:00+05:30</sent>
+  <status>Exercise</status>
+  <msgType>Alert</msgType>
+  <scope>Public</scope>
+  <info>
+    <language>en-IN</language>
+    <category>Met</category>
+    <event>Heavy Rainfall Warning</event>
+    <urgency>Expected</urgency>
+    <severity>Severe</severity>
+    <certainty>Likely</certainty>
+    <expires>2026-09-27T01:00:00+05:30</expires>
+    <headline>Heavy to very heavy rainfall likely (exercise fixture)</headline>
+    <description>Exercise message. Not an official warning.</description>
+    <area>
+      <areaDesc>East Khasi Hills</areaDesc>
+    </area>
+  </info>
+</alert>

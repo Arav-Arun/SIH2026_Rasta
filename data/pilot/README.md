@@ -1,0 +1,38 @@
+# Shillong pilot routing data
+
+This folder contains a **baseline topology**, not current road conditions.
+
+| File | Purpose |
+|---|---|
+| `shillong_graph.json` | Directed road graph clipped to the documented query bounds and pruned to its largest weakly connected component |
+| `shillong_facilities.json` | OSM-sourced health, pharmacy, marketplace, and warehouse candidates snapped to the retained graph |
+| `scenario_endpoints.json` | Deterministically selected graph references for S1–S6; it contains no incident, delivery, warning, or vehicle claim |
+
+Current validated graph version: `osm-shillong-4d449d18c4666431`.
+
+The graph has 1,236 nodes and 2,860 directed edges. All baseline passability is
+`unknown`. Speeds are populated only when the source contains a parseable
+`maxspeed`; bridge weight limits remain null when the source does not provide
+them. Constraints and events are added only as clearly labelled simulated
+scenario overlays.
+
+## Rebuild and validate
+
+Run from the repository root:
+
+```bash
+python3 scripts/pipeline/import_osm_pilot.py
+python3 scripts/pipeline/validate_pilot_graph.py
+python3 -m unittest discover -s tests/scripts
+```
+
+Validation evidence is written to
+`artifacts/reports/graph_validation.json`. Output files are deterministic
+for the same raw source, query, and importer version.
+
+## Licence and attribution
+
+The graph is derived from OpenStreetMap and is covered by the data notice in
+`data/OSM-NOTICE.md`. Any screen that later renders this geography must show
+"© OpenStreetMap contributors" with a link to
+https://www.openstreetmap.org/copyright.

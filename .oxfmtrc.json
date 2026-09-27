@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/*.json",
+    "**/*.md",
+    "**/*.yaml",
+    "packages/contracts/src/openapi.d.ts",
+    "apps/client/i18n/index.ts",
+    "apps/client/public/packs/**"
+  ]
+}

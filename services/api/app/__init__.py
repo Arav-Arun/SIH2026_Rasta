@@ -1,0 +1,1 @@
+"""RASTA API application package."""

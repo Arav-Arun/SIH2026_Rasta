@@ -1,0 +1,977 @@
+{
+  "_meta": {
+    "locale": "en",
+    "label": "English",
+    "nativeLabel": "English",
+    "reviewed": true,
+    "reviewedBy": "team",
+    "notes": "English is the complete source catalogue. Every key here must exist before it is used."
+  },
+  "app": {
+    "name": "RASTA",
+    "skipToContent": "Skip to main content"
+  },
+  "nav": {
+    "operations": "Operations",
+    "overview": "Overview",
+    "map": "Accessibility map",
+    "planner": "Route planner",
+    "deliveries": "Deliveries",
+    "fleet": "Fleet",
+    "incidents": "Incidents",
+    "inspections": "Inspections",
+    "alerts": "Alerts",
+    "dataHealth": "Data health",
+    "settings": "Settings",
+    "toggleSidebar": "Toggle sidebar",
+    "signIn": "Sign in",
+    "fieldWork": "Field work",
+    "fieldHome": "My field work",
+    "newReport": "New report",
+    "myTrips": "My trips",
+    "syncQueue": "Sync queue",
+    "permissions": "Device check"
+  },
+  "locale": {
+    "label": "Language",
+    "unreviewed": "Draft translation, not yet reviewed by a native speaker"
+  },
+  "status": {
+    "passability": {
+      "label": "Road status",
+      "open": "Open",
+      "restricted": "Restricted",
+      "closed": "Closed",
+      "unknown": "Unknown"
+    },
+    "risk": {
+      "label": "Predicted risk",
+      "low": "Low risk",
+      "moderate": "Moderate risk",
+      "high": "High risk",
+      "unavailable": "Risk unavailable"
+    },
+    "sync": {
+      "label": "Sync status",
+      "saved_locally": "Saved on this device",
+      "waiting": "Waiting for connection",
+      "uploading": "Photo still uploading",
+      "sent": "Sent to control room",
+      "awaiting_verification": "Awaiting verification",
+      "conflict": "Needs your review",
+      "failed": "Could not send"
+    },
+    "review": {
+      "label": "Review status",
+      "reported": "Reported, unverified",
+      "confirmed_closed": "Confirmed closed",
+      "confirmed_restricted": "Confirmed restricted",
+      "rejected": "Rejected",
+      "clarification": "Clarification requested",
+      "submitted": "Submitted",
+      "under_review": "In review",
+      "confirmed": "Confirmed",
+      "superseded": "Superseded",
+      "pending": "Upload pending",
+      "uploaded": "Uploaded, not verified",
+      "verified": "Verified",
+      "expired": "Upload expired",
+      "draft": "Draft",
+      "queued": "Queued to send"
+    },
+    "consignment": {
+      "label": "Consignment status",
+      "draft": "Draft",
+      "planned": "Planned",
+      "assigned": "Assigned",
+      "in_transit": "In transit",
+      "delivered": "Delivered",
+      "partially_delivered": "Partially delivered",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "trip": {
+      "label": "Trip status",
+      "planned": "Planned",
+      "awaiting_driver": "Awaiting driver",
+      "active": "Running",
+      "paused": "Paused",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "request": {
+      "label": "Request status",
+      "open": "Open",
+      "planned": "Planned",
+      "partially_fulfilled": "Partly fulfilled",
+      "fulfilled": "Fulfilled",
+      "cancelled": "Cancelled"
+    }
+  },
+  "mode": {
+    "label": "Data mode",
+    "synthetic": "Simulated scenario",
+    "recorded": "Recorded data",
+    "live": "Live data",
+    "local_demo": "Local demo",
+    "hosted_demo": "Hosted demo",
+    "pilot": "Pilot",
+    "production": "Production",
+    "noData": "No data connected"
+  },
+  "freshness": {
+    "updated": "Updated {relative}",
+    "justNow": "just now",
+    "minutesAgo": "{count, plural, one {# min ago} other {# min ago}}",
+    "hoursAgo": "{count, plural, one {# hour ago} other {# hours ago}}",
+    "daysAgo": "{count, plural, one {# day ago} other {# days ago}}",
+    "stale": "Stale",
+    "never": "Never updated",
+    "timezone": "IST",
+    "source": "Source: {source}"
+  },
+  "offline": {
+    "title": "Working from the last saved data",
+    "body": "Changes stay on this device until a connection returns. Nothing has been sent to the control room yet.",
+    "queued": "{count, plural, =0 {Nothing queued} one {# item waiting to send} other {# items waiting to send}}",
+    "retry": "Retry now",
+    "viewQueue": "Open sync centre"
+  },
+  "error": {
+    "title": "Data could not be loaded",
+    "body": "Your input has been kept on this screen.",
+    "requestId": "Request ID {id}",
+    "retry": "Try again",
+    "dismiss": "Dismiss"
+  },
+  "empty": {
+    "noDecisions": "No decisions to review",
+    "noMap": "No map data loaded"
+  },
+  "confirm": {
+    "title": "Confirm this action",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "Required. Explain the decision for the audit trail.",
+    "reasonRequired": "A reason is required.",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "working": "Working…"
+  },
+  "list": {
+    "viewAsTable": "View as table",
+    "viewAsList": "View as list",
+    "actions": "Actions",
+    "noRows": "No rows to display",
+    "loading": "Loading…",
+    "itemCount": "{count, plural, one {# item} other {# items}}"
+  },
+  "overview": {
+    "title": "Logistics accessibility overview",
+    "subtitle": "No district is assigned to this account.",
+    "summaries": "Operational summaries",
+    "reachableFacilities": "Reachable facilities",
+    "activeDeliveries": "Active deliveries",
+    "reasonNoNetwork": "Pilot network not imported",
+    "reasonNoIncidents": "Incident source not connected",
+    "reasonNoReports": "No reports have been submitted",
+    "networkCard": "Accessibility network",
+    "queueCard": "Decision queue"
+  },
+  "units": {
+    "km": "{value} km",
+    "m": "{value} m",
+    "kg": "{value} kg",
+    "t": "{value} t",
+    "minutes": "{count, plural, one {# min} other {# min}}",
+    "hours": "{count, plural, one {# h} other {# h}}"
+  },
+  "signIn": {
+    "title": "Sign in to RASTA",
+    "rejected": "The email or password was not accepted. Check the configured account and try again.",
+    "unconfiguredTitle": "Authentication is not configured",
+    "unconfiguredBody": "Add the Supabase project URL and publishable key to a local environment file. No demo credentials are embedded in this client.",
+    "sessionExists": "A session exists for {name}. The workspace opens only after the server verifies the profile, role grants and district scope.",
+    "currentUser": "the current user",
+    "continue": "Continue to workspace",
+    "checkAgain": "Check access again",
+    "signOutLocally": "Sign out locally",
+    "unsentTitle": "Not everything has been sent",
+    "unsentText": "{count, plural, one {# report or draft on this device has} other {# reports or drafts on this device have}} not reached the control room. Signing out deletes them from this device.",
+    "stay": "Stay signed in",
+    "discardAndSignOut": "Delete them and sign out",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "signingIn": "Signing in…",
+    "bootstrap": {
+      "error": {
+        "title": "Operational access could not be verified",
+        "text": "The server returned an invalid or unexpected identity response. No workspace has been opened."
+      },
+      "idle": {
+        "title": "Operational access is not loaded",
+        "text": "This browser session has no server-verified workspace yet."
+      },
+      "loading": {
+        "title": "Checking operational access",
+        "text": "The server is validating your active profile, role grants and district scope."
+      },
+      "ready": {
+        "title": "Operational access verified",
+        "text": "The server verified an active workspace for this account."
+      },
+      "scope_denied": {
+        "title": "This account has no workspace access",
+        "text": "The server did not authorize this account for an operational workspace."
+      },
+      "session_expired": {
+        "title": "Session needs to be renewed",
+        "text": "The API did not accept this browser session. Sign out, then sign in again."
+      },
+      "unavailable": {
+        "title": "Identity service is unavailable",
+        "text": "The account session exists, but its operational role and district scope could not be verified."
+      },
+      "offline": {
+        "title": "Working offline",
+        "text": "The server cannot be reached. This device is using the access the server last confirmed for this account, and nothing leaves it until the connection returns."
+      }
+    }
+  },
+  "map": {
+    "title": "Accessibility map",
+    "district": "District",
+    "allDistricts": "All districts in scope",
+    "statusFilter": "Road status",
+    "layers": "Layers",
+    "layerBasemap": "Basemap (OpenStreetMap)",
+    "layerFacilities": "Facilities",
+    "layerBridges": "Bridges",
+    "layerCoverage": "Coverage boundary",
+    "legend": "Legend",
+    "legendOpen": "Open (solid)",
+    "legendRestricted": "Restricted (dashed)",
+    "legendClosed": "Closed (hatched)",
+    "legendUnknown": "Unknown (dotted)",
+    "legendFacility": "Facility (reachable / isolated / unknown coverage)",
+    "viewMap": "Map view",
+    "viewList": "List view",
+    "segmentsInView": "{shown, plural, one {# segment in view} other {# segments in view}} of {total} in scope",
+    "truncated": "Showing the first {shown}; zoom in to see every segment",
+    "coverage": "{count, plural, one {# segment} other {# segments}} in scope, {districts, plural, one {# district} other {# districts}}",
+    "noSelection": "Select a road on the map or in the list",
+    "selectedRoad": "Selected road",
+    "unnamedRoad": "Unnamed road",
+    "roadClass": "Road class",
+    "length": "Length",
+    "direction": "Direction",
+    "bridge": "Bridge",
+    "bridgeLimit": "Weight limit",
+    "bridgeLimitUnknown": "Unknown: not a pass",
+    "noBridge": "No bridge on this segment",
+    "tabEvidence": "Current evidence",
+    "tabRisk": "Future risk",
+    "tabHistory": "History",
+    "basis": "Basis",
+    "lastDecision": "Last decision",
+    "decisionBy": "Reviewed {when}",
+    "reason": "Reason",
+    "riskUnavailable": "Forecast risk is not available",
+    "riskUnavailableBody": "The risk engine is not connected yet. No score is shown rather than an unsourced one.",
+    "noObservations": "No observations recorded for this segment",
+    "observedAt": "Observed",
+    "actions": "Actions",
+    "actionInspect": "Assign inspection",
+    "actionReport": "Report observation",
+    "actionPlan": "Plan route",
+    "close": "Close",
+    "select": "Select",
+    "loading": "Loading network…",
+    "emptyScope": "No road network in your scope",
+    "listCaption": "Road segments in the current view"
+  },
+  "overview2": {
+    "reachableOf": "{reachable} of {monitored}",
+    "computedAt": "computed {when}",
+    "blockedSegments": "Blocked segments",
+    "blockedDetail": "{closed} closed, {restricted} restricted",
+    "awaitingReview": "Reports awaiting review",
+    "awaitingDetail": "{count, plural, =0 {none pending} one {# pending} other {# pending}}",
+    "queueIsolated": "Facility may be isolated",
+    "queueIsolatedBody": "No open route from a supply hub under the current network version.",
+    "queueReport": "Field report awaiting verification",
+    "queueReportBody": "{type}, reported {when}",
+    "openIncidents": "Open review queue",
+    "openMap": "Open accessibility map",
+    "districtTable": "District status",
+    "colDistrict": "District",
+    "colReachable": "Reachable facilities",
+    "colClosed": "Closed",
+    "colUnknown": "Unknown",
+    "colComputed": "Computed",
+    "coveragePartial": "Partial coverage",
+    "coverageNone": "No network",
+    "coverageComplete": "Complete",
+    "deliveriesDetail": "{moving} moving, {paused} paused",
+    "deliveriesOutOfScope": "Trips are not shown to your role",
+    "deliveriesUnavailable": "The trip service did not answer"
+  },
+  "incidentType": {
+    "landslide_debris": "Landslide / debris",
+    "flooding": "Flooding",
+    "bridge_damage": "Bridge damage",
+    "road_damage": "Road damage",
+    "congestion": "Congestion",
+    "road_reopened": "Road reopened",
+    "other": "Other"
+  },
+  "incidents": {
+    "title": "Report review",
+    "queueLabel": "Review queue",
+    "detailLabel": "Report detail",
+    "filterLabel": "Queue filter",
+    "filter": {
+      "submitted": "Awaiting review",
+      "underReview": "In review",
+      "all": "All"
+    },
+    "badge": {
+      "awaiting": "Awaiting a decision",
+      "decided": "Decided"
+    },
+    "empty": {
+      "title": "Queue is clear"
+    },
+    "noSelection": {
+      "title": "Select a report"
+    },
+    "noNote": "No note was written by the reporter.",
+    "noEvidence": "No evidence",
+    "evidenceCount": "{count} verified photo(s)",
+    "noPosition": "No position",
+    "reportedLabel": "Reported",
+    "loadingDetail": "Loading full report…",
+    "alreadyDecided": "This report has already been decided. Its record is read-only.",
+    "decisionLabel": "Decision",
+    "decision": {
+      "confirmClosure": "Confirm closure",
+      "confirmRestriction": "Confirm restriction",
+      "reopen": "Reopen road",
+      "requestClarification": "Request clarification",
+      "reject": "Reject"
+    },
+    "segmentsLabel": "Affected road segments",
+    "segmentsHelp": "Only the segments you tick change state. Nothing is applied automatically.",
+    "noSegments": "No road segments are linked to this report, so it cannot change road state. Request clarification instead.",
+    "unnamedSegment": "Unnamed segment",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "What in the evidence supports this decision?",
+    "reasonHelp": "Recorded in the audit trail against your name.",
+    "evidenceLabel": "Evidence",
+    "evidenceHelp": "Only verified files passed the server's size and checksum check.",
+    "noEvidenceWarning": "No evidence was attached. A report without evidence should not close a road.",
+    "noPositionWarning": "No position was attached, so this report cannot be placed on the network.",
+    "submitDecision": "Record decision",
+    "submitting": "Recording…",
+    "needSegment": "Tick at least one segment.",
+    "outcome": {
+      "title": "Decision recorded",
+      "replayed": "This decision was already recorded; the stored result is shown.",
+      "noChange": "No road changed state.",
+      "skipped": "Not applied: {outcome}",
+      "networkVersion": "New network version",
+      "audit": "{audit} audit event(s), {outbox} queued notification(s).",
+      "backToQueue": "Back to the queue"
+    },
+    "error": {
+      "queue": "Could not load the review queue",
+      "review": "The decision was not recorded"
+    },
+    "loadingSegments": "Finding roads near the reported position…",
+    "noSegmentsNearby": "No road segments were found near this position, so this report cannot change road state.",
+    "segmentsNearbyHelp": "Roads near where the report was taken. Only the ones you tick change state.",
+    "evidenceNotViewable": "Not verified: cannot be shown as evidence",
+    "evidenceLoading": "Loading photo…",
+    "evidenceOpen": "Open this photo full size",
+    "evidenceAlt": "Photo submitted with this report",
+    "evidenceClose": "Close the photo",
+    "segmentDistance": "{metres} m away",
+    "pinnedPosition": "Pinned position"
+  },
+  "outbox": {
+    "title": "Sync queue",
+    "queueLabel": "Queued changes",
+    "empty": {
+      "title": "Everything is sent"
+    },
+    "state": {
+      "queued": "Waiting to send",
+      "uploading": "Sending",
+      "accepted": "Sent",
+      "conflict": "Needs your decision",
+      "needs_action": "Needs your attention",
+      "blocked": "Waiting on another change"
+    },
+    "stateHelp": {
+      "queued": "Will be sent when there is a connection.",
+      "uploading": "Being sent now.",
+      "accepted": "The server has it.",
+      "conflict": "The server already recorded something for this. Review and send again.",
+      "needs_action": "This cannot be sent as it stands."
+    },
+    "type": {
+      "incident.create": "Field report",
+      "incident.attachment.complete": "Evidence photo check",
+      "incident.review": "Review decision",
+      "inspection.accept": "Task accepted",
+      "inspection.start": "Task started",
+      "inspection.complete": "Task submitted",
+      "incident.attachment.upload": "Evidence photo upload"
+    },
+    "blockedReason": "Waiting for the report it belongs to be sent first.",
+    "attempts": "{count} attempt(s) so far",
+    "notYetSent": "Not sent yet",
+    "retry": "Try again"
+  },
+  "inspections": {
+    "title": "Inspections",
+    "assign": "Assign an inspection",
+    "assigning": "Assigning…",
+    "cancel": "Withdraw",
+    "choose": "Choose…",
+    "district": "District",
+    "assignee": "Field officer",
+    "instructions": "Instructions",
+    "instructionsPlaceholder": "What should they check when they get there?",
+    "noOfficers": "No active field officer has a grant covering this district.",
+    "openHeading": "Open",
+    "closedHeading": "Closed",
+    "unnamedTarget": "Unnamed target",
+    "unnamedAssignee": "Assignee not named",
+    "dueAt": "Due {when}",
+    "noDueDate": "No due date",
+    "empty": {
+      "title": "No inspections"
+    },
+    "target": {
+      "incident": "Field report",
+      "segment": "Road segment",
+      "bridge": "Bridge",
+      "facility": "Facility"
+    },
+    "status": {
+      "assigned": "Assigned",
+      "accepted": "Accepted",
+      "in_progress": "In progress",
+      "submitted": "Submitted",
+      "reviewed": "Reviewed",
+      "cancelled": "Withdrawn",
+      "overdue": "Overdue"
+    },
+    "error": {
+      "queue": "Could not load inspections",
+      "assign": "The inspection was not assigned",
+      "cancel": "The inspection was not withdrawn"
+    }
+  },
+  "priority": {
+    "label": "Priority",
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "critical": "Critical"
+  },
+  "deliveries": {
+    "title": "Deliveries",
+    "requestsHeading": "Requests",
+    "consignmentsHeading": "Consignments",
+    "filter": {
+      "all": "All",
+      "draft": "Draft",
+      "planned": "Ready",
+      "moving": "Moving",
+      "arrived": "Arrived"
+    },
+    "empty": {
+      "title": "No consignments yet"
+    },
+    "requestsEmpty": "No open requests.",
+    "filterEmpty": "No consignments match this filter.",
+    "fulfilment": "{delivered} of {total} consignments delivered",
+    "noConsignments": "No consignments raised",
+    "neededBy": "Needed by {when}",
+    "noDeadline": "No deadline",
+    "selectTitle": "Select a consignment",
+    "unnamedFacility": "Unnamed facility",
+    "itemsHeading": "Manifest",
+    "commodity": "Commodity",
+    "ordered": "Ordered",
+    "delivered": "Delivered",
+    "weight": "Weight",
+    "totalWeight": "Total {weight} kg",
+    "weightUnknown": "Total weight unknown: at least one line has no weight",
+    "tripHeading": "Trip",
+    "noTrip": "No vehicle assigned yet.",
+    "vehicle": "Vehicle",
+    "driver": "Driver",
+    "startedAt": "Started {when}",
+    "notStarted": "Not started",
+    "receiptHeading": "Receipt",
+    "noReceipt": "Nothing has been received yet.",
+    "receivedBy": "Received by {who}",
+    "receivedAt": "Received {when}",
+    "shortBy": "Short by {amount} {unit}",
+    "action": {
+      "plan": "Release for planning",
+      "assign": "Assign vehicle and driver",
+      "planHint": "Confirms the manifest is right. Only then can a trip be raised."
+    },
+    "capacity": {
+      "within": "{load} kg of {capacity} kg capacity"
+    },
+    "error": {
+      "list": "Could not load deliveries.",
+      "plan": "Could not release this consignment.",
+      "assign": "Could not assign this trip.",
+      "requests": "Could not load requests."
+    },
+    "startedLabel": "Started"
+  },
+  "assignTrip": {
+    "title": "Assign vehicle and driver",
+    "vehicle": "Vehicle",
+    "driver": "Driver",
+    "choose": "Choose…",
+    "noVehicles": "No vehicles are registered for this organisation.",
+    "noDrivers": "No eligible driver holds a current grant in this district.",
+    "loadWeight": "Load {weight} kg",
+    "loadUnknown": "Load weight unknown",
+    "capacityOf": "capacity {capacity} kg",
+    "capacityUnknown": "capacity not declared",
+    "overCapacity": "This load is heavier than the vehicle's declared capacity.",
+    "uncheckable": "Capacity cannot be checked: {reason}. Assign only if you know the load fits.",
+    "submit": "Assign",
+    "cancel": "Cancel"
+  },
+  "fleet": {
+    "title": "Fleet",
+    "vehiclesHeading": "Vehicles",
+    "tripsHeading": "Trips",
+    "capacity": "{capacity} kg",
+    "capacityUnknown": "Capacity not declared",
+    "height": "Max height {height} m",
+    "outOfService": "Out of service",
+    "scope": {
+      "district": "Trips across your districts",
+      "assigned_to_me": "Trips assigned to you"
+    },
+    "empty": {
+      "vehiclesTitle": "No vehicles on the roster",
+      "tripsTitle": "No trips"
+    },
+    "action": {
+      "offer": "Offer to driver",
+      "cancel": "Cancel trip"
+    },
+    "error": {
+      "vehicles": "Could not load the vehicle roster.",
+      "trips": "Could not load trips.",
+      "transition": "Could not change this trip.",
+      "locations": "Could not load vehicle positions."
+    },
+    "livePositionsHeading": "Where the fleet is now",
+    "livePositionsSummary": "{live} reporting, {stale} late, {silent} not reporting",
+    "livePositionsEmptyTitle": "No trips are running",
+    "reportingLive": "Reporting",
+    "reportingStale": "Late",
+    "reportingNever": "Not reporting",
+    "neverReported": "This trip has sent no position yet",
+    "staleExplained": "Nothing has arrived for over {minutes} minutes. Treat this position as where the vehicle was, not where it is.",
+    "coordinates": "{latitude}, {longitude}",
+    "accuracy": "±{accuracy} m"
+  },
+  "planner": {
+    "title": "Route planner",
+    "inputsHeading": "Route request",
+    "origin": "From",
+    "destination": "To",
+    "vehicle": "Vehicle",
+    "anyVehicle": "No vehicle chosen",
+    "priority": "Priority",
+    "departure": "Departure",
+    "deadline": "Deadline",
+    "choose": "Choose…",
+    "plan": "Plan route",
+    "planning": "Planning…",
+    "replan": "Plan again",
+    "alternativesHeading": "Options",
+    "showOptions": "Options ({count})",
+    "hideOptions": "Hide options",
+    "noFacilities": "This district has no facilities with a routing node, so there is nowhere to plan between.",
+    "sameFacility": "Choose two different facilities.",
+    "emptyTitle": "No route planned yet",
+    "mapEmptyTitle": "Nothing to draw",
+    "category": {
+      "fastest_feasible": "Fastest feasible",
+      "lower_exposure": "Lower exposure",
+      "alternate": "Alternate"
+    },
+    "distance": "Distance",
+    "eta": "ETA",
+    "etaRange": "{low}–{high}",
+    "margin": "Deadline margin",
+    "marginLate": "{duration} late",
+    "marginSpare": "{duration} spare",
+    "marginNone": "No deadline set",
+    "avoidedClosures": "{count, plural, =0 {No confirmed closures to avoid} one {Avoids # confirmed closure} other {Avoids # confirmed closures}}",
+    "unknownConstraints": "{count, plural, =0 {No unverified limits} one {# unverified limit} other {# unverified limits}}",
+    "riskUnavailable": "No risk score recorded for this road",
+    "riskMax": "Highest risk {score}",
+    "riskUnscored": "{count, plural, one {# segment has no risk score} other {# segments have no risk score}}",
+    "needsReview": "Needs review before dispatch",
+    "select": "Show on map",
+    "selected": "Shown on map",
+    "approve": "Approve this route",
+    "approving": "Approving…",
+    "approved": "Approved",
+    "approveHeading": "Approve route",
+    "approveVehicle": "Vehicle",
+    "approveRoute": "Route",
+    "approveSnapshot": "Planned against network {version}",
+    "approveUnresolved": "Unresolved constraints",
+    "approveNoUnresolved": "No unresolved constraints on this route.",
+    "approveConfirm": "Approve",
+    "approveCancel": "Cancel",
+    "staleTitle": "This plan is out of date",
+    "staleBody": "The road network changed after this route was planned, so it cannot be approved. Plan again to see the current options.",
+    "noRouteTitle": "No route found",
+    "noRouteBody": "The planner could not find a way through under this vehicle's constraints.",
+    "reasonHeading": "Why",
+    "actionsHeading": "What you can do",
+    "exclusionsHeading": "Excluded from the search",
+    "exclusion": {
+      "segment_closed": "{count, plural, one {# confirmed closure} other {# confirmed closures}}",
+      "vehicle_exceeds_max_weight": "{count, plural, one {# segment too light for this vehicle} other {# segments too light for this vehicle}}",
+      "vehicle_exceeds_max_height": "{count, plural, one {# segment too low for this vehicle} other {# segments too low for this vehicle}}"
+    },
+    "reason": {
+      "closed_segments_disconnect_route": "Confirmed closures cut every path to the destination.",
+      "vehicle_constraints_disconnect_route": "This vehicle cannot use the roads that remain.",
+      "no_path_in_directed_graph": "The road graph has no path between these points, even with nothing excluded.",
+      "origin_has_no_usable_road": "Every road leaving the origin is closed or unusable by this vehicle."
+    },
+    "coverage": {
+      "unobserved_network": "{count, plural, one {# segment in this district has no observed state} other {# segments in this district have no observed state}}. Routes across them are computed, not confirmed."
+    },
+    "warning": {
+      "unknown_constraint": "A load limit on this route has never been established.",
+      "unobserved_segment_state": "Nobody has reported on part of this route; its state is unknown, not open.",
+      "restricted_segment_used": "This route uses road that is passable only under restriction."
+    },
+    "notSafeClaim": "RASTA does not claim a route is safe. It reports what was used, what was excluded and what could not be established.",
+    "policyVersion": "Cost policy {version}",
+    "error": {
+      "plan": "Could not plan a route.",
+      "approve": "Could not approve this route.",
+      "facilities": "Could not load facilities.",
+      "bind": "The route was approved but could not be given to the trip."
+    },
+    "district": "District",
+    "forTrip": "For trip",
+    "noTrip": "No trip (plan only)",
+    "tripOption": "{reference}, {vehicle}, route: {route}",
+    "routeWithdrawn": "withdrawn",
+    "routeNone": "none",
+    "bound": "Route given to trip {reference}. The driver sees it under My trips."
+  },
+  "alerts": {
+    "title": "Alerts",
+    "summary": "{unacknowledged} not yet acknowledged of {total}",
+    "filterUnacknowledged": "Show only what I have not acknowledged",
+    "acknowledge": "Acknowledge",
+    "acknowledged": "Acknowledged",
+    "validUntil": "valid until {when}",
+    "expired": "This alert has expired.",
+    "notReplaced": "Your route was withdrawn, not replaced. A dispatcher must plan and approve a new one.",
+    "severity": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "info": "For information"
+    },
+    "evidence": {
+      "segments": "{count} road sections affected",
+      "consignment": "Consignment {reference}",
+      "blocked": "{count, plural, one {# section of the approved route is blocked} other {# sections of the approved route are blocked}}",
+      "facility": "Facility: {facility}",
+      "reasons": "Reasons: {reasons}"
+    },
+    "empty": {
+      "title": "Nothing in your inbox"
+    },
+    "error": {
+      "load": "Could not load your alerts.",
+      "acknowledge": "Could not acknowledge that alert."
+    },
+    "push": {
+      "title": "Notifications on this device",
+      "notConfigured": "Notifications are switched off on this deployment: no push key is set, so nothing is sent.",
+      "unsupported": "This browser cannot show notifications.",
+      "noWorker": "Notifications need the installed app. The app's service worker is not running in this browser.",
+      "blocked": "Notifications are blocked for this site in the browser's settings.",
+      "on": "On for this device.",
+      "off": "Off for this device.",
+      "enable": "Turn on notifications",
+      "disable": "Turn off",
+      "test": "Send a test notification",
+      "testResult": "Test sent to {sent} of {attempted} registrations.",
+      "testNothing": "Nothing was sent: {reasons}.",
+      "failed": "This browser could not register for notifications: {reason}",
+      "notificationTitle": "RASTA: new alert",
+      "notificationBody": "Open the alert inbox to read it."
+    },
+    "replan": "Plan a new route for this trip"
+  },
+  "health": {
+    "title": "Data health",
+    "mode": "Operating mode: {mode}",
+    "sourcesHeading": "Sources",
+    "noSources": "No source has been run yet.",
+    "coverageHeading": "Coverage",
+    "queuesHeading": "Queues and tracking",
+    "pushHeading": "Notifications",
+    "riskModelHeading": "Risk model",
+    "riskModel": "Active model: {version}",
+    "riskModelNotTrained": "Rule-based weighting, not a trained model.",
+    "pushConfigured": "Push is configured ({sender}).",
+    "pushNotConfigured": "Push is not configured in this deployment. Every alert is in the inbox.",
+    "sourceState": {
+      "live": "Live",
+      "recorded": "Recorded",
+      "stale": "Out of date",
+      "failed": "Failed",
+      "never_run": "Never run",
+      "disabled": "Not configured"
+    },
+    "lastSuccess": "Last successful run {when}",
+    "neverSucceeded": "No run has ever succeeded",
+    "records": "{count, plural, one {# record} other {# records}}",
+    "consecutiveFailures": "{count, plural, one {# failed run} other {# failures in a row}}",
+    "observed": "{observed} of {total} road sections have an observed state",
+    "scored": "{scored} of {total} road sections have a risk score",
+    "facilities": "{onGraph} of {total} facilities sit on the routing graph",
+    "noGraphVersion": "No graph version recorded",
+    "recompute": "Re-run sources",
+    "recomputed": "Scored {scored}, left {unscored} unscored with {model}.",
+    "outbox": "Unprocessed events",
+    "ledger": "Idempotency ledger",
+    "reporting": "Trips reporting",
+    "stale": "Trips late",
+    "silent": "Trips silent",
+    "error": {
+      "load": "Could not load data health.",
+      "recompute": "Could not re-run the sources."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "build": {
+      "title": "This build",
+      "appVersion": "App version",
+      "mode": "Deployment mode"
+    },
+    "update": {
+      "ready": "A new version is ready. Nothing is waiting to be sent, so it is safe to reload.",
+      "apply": "Reload now",
+      "held": "A new version is downloaded but held: {count, plural, one {# report has} other {# reports have}} not reached the control room yet. It will be offered once everything has been sent.",
+      "unsupported": "This browser is not running a service worker, so there is nothing to update here."
+    },
+    "pack": {
+      "title": "Offline data pack",
+      "version": "Pack version",
+      "age": "Age",
+      "ageDays": "{days} days old",
+      "stale": "out of date",
+      "staleExplainer": "This pack is out of date. Download a newer one when you can.",
+      "contents": "Contents",
+      "counts": "{edges} road segments, {facilities} facilities",
+      "checksum": "Checksum",
+      "attribution": "Source",
+      "noneTitle": "No pack downloaded",
+      "download": "Download",
+      "downloading": "{percent}%",
+      "alreadyHave": "Already have this",
+      "activated": "Verified against its published checksum and activated.",
+      "offerDetail": "Version {version}, {megabytes} MB",
+      "manifestError": "The pack list could not be read"
+    }
+  },
+  "report": {
+    "title": "New field report",
+    "lede": "Saved on this device as you type, until the control room has it.",
+    "typeLabel": "What did you see?",
+    "typePlaceholder": "Choose…",
+    "locationHeading": "Where",
+    "useGps": "Use my current location",
+    "locating": "Getting a fix…",
+    "gpsFix": "GPS fix ±{accuracy} m at {time}",
+    "gpsFailed": "No GPS fix: {reason} Enter the position below instead.",
+    "gpsUnknownError": "The device did not give a position.",
+    "pinRecorded": "Recorded as a manual pin, not a GPS fix",
+    "fromMap": "Road chosen on the map: {road}",
+    "unnamedRoad": "unnamed road",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "manualHint": "A position typed here or taken from the map is recorded as a pin. The reviewer sees the difference from a measured GPS fix.",
+    "photoHeading": "Photo (optional)",
+    "addPhoto": "Take or choose a photo",
+    "removePhoto": "Remove photo",
+    "photoAlt": "Photo attached to this report",
+    "photoMeta": "{size}, checksum {checksum}…",
+    "photoKept": "Kept on this device until the server has verified it.",
+    "photoRefused": {
+      "too_large": "This photo is larger than 5 MB. The original is the evidence, so it is not shrunk to fit. Take a smaller photo.",
+      "unsupported_type": "Only JPEG, PNG or WebP photos can be attached.",
+      "empty": "The photo was empty.",
+      "storage_unavailable": "This browser is not keeping local data, so the photo cannot be held until it is sent.",
+      "capture_failed": "No photo was taken."
+    },
+    "noteLabel": "Note (optional)",
+    "notePlaceholder": "Lanes blocked, vehicles waiting, water depth…",
+    "noteCount": "{count} of 4000 characters",
+    "savedLocally": "Saved on this device",
+    "notSaved": "Not saved: this browser is not keeping local data",
+    "submitHint": "The report is sent as soon as there is a connection.",
+    "stillNeeded": "Still needed: {items}",
+    "missing": {
+      "type": "what you saw",
+      "location": "a position"
+    },
+    "submit": "Queue report",
+    "queueFailed": "The report could not be queued on this device.",
+    "discard": "Discard draft",
+    "discardConfirm": "Discard this report and its photo from this device? This cannot be undone.",
+    "queuedTitle": "Report queued",
+    "queuedBody": "It stays on this device until the control room has it. You can close this page; it is sent when there is a connection.",
+    "step": {
+      "report": "Report",
+      "photo": "Photo upload",
+      "check": "Photo check"
+    },
+    "state": {
+      "waiting": "Waiting to send",
+      "sending": "Sending",
+      "done": "Done",
+      "attention": "Needs your attention"
+    },
+    "receivedAs": "Received by the control room (ref {id})",
+    "check": {
+      "verified": "Verified by the server against the checksum",
+      "notVerified": "Not verified: {reason}"
+    },
+    "fileAnother": "File another report",
+    "openQueue": "Open sync queue"
+  },
+  "fieldHome": {
+    "title": "My field work",
+    "heading": "Assigned to you",
+    "lede": "Works without signal. Each change is sent once a connection returns.",
+    "newReport": "New report",
+    "openQueue": "Sync queue",
+    "assignedHeading": "Open tasks",
+    "empty": {
+      "title": "Nothing assigned"
+    },
+    "error": "Your assignments could not be loaded",
+    "queueFailed": "That move could not be kept on this device.",
+    "accept": "Accept",
+    "start": "Start",
+    "submitFindings": "Submit findings",
+    "findingsLabel": "What you found (optional)",
+    "queueFindings": "Queue submission",
+    "reportHere": "Report on this road",
+    "moveQueued": "{move}: waiting to send",
+    "moveNeedsAttention": "This move needs your attention in the sync queue."
+  },
+  "driverTrips": {
+    "title": "My trips",
+    "heading": "Your trips",
+    "phoneOnly": "Starting a trip, position reporting and delivery receipts happen in the RASTA driver app on your phone. A browser cannot keep reporting your position once the screen locks, so this page only shows your trips and routes.",
+    "error": "Your trips could not be loaded",
+    "empty": {
+      "title": "No trips assigned"
+    },
+    "listLabel": "Your trips",
+    "noReference": "Consignment without a reference",
+    "noVehicle": "No vehicle recorded",
+    "routeHeading": "Approved route",
+    "startedAt": "Started {when}",
+    "noRoute": "The control room has not approved a route for this trip. Do not follow any other route as if it were approved.",
+    "routeError": "The route could not be loaded",
+    "noGeometry": "The approved route has no map line to draw.",
+    "approvedSummary": "{distance}, {low} to {high} by the planner's estimate",
+    "approvedAgainst": "Approved {when} against network version {version}",
+    "planState": {
+      "proposed": "This route is only a proposal and has not been approved. Wait for the control room.",
+      "superseded": "This route was replaced by a newer one. Do not follow it; open the driver app for the current route.",
+      "invalidated": "The control room withdrew this route because the road changed. Do not follow it; wait for a new route.",
+      "rejected": "This route was rejected. Do not follow it; wait for the control room."
+    }
+  },
+  "permissions": {
+    "title": "Device check",
+    "lede": "Find out before you are on the road whether this device will let the app take a photo and a position.",
+    "checksHeading": "Device checks",
+    "checksBody": "Each permission is requested only when you start its check.",
+    "localOnlyTitle": "Local check only",
+    "localOnlyBody": "These checks do not create a report, start tracking, or send a photo or position to any server.",
+    "camera": {
+      "title": "Camera",
+      "idle": "No camera request has been made.",
+      "running": "Waiting for the camera or file chooser.",
+      "passed": "A photo was taken on this device. It has not been uploaded or saved.",
+      "none": "No photo taken",
+      "previewAlt": "Photo from the camera check, kept on this device",
+      "test": "Test camera"
+    },
+    "location": {
+      "title": "Current location",
+      "idle": "No location request has been made.",
+      "running": "Asking the device for one position fix.",
+      "passed": "A position was received at {time}. It stays on this device.",
+      "passedWithAccuracy": "A position was received at {time}, accurate to ±{accuracy} m. It stays on this device.",
+      "received": "Position received",
+      "noCoordinates": "Coordinates are deliberately not shown on this check.",
+      "test": "Test current location"
+    },
+    "error": {
+      "camera_unavailable": "This device or browser offers no camera to the app.",
+      "location_unavailable": "This browser does not offer location to the app.",
+      "permission_denied": "Permission was not granted. Allow it in the device settings and try again.",
+      "request_cancelled": "The request was cancelled.",
+      "location_failed": "No position was received before the request ended.",
+      "unknown": "The device check failed without a recognised answer."
+    }
+  },
+  "gate": {
+    "frameBody": "RASTA does not open operational views from a browser session alone.",
+    "checkingTitle": "Checking workspace access",
+    "checkingBody": "Verifying the active profile, role grants and district scope.",
+    "unconfiguredTitle": "Authentication is not configured",
+    "unconfiguredHeading": "Operational views remain closed",
+    "unconfiguredBody": "This build has no configured Supabase project URL and publishable key. No demo account or local bypass is available.",
+    "reason": {
+      "scopeDenied": "The server did not authorize this account for the requested workspace.",
+      "sessionExpired": "The API did not accept this browser session. Sign in again to renew it.",
+      "unavailable": "The identity service is unavailable, so role and district scope cannot be verified.",
+      "signIn": "Sign in with an administrator-assigned account to request a server-verified workspace."
+    },
+    "requiredTitle": "Workspace access required",
+    "requiredHeading": "No operational data is shown",
+    "deniedTitle": "This view is not available to this role",
+    "deniedHeading": "Access denied",
+    "deniedBody": "The server-verified role grants do not allow this route. No data or action has been loaded.",
+    "returnToWorkspace": "Return to workspace",
+    "offlineNotice": "Offline. Your access was last confirmed {when}. Reports are kept on this device and sent when the connection returns."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-07T08:52:19+00:00",
+  "packs": [
+    {
+      "pack_id": "pilot-shillong",
+      "version": "osm-shillong-4d449d18c4666431",
+      "url": "/packs/pilot-shillong.osm-shillong-4d449d18c4666431.json",
+      "bytes": 1186747,
+      "sha256": "83490e6f4f75632340835d1b0b416ec886ce2908a4b0b01e6fbd112560aa93e8",
+      "created_at": "2026-09-07T08:52:19+00:00",
+      "treat_as_current_until": "2026-12-06T08:52:19+00:00",
+      "mode": "recorded",
+      "bbox": {
+        "east": 91.9,
+        "north": 25.585,
+        "south": 25.56,
+        "west": 91.875
+      },
+      "counts": {
+        "edges": 2860,
+        "nodes": 1236,
+        "facilities": 30
+      },
+      "attribution": "\u00a9 OpenStreetMap contributors",
+      "license": "ODbL-1.0",
+      "notice": "Baseline road topology for the pilot bounding box only, from the OpenStreetMap extract in data/pilot. Not a navigation map and not a statement about current road conditions: every segment here reads passability 'unknown'. Live state comes from the API."
+    }
+  ]
+}

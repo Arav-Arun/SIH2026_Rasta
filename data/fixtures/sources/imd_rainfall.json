@@ -1,0 +1,11 @@
+{
+  "_note": "RECORDED FIXTURE, NOT LIVE DATA. Shape follows the documented IMD district rainfall forecast response. Values are placeholders for pipeline testing and must never be presented as a forecast.",
+  "issued_by": "Fixture publisher (not IMD)",
+  "issued_at": "2026-09-26T00:30:00Z",
+  "valid_until": "2026-09-28T00:30:00Z",
+  "districts": [
+    { "district": "East Khasi Hills", "rainfall_mm_48h": 86.4 },
+    { "district": "Ri Bhoi", "rainfall_mm_48h": 42.0 },
+    { "district": "West Jaintia Hills", "rainfall_mm_48h": 131.2 }
+  ]
+}

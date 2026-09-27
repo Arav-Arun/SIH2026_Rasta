@@ -1,0 +1,260 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+body {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/*
+ * One font stack per script, using fonts already on the device (Noto on
+ * Android, Nirmala UI on Windows, Sangam faces on macOS), so nothing is
+ * downloaded and every language works offline.
+ */
+
+:lang(hi),
+:lang(mr),
+:lang(ne),
+:lang(sa),
+:lang(kok),
+:lang(mai),
+:lang(doi),
+:lang(brx),
+:lang(sd) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Devanagari', 'Nirmala UI', 'Mangal',
+    'Kohinoor Devanagari', system-ui, sans-serif;
+}
+
+:lang(as),
+:lang(bn) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Bengali', 'Nirmala UI', 'Vrinda',
+    'Bangla Sangam MN', system-ui, sans-serif;
+}
+
+:lang(mni) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Meetei Mayek', 'Nirmala UI', system-ui,
+    sans-serif;
+}
+
+:lang(gu) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Gujarati', 'Nirmala UI', 'Shruti',
+    'Gujarati Sangam MN', system-ui, sans-serif;
+}
+
+:lang(pa) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Gurmukhi', 'Nirmala UI', 'Raavi',
+    'Gurmukhi MN', system-ui, sans-serif;
+}
+
+:lang(or) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Oriya', 'Nirmala UI', 'Kalinga',
+    'Oriya Sangam MN', system-ui, sans-serif;
+}
+
+:lang(ta) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Tamil', 'Nirmala UI', 'Latha',
+    'Tamil Sangam MN', system-ui, sans-serif;
+}
+
+:lang(te) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Telugu', 'Nirmala UI', 'Gautami',
+    'Telugu Sangam MN', system-ui, sans-serif;
+}
+
+:lang(kn) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Kannada', 'Nirmala UI', 'Tunga',
+    'Kannada Sangam MN', system-ui, sans-serif;
+}
+
+:lang(ml) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Malayalam', 'Nirmala UI', 'Kartika',
+    'Malayalam Sangam MN', system-ui, sans-serif;
+}
+
+:lang(sat) {
+  font-family:
+    var(--font-geist-sans), 'Noto Sans Ol Chiki', 'Nirmala UI', system-ui,
+    sans-serif;
+}
+
+/* Perso-Arabic script is right to left; Nastaliq needs taller lines. */
+:lang(ur),
+:lang(ks) {
+  font-family:
+    var(--font-geist-sans), 'Noto Nastaliq Urdu', 'Noto Naskh Arabic',
+    'Noto Sans Arabic', 'Segoe UI', 'Geeza Pro', system-ui, sans-serif;
+  line-height: 1.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:root {
+  --background: #f5f7fa;
+  --foreground: #172033;
+  --card: #ffffff;
+  --card-foreground: #172033;
+  --popover: #ffffff;
+  --popover-foreground: #172033;
+  --primary: #1d4ed8;
+  --primary-foreground: #ffffff;
+  --secondary: #eef2ff;
+  --secondary-foreground: #1e3a8a;
+  --muted: #f1f5f9;
+  --muted-foreground: #526079;
+  --accent: #eef2ff;
+  --accent-foreground: #1e3a8a;
+  --destructive: #991b1b;
+  --border: #dce3ed;
+  --input: #dce3ed;
+  --ring: #1d4ed8;
+  --chart-1: #1d4ed8;
+  --chart-2: #166534;
+  --chart-3: #92400e;
+  --chart-4: #991b1b;
+  --chart-5: #475569;
+  --radius: 0.625rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #172033;
+  --sidebar-primary: #1d4ed8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef2ff;
+  --sidebar-accent-foreground: #172033;
+  --sidebar-border: #dce3ed;
+  --sidebar-ring: #1d4ed8;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+
+  /* One visible focus ring for everything that can take focus. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  /* Date and time inputs need `:focus-within`, not `:focus-visible`. */
+  input[type='datetime-local']:focus-within,
+  input[type='date']:focus-within,
+  input[type='time']:focus-within,
+  input[type='month']:focus-within,
+  input[type='week']:focus-within {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  /* Honour a reader who has asked the system for less movement. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

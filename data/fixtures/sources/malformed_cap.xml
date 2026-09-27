@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RECORDED FIXTURE: deliberately not CAP, to prove a malformed payload is a
+     failed run that changes nothing already stored. -->
+<weather><summary>no alert blocks here</summary></weather>

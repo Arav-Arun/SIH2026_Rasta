@@ -1,0 +1,41 @@
+{
+  "name": "RASTA: Road Accessibility & Supply Tracking Assistant",
+  "short_name": "RASTA",
+  "description": "Decide which roads a relief load can actually use, and say what is not known.",
+  "id": "/overview",
+  "start_url": "/overview",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#FFFFFF",
+  "background_color": "#FFFFFF",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

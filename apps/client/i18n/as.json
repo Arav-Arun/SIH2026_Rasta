@@ -1,0 +1,994 @@
+{
+  "_meta": {
+    "locale": "as",
+    "label": "Assamese",
+    "nativeLabel": "অসমীয়া",
+    "reviewed": false,
+    "reviewedBy": null,
+    "notes": "Drafted by the team without a native-speaker review. Keys missing here fall back to English at display time. Do not claim Assamese support until reviewed is true.",
+    "script": "Beng",
+    "dir": "ltr",
+    "machine": {
+      "provider": "Sarvam Translate",
+      "model": "sarvam-translate:v1",
+      "strings": 134,
+      "generatedAt": "2026-09-27T03:22:27Z"
+    },
+    "fallbackKeys": [
+      "alerts.expired",
+      "deliveries.noReceipt",
+      "driverTrips.noGeometry",
+      "fieldHome.lede",
+      "health.pushConfigured",
+      "report.lede",
+      "settings.pack.staleExplainer"
+    ]
+  },
+  "app": {
+    "name": "RASTA",
+    "skipToContent": "মুখ্য বিষয়বস্তুলৈ যাওক"
+  },
+  "nav": {
+    "operations": "কাৰ্য পৰিচালনা",
+    "overview": "সমীক্ষা",
+    "map": "সুগমতা মানচিত্ৰ",
+    "planner": "পথ পৰিকল্পনা",
+    "deliveries": "বিতৰণ",
+    "fleet": "বাহন বহৰ",
+    "incidents": "ঘটনা",
+    "inspections": "পৰিদৰ্শন",
+    "alerts": "সতৰ্কবাণী",
+    "dataHealth": "তথ্যৰ স্বাস্থ্য",
+    "settings": "ছেটিংছ",
+    "toggleSidebar": "কাষৰ তালিকাখন অন আৰু বন্ধ কৰক",
+    "signIn": "ছাইন ইন",
+    "fieldWork": "ক্ষেত্ৰ কাম",
+    "fieldHome": "মোৰ ক্ষেত্ৰ কাম",
+    "newReport": "নতুন প্ৰতিবেদন",
+    "myTrips": "মোৰ যাত্ৰা",
+    "syncQueue": "ছিংক শাৰী",
+    "permissions": "ডিভাইচ পৰীক্ষা"
+  },
+  "locale": {
+    "label": "ভাষা",
+    "unreviewed": "অনুবাদৰ খচৰা, মাতৃভাষীৰ পৰ্যালোচনা এতিয়াও বাকী"
+  },
+  "status": {
+    "passability": {
+      "label": "পথৰ অৱস্থা",
+      "open": "খোলা",
+      "restricted": "সীমিত",
+      "closed": "বন্ধ",
+      "unknown": "অজ্ঞাত"
+    },
+    "risk": {
+      "label": "অনুমানিত বিপদ",
+      "low": "কম বিপদ",
+      "moderate": "মধ্যম বিপদ",
+      "high": "উচ্চ বিপদ",
+      "unavailable": "বিপদৰ তথ্য নাই"
+    },
+    "sync": {
+      "label": "ছিংক অৱস্থা",
+      "saved_locally": "এই ডিভাইচত সংৰক্ষিত",
+      "waiting": "সংযোগৰ অপেক্ষাত",
+      "uploading": "ফটো এতিয়াও আপল'ড হৈ আছে",
+      "sent": "নিয়ন্ত্ৰণ কক্ষলৈ পঠোৱা হৈছে",
+      "awaiting_verification": "সত্যাপনৰ অপেক্ষাত",
+      "conflict": "আপোনাৰ পৰ্যালোচনা প্ৰয়োজন",
+      "failed": "পঠিয়াব পৰা নগ'ল"
+    },
+    "review": {
+      "label": "পৰ্যালোচনাৰ অৱস্থা",
+      "reported": "প্ৰতিবেদিত, অসত্যাপিত",
+      "confirmed_closed": "বন্ধ নিশ্চিত",
+      "confirmed_restricted": "সীমিত নিশ্চিত",
+      "rejected": "নাকচ",
+      "clarification": "স্পষ্টীকৰণ বিচৰা হৈছে",
+      "submitted": "দাখিল কৰা হ’ল",
+      "under_review": "পুনৰীক্ষণত আছে",
+      "confirmed": "নিশ্চিত কৰা হ’ল।",
+      "superseded": "উত্তৰাধিকাৰী",
+      "pending": "আপলোড বাকী আছে",
+      "uploaded": "আপলোড কৰা হৈছে, কিন্তু পৰীক্ষা কৰা হোৱা নাই।",
+      "verified": "প্ৰমাণিত",
+      "expired": "আপলোডৰ ম্যাদ উকলি গৈছে",
+      "draft": "খচৰা",
+      "queued": "প্ৰেৰণ কৰিবলৈ শাৰীত আছে"
+    },
+    "consignment": {
+      "label": "সামগ্ৰীৰ অৱস্থা",
+      "draft": "খচৰা",
+      "planned": "পৰিকল্পিত",
+      "assigned": "নিৰ্ধাৰিত",
+      "in_transit": "পথত আছে",
+      "delivered": "পোৱা গ'ল",
+      "partially_delivered": "আংশিকভাৱে পোৱা গ'ল",
+      "failed": "বিফল",
+      "cancelled": "বাতিল"
+    },
+    "trip": {
+      "label": "যাত্ৰাৰ অৱস্থা",
+      "planned": "পৰিকল্পিত",
+      "awaiting_driver": "চালকৰ অপেক্ষাত",
+      "active": "চলি আছে",
+      "paused": "স্থগিত",
+      "completed": "সম্পূৰ্ণ",
+      "failed": "বিফল",
+      "cancelled": "বাতিল"
+    },
+    "request": {
+      "label": "অনুৰোধৰ অৱস্থা",
+      "open": "মুকলি",
+      "planned": "পৰিকল্পিত",
+      "partially_fulfilled": "আংশিকভাৱে পূৰণ",
+      "fulfilled": "পূৰণ হ'ল",
+      "cancelled": "বাতিল"
+    }
+  },
+  "mode": {
+    "label": "তথ্য ম'ড",
+    "synthetic": "অনুকৰণ পৰিস্থিতি",
+    "recorded": "ৰেকৰ্ড কৰা তথ্য",
+    "live": "লাইভ তথ্য",
+    "local_demo": "স্থানীয় ডেম'",
+    "hosted_demo": "হ'ষ্টেড ডেম'",
+    "pilot": "পাইলট",
+    "production": "উৎপাদন",
+    "noData": "কোনো তথ্য সংযুক্ত নহয়"
+  },
+  "freshness": {
+    "updated": "আপডেট {relative}",
+    "justNow": "এইমাত্ৰ",
+    "minutesAgo": "{count, plural, one {# মিনিট আগতে} other {# মিনিট আগতে}}",
+    "hoursAgo": "{count, plural, one {# ঘণ্টা আগতে} other {# ঘণ্টা আগতে}}",
+    "daysAgo": "{count, plural, one {# দিন আগতে} other {# দিন আগতে}}",
+    "stale": "পুৰণি",
+    "never": "কেতিয়াও আপডেট হোৱা নাই",
+    "timezone": "IST",
+    "source": "উৎস: {source}"
+  },
+  "offline": {
+    "title": "শেষবাৰ সংৰক্ষিত তথ্যৰ পৰা কাম চলি আছে",
+    "body": "সংযোগ ঘূৰি নহালৈকে পৰিৱৰ্তনবোৰ এই ডিভাইচতে থাকিব। নিয়ন্ত্ৰণ কক্ষলৈ এতিয়াও একো পঠোৱা হোৱা নাই।",
+    "queued": "{count, plural, =0 {শাৰীত একো নাই} one {# টা বস্তু পঠোৱাৰ অপেক্ষাত} other {# টা বস্তু পঠোৱাৰ অপেক্ষাত}}",
+    "retry": "এতিয়াই পুনৰ চেষ্টা কৰক",
+    "viewQueue": "ছিংক কেন্দ্ৰ খোলক"
+  },
+  "error": {
+    "title": "তথ্য ল'ড কৰিব পৰা নগ'ল",
+    "body": "আপোনাৰ ইনপুট এই স্ক্ৰীনত ৰখা হৈছে।",
+    "requestId": "অনুৰোধ আইডি {id}",
+    "retry": "পুনৰ চেষ্টা কৰক",
+    "dismiss": "বন্ধ কৰক"
+  },
+  "empty": {
+    "noDecisions": "পৰ্যালোচনাৰ বাবে কোনো সিদ্ধান্ত নাই",
+    "noMap": "কোনো মানচিত্ৰ তথ্য ল'ড হোৱা নাই"
+  },
+  "confirm": {
+    "title": "এই কাৰ্য নিশ্চিত কৰক",
+    "reasonLabel": "কাৰণ",
+    "reasonPlaceholder": "প্ৰয়োজনীয়। অডিট ট্ৰেইলৰ বাবে সিদ্ধান্ত ব্যাখ্যা কৰক।",
+    "reasonRequired": "কাৰণ দিয়া প্ৰয়োজন।",
+    "confirm": "নিশ্চিত কৰক",
+    "cancel": "বাতিল",
+    "working": "প্ৰক্ৰিয়া চলি আছে…"
+  },
+  "list": {
+    "viewAsTable": "তালিকা হিচাপে চাওক",
+    "viewAsList": "সূচী হিচাপে চাওক",
+    "actions": "কাৰ্য",
+    "noRows": "দেখুৱাবলৈ কোনো শাৰী নাই",
+    "loading": "লোড হৈ আছে…",
+    "itemCount": "{count, plural, one {# সামগ্ৰী} other {# সামগ্ৰী}}"
+  },
+  "overview": {
+    "title": "লজিষ্টিকছ সুগমতা সমীক্ষা",
+    "subtitle": "এই একাউণ্টটোৰ বাবে কোনো জিলা নিৰ্ধাৰণ কৰা হোৱা নাই।",
+    "summaries": "কাৰ্যকৰী সাৰাংশ",
+    "reachableFacilities": "উপনীত হ'ব পৰা সুবিধা",
+    "activeDeliveries": "সক্ৰিয় বিতৰণ",
+    "reasonNoNetwork": "পাইলট নেটৱৰ্ক আমদানি হোৱা নাই",
+    "reasonNoIncidents": "ঘটনাৰ উৎস সংযুক্ত নহয়",
+    "reasonNoReports": "কোনো প্ৰতিবেদন দাখিল হোৱা নাই",
+    "networkCard": "সুগমতা নেটৱৰ্ক",
+    "queueCard": "সিদ্ধান্ত শাৰী"
+  },
+  "units": {
+    "km": "{value} কি.মি.",
+    "m": "{value} মি.",
+    "kg": "{value} কে.জি.",
+    "t": "{value} টন",
+    "minutes": "{count, plural, one {# মিনিট} other {# মিনিট}}",
+    "hours": "{count, plural, one {# ঘণ্টা} other {# ঘণ্টা}}"
+  },
+  "signIn": {
+    "title": "RASTA-ত ছাইন ইন কৰক",
+    "rejected": "ইমেইল বা পাছৱৰ্ড গ্ৰহণ কৰা নহ'ল। একাউণ্ট পৰীক্ষা কৰি পুনৰ চেষ্টা কৰক।",
+    "unconfiguredTitle": "প্ৰমাণীকৰণ কনফিগাৰ কৰা হোৱা নাই",
+    "unconfiguredBody": "Supabase প্ৰজেক্ট URL আৰু প্ৰকাশযোগ্য চাবি স্থানীয় পৰিৱেশ ফাইলত যোগ কৰক। এই ক্লায়েণ্টত কোনো ডেমো পৰিচয়পত্ৰ নাই।",
+    "sessionExists": "{name}ৰ বাবে ছেচন আছে। ছাৰ্ভাৰে প্ৰফাইল, ভূমিকা অনুমতি আৰু জিলা পৰিসৰ সত্যাপন কৰাৰ পিছতহে কৰ্মক্ষেত্ৰ খোলে।",
+    "currentUser": "বৰ্তমান ব্যৱহাৰকাৰী",
+    "continue": "কৰ্মক্ষেত্ৰলৈ আগবাঢ়ক",
+    "checkAgain": "প্ৰৱেশ পুনৰ পৰীক্ষা কৰক",
+    "signOutLocally": "স্থানীয়ভাৱে ছাইন আউট কৰক",
+    "unsentTitle": "সকলো বস্তু এতিয়াও পঠোৱা হোৱা নাই",
+    "unsentText": "{count, plural, one {এই ডিভাইচৰ # টা প্ৰতিবেদন বা খচৰা} other {এই ডিভাইচৰ # টা প্ৰতিবেদন বা খচৰা}} নিয়ন্ত্ৰণ কক্ষত উপনীত হোৱা নাই। ছাইন আউট কৰিলে সেইবোৰ এই ডিভাইচৰ পৰা আঁতৰি যাব।",
+    "stay": "ছাইন ইন হৈ থাকক",
+    "discardAndSignOut": "সেইবোৰ আঁতৰাই ছাইন আউট কৰক",
+    "email": "ইমেইল",
+    "password": "পাছৱৰ্ড",
+    "submit": "ছাইন ইন কৰক",
+    "signingIn": "ছাইন ইন হৈ আছে…",
+    "bootstrap": {
+      "error": {
+        "title": "কাৰ্যকৰী প্ৰৱেশ সত্যাপন কৰিব পৰা নগ'ল",
+        "text": "ছাৰ্ভাৰে অবৈধ বা অপ্ৰত্যাশিত পৰিচয় উত্তৰ দিলে। কোনো কৰ্মক্ষেত্ৰ খোলা হোৱা নাই।"
+      },
+      "idle": {
+        "title": "কাৰ্যকৰী প্ৰৱেশ ল'ড হোৱা নাই",
+        "text": "এই ব্ৰাউজাৰ ছেচনত এতিয়াও কোনো ছাৰ্ভাৰ-সত্যাপিত কৰ্মক্ষেত্ৰ নাই।"
+      },
+      "loading": {
+        "title": "কাৰ্যকৰী প্ৰৱেশ পৰীক্ষা",
+        "text": "ছাৰ্ভাৰে আপোনাৰ সক্ৰিয় প্ৰফাইল, ভূমিকা অনুমতি আৰু জিলা পৰিসৰ সত্যাপন কৰি আছে।"
+      },
+      "ready": {
+        "title": "কাৰ্যকৰী প্ৰৱেশ সত্যাপিত",
+        "text": "ছাৰ্ভাৰে এই একাউণ্টৰ বাবে সক্ৰিয় কৰ্মক্ষেত্ৰ সত্যাপন কৰিলে।"
+      },
+      "scope_denied": {
+        "title": "এই একাউণ্টৰ কোনো কৰ্মক্ষেত্ৰ প্ৰৱেশ নাই",
+        "text": "ছাৰ্ভাৰে এই একাউণ্টক কাৰ্যকৰী কৰ্মক্ষেত্ৰৰ বাবে অনুমোদন নিদিলে।"
+      },
+      "session_expired": {
+        "title": "ছেচন নবীকৰণ কৰিব লাগিব",
+        "text": "API-এ এই ব্ৰাউজাৰ ছেচন গ্ৰহণ নকৰিলে। ছাইন আউট কৰি পুনৰ ছাইন ইন কৰক।"
+      },
+      "unavailable": {
+        "title": "পৰিচয় সেৱা উপলব্ধ নহয়",
+        "text": "একাউণ্টৰ ছেচন আছে, কিন্তু ইয়াৰ কাৰ্যকৰী ভূমিকা আৰু জিলা পৰিসৰ সত্যাপন কৰিব পৰা নগ'ল।"
+      },
+      "offline": {
+        "title": "অফলাইনত কাম চলি আছে",
+        "text": "ছাৰ্ভাৰলৈ সংযোগ নাই। এই ডিভাইচে এই একাউণ্টৰ বাবে ছাৰ্ভাৰে শেষবাৰ নিশ্চিত কৰা প্ৰৱেশাধিকাৰ ব্যৱহাৰ কৰিছে, আৰু সংযোগ ঘূৰি নহালৈকে একো বাহিৰলৈ নাযায়।"
+      }
+    }
+  },
+  "map": {
+    "title": "সুগমতা মানচিত্ৰ",
+    "district": "জিলা",
+    "allDistricts": "পৰিসৰৰ সকলো জিলা",
+    "statusFilter": "পথৰ অৱস্থা",
+    "layers": "স্তৰ",
+    "layerBasemap": "ভিত্তি মানচিত্ৰ (OpenStreetMap)",
+    "layerFacilities": "সুবিধা",
+    "layerBridges": "দলং",
+    "layerCoverage": "কভাৰেজ সীমা",
+    "legend": "সংকেত",
+    "legendOpen": "খোলা (নিৰেট ৰেখা)",
+    "legendRestricted": "সীমিত (ডেছ ৰেখা)",
+    "legendClosed": "বন্ধ (ডোৰাকটা)",
+    "legendUnknown": "অজ্ঞাত (বিন্দুযুক্ত)",
+    "legendFacility": "সুবিধা (উপনীত হ'ব পৰা / বিচ্ছিন্ন / কভাৰেজ অজ্ঞাত)",
+    "viewMap": "মানচিত্ৰ দৃশ্য",
+    "viewList": "সূচী দৃশ্য",
+    "segmentsInView": "দৃশ্যত {shown, plural, one {# খণ্ড} other {# খণ্ড}}, পৰিসৰত মুঠ {total}",
+    "truncated": "প্ৰথম {shown} টা দেখুওৱা হৈছে; সকলো খণ্ড চাবলৈ জুম কৰক",
+    "coverage": "পৰিসৰত {count, plural, one {# খণ্ড} other {# খণ্ড}}, {districts, plural, one {# জিলা} other {# জিলা}}",
+    "noSelection": "মানচিত্ৰ বা সূচীত এটা পথ বাছক",
+    "selectedRoad": "নিৰ্বাচিত পথ",
+    "unnamedRoad": "নামহীন পথ",
+    "roadClass": "পথৰ শ্ৰেণী",
+    "length": "দৈৰ্ঘ্য",
+    "direction": "দিশ",
+    "bridge": "দলং",
+    "bridgeLimit": "ওজনৰ সীমা",
+    "bridgeLimitUnknown": "অজ্ঞাত: অনুমতি নহয়",
+    "noBridge": "এই খণ্ডত দলং নাই",
+    "tabEvidence": "বৰ্তমানৰ প্ৰমাণ",
+    "tabRisk": "ভৱিষ্যতৰ বিপদ",
+    "tabHistory": "ইতিহাস",
+    "basis": "ভিত্তি",
+    "lastDecision": "শেষ সিদ্ধান্ত",
+    "decisionBy": "পৰ্যালোচনা {when}",
+    "reason": "কাৰণ",
+    "riskUnavailable": "পূৰ্বানুমানিত বিপদ উপলব্ধ নহয়",
+    "riskUnavailableBody": "বিপদ ইঞ্জিন এতিয়াও সংযুক্ত নহয়। উৎসহীন নম্বৰ দেখুওৱাৰ সলনি কোনো নম্বৰ দেখুওৱা নহয়।",
+    "noObservations": "এই খণ্ডৰ বাবে কোনো পৰ্যবেক্ষণ লিপিবদ্ধ নাই",
+    "observedAt": "পৰ্যবেক্ষিত",
+    "actions": "কাৰ্য",
+    "actionInspect": "পৰিদৰ্শন নিযুক্ত কৰক",
+    "actionReport": "পৰ্যবেক্ষণ প্ৰতিবেদন কৰক",
+    "actionPlan": "পথ পৰিকল্পনা",
+    "close": "বন্ধ কৰক",
+    "select": "বাছক",
+    "loading": "নেটৱৰ্ক ল'ড হৈ আছে…",
+    "emptyScope": "আপোনাৰ পৰিসৰত কোনো পথ নেটৱৰ্ক নাই",
+    "listCaption": "বৰ্তমান দৃশ্যৰ পথ খণ্ড"
+  },
+  "overview2": {
+    "reachableOf": "{monitored} ৰ ভিতৰত {reachable}",
+    "computedAt": "গণনা {when}",
+    "blockedSegments": "অৱৰুদ্ধ খণ্ড",
+    "blockedDetail": "{closed} বন্ধ, {restricted} সীমিত",
+    "awaitingReview": "পৰ্যালোচনাৰ অপেক্ষাত থকা প্ৰতিবেদন",
+    "awaitingDetail": "{count, plural, =0 {কোনো বাকী নাই} one {# টা বাকী} other {# টা বাকী}}",
+    "queueIsolated": "সুবিধা বিচ্ছিন্ন হ'ব পাৰে",
+    "queueIsolatedBody": "বৰ্তমান নেটৱৰ্ক সংস্কৰণত যোগান কেন্দ্ৰৰ পৰা কোনো খোলা পথ নাই।",
+    "queueReport": "ফিল্ড প্ৰতিবেদন সত্যাপনৰ অপেক্ষাত",
+    "queueReportBody": "{type}, প্ৰতিবেদিত {when}",
+    "openIncidents": "পৰ্যালোচনা শাৰী খোলক",
+    "openMap": "সুগমতা মানচিত্ৰ খোলক",
+    "districtTable": "জিলাৰ অৱস্থা",
+    "colDistrict": "জিলা",
+    "colReachable": "উপনীত হ'ব পৰা সুবিধা",
+    "colClosed": "বন্ধ",
+    "colUnknown": "অজ্ঞাত",
+    "colComputed": "গণনা",
+    "coveragePartial": "আংশিক কভাৰেজ",
+    "coverageNone": "নেটৱৰ্ক নাই",
+    "coverageComplete": "সম্পূৰ্ণ",
+    "deliveriesDetail": "{moving} চলি আছে, {paused} ৰৈ আছে",
+    "deliveriesOutOfScope": "আপোনাৰ ভূমিকাক যাত্ৰা দেখুওৱা নহয়",
+    "deliveriesUnavailable": "যাত্ৰা সেৱাই উত্তৰ নিদিলে"
+  },
+  "incidentType": {
+    "landslide_debris": "ভূমিস্খলন / ধ্বংসাৱশেষ",
+    "flooding": "বানপানী",
+    "bridge_damage": "দলঙৰ ক্ষতি",
+    "road_damage": "পথৰ ক্ষতি",
+    "congestion": "যানজট",
+    "road_reopened": "পথ পুনৰ খোলা",
+    "other": "অন্যান্য"
+  },
+  "incidents": {
+    "title": "প্ৰতিবেদনৰ পৰ্যালোচনা",
+    "queueLabel": "পুনৰীক্ষণ শাৰী",
+    "detailLabel": "ৰিportৰ বিৱৰণ",
+    "filterLabel": "ক্ৰম ফিল্টাৰ",
+    "filter": {
+      "submitted": "পুনৰীক্ষণৰ বাবে অপেক্ষা কৰি আছো",
+      "underReview": "পুনৰীক্ষণত আছে",
+      "all": "সকলো"
+    },
+    "badge": {
+      "awaiting": "এটা সিদ্ধান্তৰ বাবে অপেক্ষা কৰি আছো",
+      "decided": "সিদ্ধান্ত লোৱা হ’ল।"
+    },
+    "empty": {
+      "title": "শাৰীটো পৰিষ্কাৰ।"
+    },
+    "noSelection": {
+      "title": "এটা প্ৰতিবেদন বাছক"
+    },
+    "noNote": "সাংবাদিকগৰাকীয়ে কোনো টোকা লিখা নাছিল।",
+    "noEvidence": "কোনো প্ৰমাণ নাই।",
+    "evidenceCount": "{count} টা প্ৰমাণিত ফটো(সমূহ)",
+    "noPosition": "কোনো পদ নাই",
+    "reportedLabel": "জাননী দিয়া হ’ল",
+    "loadingDetail": "সম্পূৰ্ণ প্ৰতিবেদন লোড হৈ আছে...",
+    "alreadyDecided": "এই প্ৰতিবেদনখন ইতিমধ্যে নিৰ্ধাৰণ কৰা হৈছে। ইয়াৰ ৰেকৰ্ড কেৱল পঢ়িব পৰা বিধৰ।",
+    "decisionLabel": "সিদ্ধান্ত",
+    "decision": {
+      "confirmClosure": "বন্ধ কৰাটো নিশ্চিত কৰক",
+      "confirmRestriction": "নিষেধাজ্ঞা নিশ্চিত কৰক",
+      "reopen": "পুনৰ মুকলি পথ",
+      "requestClarification": "অনুগ্রহ কৰি স্পষ্টীকৰণ বিচাৰক",
+      "reject": "বাতিল কৰক"
+    },
+    "segmentsLabel": "প্ৰভাৱিত পথৰ অংশসমূহ",
+    "segmentsHelp": "কেৱল আপুনি টিক চিহ্ন দিয়া অংশবোৰৰ অৱস্থা সলনি হয়। কোনো বস্তু স্বয়ংক্ৰিয়ভাৱে প্ৰয়োগ নহয়।",
+    "noSegments": "এই প্ৰতিবেদনৰ সৈতে কোনো পথৰ অংশ সংযোগ কৰা হোৱা নাই, সেয়ে ই পথৰ অৱস্থা সলনি কৰিব নোৱাৰে। ইয়াৰ পৰিৱৰ্তে স্পষ্টীকৰণৰ বাবে অনুৰোধ কৰক।",
+    "unnamedSegment": "নামবিহীন অংশ",
+    "reasonLabel": "কাৰণ",
+    "reasonPlaceholder": "এই সিদ্ধান্তক কি সাক্ষ্যই সমৰ্থন কৰে?",
+    "reasonHelp": "আপোনাৰ নামৰ বিৰুদ্ধে অডিট ট্ৰেইলত ৰেকৰ্ড কৰা হৈছে।",
+    "evidenceLabel": "প্ৰমাণ",
+    "evidenceHelp": "কেৱল সত্যাপন কৰা ফাইলবোৰহে ছাৰ্ভাৰৰ আকাৰ আৰু চেকছাম পৰীক্ষা পাৰ কৰিছিল।",
+    "noEvidenceWarning": "কোনো প্ৰমাণ সংযুক্ত কৰা হোৱা নাই। প্ৰমাণ অবিহনে কোনো প্ৰতিবেদনে পথ বন্ধ কৰিব নালাগে।",
+    "noPositionWarning": "কোনো পদ সংযুক্ত কৰা হোৱা নাছিল, সেয়েহে এই প্ৰতিবেদনটো নেটৱৰ্কত ৰাখিব নোৱাৰি।",
+    "submitDecision": "ৰেকৰ্ড সিদ্ধান্ত",
+    "submitting": "ৰেকৰ্ডিং কৰি থকা হৈছে...",
+    "needSegment": "কমপক্ষে এটা অংশ টিক কৰক।",
+    "outcome": {
+      "title": "সিদ্ধান্ত লিপিবদ্ধ কৰা হ’ল।",
+      "replayed": "এই সিদ্ধান্তটো ইতিমধ্যে ৰেকৰ্ড কৰা হৈছিল; সংৰক্ষিত ফলাফলটো দেখুওৱা হৈছে।",
+      "noChange": "কোনো পথে ৰাজ্য সলনি কৰা নাই।",
+      "skipped": "প্ৰয়োগ কৰা হোৱা নাই: {outcome}",
+      "networkVersion": "নতুন নেটৱৰ্ক সংস্কৰণ",
+      "audit": "{audit} টা অডিট ইভেণ্ট, {outbox} টা শাৰীত থকা জাননী।",
+      "backToQueue": "পুনৰ শাৰীলৈ ঘূৰি যাওক"
+    },
+    "error": {
+      "queue": "সমালোচনাৰ শাৰীখন লোড কৰিব পৰা নগ'ল।",
+      "review": "সিদ্ধান্তটো লিপিবদ্ধ কৰা হোৱা নাছিল।"
+    },
+    "loadingSegments": "জাননী দিয়া স্থানৰ ওচৰৰ পথবোৰ বিচাৰি উলিওৱা হৈছে...",
+    "noSegmentsNearby": "এই স্থানৰ ওচৰত কোনো পথৰ অংশ পোৱা নগ'ল, সেয়েহে এই প্ৰতিবেদনখনে পথৰ অৱস্থা সলনি কৰিব নোৱাৰে।",
+    "segmentsNearbyHelp": "যি ঠাইৰ পৰা ৰিপ'ৰ্ট লোৱা হৈছিল তাৰ কাষৰ পথসমূহ। আপুনি টিক চিহ্ন দিয়া পথবোৰৰ অৱস্থা সলনি হয়।",
+    "evidenceNotViewable": "প্ৰমাণ হিচাপে দেখুৱাব নোৱাৰি: সত্যাপন কৰা হোৱা নাই।",
+    "evidenceLoading": "ফটো লোড হৈ আছে...",
+    "evidenceOpen": "এই ফটোখন সম্পূৰ্ণ আকাৰত খোলক।",
+    "evidenceAlt": "এই প্ৰতিবেদনৰ সৈতে এখন ফটো দাখিল কৰা হৈছে।",
+    "evidenceClose": "ফটোখন বন্ধ কৰক",
+    "segmentDistance": "{metres} মি দূৰত",
+    "pinnedPosition": "পিন কৰা অৱস্থান"
+  },
+  "outbox": {
+    "title": "ক্ৰম সংমিশ্ৰণ কৰক",
+    "queueLabel": "ক্ৰমবদ্ধ পৰিৱৰ্তনসমূহ",
+    "empty": {
+      "title": "সকলো পঠোৱা হৈছে।"
+    },
+    "state": {
+      "queued": "প্ৰেৰণ কৰিবলৈ ৰৈ আছো",
+      "uploading": "পঠোৱা হৈছে",
+      "accepted": "প্ৰেৰণ কৰা হ’ল।",
+      "conflict": "আপোনাৰ সিদ্ধান্তৰ প্ৰয়োজন।",
+      "needs_action": "আপোনাৰ মনোযোগৰ প্ৰয়োজন।",
+      "blocked": "আৰু এটা পৰিৱৰ্তনৰ বাবে অপেক্ষা কৰি আছো"
+    },
+    "stateHelp": {
+      "queued": "সংযোগ স্থাপন হ'লে প্ৰেৰণ কৰা হ'ব।",
+      "uploading": "এতিয়া পঠোৱা হৈছে।",
+      "accepted": "ছাৰ্ভাৰৰ ওচৰত আছে।",
+      "conflict": "চাৰ্ভাৰগৰাকীয়ে ইতিমধ্যে ইয়াৰ বাবে কিবা এটা ৰেকৰ্ড কৰিছে। পুনৰীক্ষণ কৰি পুনৰ প্ৰেৰণ কৰক।",
+      "needs_action": "এইটো এনেকৈ পঠিয়াব নোৱাৰি।"
+    },
+    "type": {
+      "incident.create": "ক্ষেত্ৰীয় প্ৰতিবেদন",
+      "incident.attachment.complete": "প্ৰমাণ ফটো পৰীক্ষা",
+      "incident.review": "পুনৰীক্ষণ সিদ্ধান্ত",
+      "inspection.accept": "কামটো গ্ৰহণ কৰা হ’ল।",
+      "inspection.start": "কাম আৰম্ভ হ'ল।",
+      "inspection.complete": "কাম জমা দিয়া হ’ল।",
+      "incident.attachment.upload": "প্ৰমাণ ফটো আপলোড"
+    },
+    "blockedReason": "প্ৰথমে প্ৰেৰণ কৰিবলগীয়া ৰিপ'ৰ্টখনৰ বাবে অপেক্ষা কৰি আছো।",
+    "attempts": "এতিয়ালৈকে {count} টা চেষ্টা কৰা হৈছে।",
+    "notYetSent": "এতিয়ালৈকে পঠিওৱা হোৱা নাই।",
+    "retry": "পুনৰ চেষ্টা কৰক।"
+  },
+  "inspections": {
+    "title": "পৰিদৰ্শনসমূহ",
+    "assign": "এটা নিৰীক্ষণ নিৰ্ধাৰণ কৰক।",
+    "assigning": "নিযুক্ত কৰা হৈছে...",
+    "cancel": "উত্তোলন কৰক",
+    "choose": "বাছক...",
+    "district": "জিলা",
+    "assignee": "ক্ষেত্ৰ বিষয়া",
+    "instructions": "নিৰ্দেশনাসমূহ",
+    "instructionsPlaceholder": "তেওঁলোকে তাত উপস্থিত হ'লে কি পৰীক্ষা কৰিব লাগে?",
+    "noOfficers": "কোনো সক্ৰিয় ক্ষেত্ৰ বিষয়াৰ এই জিলাখন সামৰি লোৱা অনুদান নাই।",
+    "openHeading": "খোলা",
+    "closedHeading": "বন্ধ",
+    "unnamedTarget": "নামবিহীন লক্ষ্য",
+    "unnamedAssignee": "নিযুক্ত কৰ্ত্ৰীৰ নাম উল্লেখ কৰা হোৱা নাই।",
+    "dueAt": "দেউতাক {when}",
+    "noDueDate": "কোনো নিৰ্ধাৰিত তাৰিখ নাই",
+    "empty": {
+      "title": "কোনো পৰিদৰ্শন নাই"
+    },
+    "target": {
+      "incident": "ক্ষেত্ৰীয় প্ৰতিবেদন",
+      "segment": "পথখণ্ড",
+      "bridge": "সেতু",
+      "facility": "সুবিধা"
+    },
+    "status": {
+      "assigned": "নিযুক্ত",
+      "accepted": "স্বীকৃত",
+      "in_progress": "চলমান",
+      "submitted": "দাখিল কৰা হ’ল",
+      "reviewed": "সমীক্ষা কৰা হ’ল",
+      "cancelled": "প্রত্যাহৃত",
+      "overdue": "অতিৰিক্ত"
+    },
+    "error": {
+      "queue": "নিৰীক্ষণসমূহ লোড কৰিব পৰা নগ'ল",
+      "assign": "পৰিদৰ্শনটো নিৰ্ধাৰণ কৰা হোৱা নাছিল।",
+      "cancel": "পৰিদৰ্শনটো উঠাই লোৱা হোৱা নাছিল।"
+    }
+  },
+  "priority": {
+    "label": "অগ্ৰাধিকাৰ",
+    "low": "কম",
+    "normal": "সাধাৰণ",
+    "high": "বেছি",
+    "critical": "অতি জৰুৰী"
+  },
+  "deliveries": {
+    "title": "যোগান",
+    "requestsHeading": "অনুৰোধ",
+    "consignmentsHeading": "সামগ্ৰী",
+    "filter": {
+      "all": "সকলো",
+      "draft": "খচৰা",
+      "planned": "সাজু",
+      "moving": "পথত",
+      "arrived": "পালে"
+    },
+    "empty": {
+      "title": "এতিয়ালৈকে কোনো সামগ্ৰী নাই"
+    },
+    "requestsEmpty": "মুকলি অনুৰোধ নাই।",
+    "filterEmpty": "এই বাছনিৰ সৈতে কোনো সামগ্ৰী নিমিলে।",
+    "fulfilment": "{total} টাৰ ভিতৰত {delivered} টা সামগ্ৰী পোৱা গ'ল",
+    "noConsignments": "কোনো সামগ্ৰী দিয়া হোৱা নাই",
+    "neededBy": "{when} ৰ ভিতৰত লাগে",
+    "noDeadline": "সময়সীমা নাই",
+    "selectTitle": "এটা সামগ্ৰী বাছনি কৰক",
+    "unnamedFacility": "নামবিহীন কেন্দ্ৰ",
+    "itemsHeading": "সামগ্ৰীৰ তালিকা",
+    "commodity": "সামগ্ৰী",
+    "ordered": "পঠোৱা",
+    "delivered": "পোৱা",
+    "weight": "ওজন",
+    "totalWeight": "মুঠ {weight} কেজি",
+    "weightUnknown": "মুঠ ওজন অজ্ঞাত: অন্ততঃ এটা শাৰীৰ ওজন দিয়া হোৱা নাই",
+    "tripHeading": "যাত্ৰা",
+    "noTrip": "এতিয়ালৈকে কোনো বাহন নিৰ্ধাৰণ কৰা হোৱা নাই।",
+    "vehicle": "বাহন",
+    "driver": "চালক",
+    "startedAt": "{when} ত আৰম্ভ",
+    "notStarted": "আৰম্ভ হোৱা নাই",
+    "receiptHeading": "ৰচিদ",
+    "noReceipt": "Nothing has been received yet.",
+    "receivedBy": "{who} এ বুজি ল'লে",
+    "receivedAt": "{when} ত পোৱা গ'ল",
+    "shortBy": "{amount} {unit} কম",
+    "action": {
+      "plan": "পৰিকল্পনাৰ বাবে মুকলি কৰক",
+      "assign": "বাহন আৰু চালক নিৰ্ধাৰণ কৰক",
+      "planHint": "ইয়াৰ দ্বাৰা তালিকা শুদ্ধ বুলি নিশ্চিত হয়। তাৰ পিছতহে যাত্ৰা সাজিব পাৰি।"
+    },
+    "capacity": {
+      "within": "{capacity} কেজি ধাৰণক্ষমতাৰ ভিতৰত {load} কেজি"
+    },
+    "error": {
+      "list": "যোগানৰ তালিকা ল'ব পৰা নগ'ল।",
+      "plan": "এই সামগ্ৰী মুকলি কৰিব পৰা নগ'ল।",
+      "assign": "এই যাত্ৰা নিৰ্ধাৰণ কৰিব পৰা নগ'ল।",
+      "requests": "অনুৰোধবোৰ ল'ব পৰা নগ'ল।"
+    },
+    "startedLabel": "আৰম্ভ"
+  },
+  "assignTrip": {
+    "title": "বাহন আৰু চালক নিৰ্ধাৰণ কৰক",
+    "vehicle": "বাহন",
+    "driver": "চালক",
+    "choose": "বাছনি কৰক…",
+    "noVehicles": "এই সংগঠনৰ বাবে কোনো বাহন পঞ্জীভুক্ত নাই।",
+    "noDrivers": "এই জিলাত কোনো যোগ্য চালকৰ বৰ্তমান অনুমতি নাই।",
+    "loadWeight": "বোজা {weight} কেজি",
+    "loadUnknown": "বোজাৰ ওজন অজ্ঞাত",
+    "capacityOf": "ধাৰণক্ষমতা {capacity} কেজি",
+    "capacityUnknown": "ধাৰণক্ষমতা দিয়া হোৱা নাই",
+    "overCapacity": "এই বোজা বাহনৰ ঘোষিত ধাৰণক্ষমতাতকৈ বেছি।",
+    "uncheckable": "ধাৰণক্ষমতা পৰীক্ষা কৰিব নোৱাৰি: {reason}। বোজা খাপ খায় বুলি জানিলেহে নিৰ্ধাৰণ কৰক।",
+    "submit": "নিৰ্ধাৰণ কৰক",
+    "cancel": "বাতিল"
+  },
+  "fleet": {
+    "title": "বাহন বহৰ",
+    "vehiclesHeading": "বাহন",
+    "tripsHeading": "যাত্ৰা",
+    "capacity": "{capacity} কেজি",
+    "capacityUnknown": "ধাৰণক্ষমতা দিয়া হোৱা নাই",
+    "height": "সৰ্বাধিক উচ্চতা {height} মি.",
+    "outOfService": "সেৱাৰ বাহিৰত",
+    "scope": {
+      "district": "আপোনাৰ জিলাবোৰৰ যাত্ৰা",
+      "assigned_to_me": "আপোনাক দিয়া যাত্ৰা"
+    },
+    "empty": {
+      "vehiclesTitle": "তালিকাত কোনো বাহন নাই",
+      "tripsTitle": "কোনো যাত্ৰা নাই"
+    },
+    "action": {
+      "offer": "চালকক দিয়ক",
+      "cancel": "যাত্ৰা বাতিল কৰক"
+    },
+    "error": {
+      "vehicles": "বাহনৰ তালিকা ল'ব পৰা নগ'ল।",
+      "trips": "যাত্ৰাবোৰ ল'ব পৰা নগ'ল।",
+      "transition": "এই যাত্ৰা সলনি কৰিব পৰা নগ'ল।",
+      "locations": "বাহনৰ স্থান ল'ব পৰা নগ'ল।"
+    },
+    "livePositionsHeading": "বেড়া এই মুহূৰ্তত ক’ত আছে",
+    "livePositionsSummary": "{live} প্ৰতিবেদন কৰিছে, {stale} দেৰি, {silent} প্ৰতিবেদন নাই",
+    "livePositionsEmptyTitle": "কোনো যাত্ৰা চলি থকা নাই",
+    "reportingLive": "প্ৰতিবেদন কৰিছে",
+    "reportingStale": "দেৰি",
+    "reportingNever": "প্ৰতিবেদন কৰা নাই",
+    "neverReported": "এই যাত্ৰাই এতিয়ালৈকে কোনো স্থান পঠোৱা নাই",
+    "staleExplained": "{minutes} মিনিটৰ পৰা কিছুৱেই অহা নাই। ইয়াক বাহনৰ বৰ্তমান স্থান বুলি নধৰিব।",
+    "coordinates": "{latitude}, {longitude}",
+    "accuracy": "±{accuracy} মি"
+  },
+  "planner": {
+    "title": "পথ পৰিকল্পনা",
+    "inputsHeading": "পথৰ অনুৰোধ",
+    "origin": "ক'ৰ পৰা",
+    "destination": "ক'লৈ",
+    "vehicle": "বাহন",
+    "anyVehicle": "কোনো বাহন বছা হোৱা নাই",
+    "priority": "অগ্ৰাধিকাৰ",
+    "departure": "ৰাওনা",
+    "deadline": "সময়সীমা",
+    "choose": "বাছনি কৰক…",
+    "plan": "পথ সাজক",
+    "planning": "সজা হৈ আছে…",
+    "replan": "আকৌ সাজক",
+    "alternativesHeading": "বিকল্প",
+    "showOptions": "বিকল্প ({count})",
+    "hideOptions": "বিকল্প লুকুৱাওক",
+    "noFacilities": "এই জিলাত কোনো কেন্দ্ৰৰ ৰাউটিং নোড নাই, গতিকে পথ সজাৰ বাবে কোনো বিন্দু নাই।",
+    "sameFacility": "দুখন বেলেগ কেন্দ্ৰ বাছনি কৰক।",
+    "emptyTitle": "এতিয়ালৈকে কোনো পথ সজা হোৱা নাই",
+    "mapEmptyTitle": "দেখুৱাবলৈ একো নাই",
+    "category": {
+      "fastest_feasible": "আটাইতকৈ সোনকালে সম্ভৱ",
+      "lower_exposure": "কম বিপদ",
+      "alternate": "বিকল্প"
+    },
+    "distance": "দূৰত্ব",
+    "eta": "আনুমানিক সময়",
+    "etaRange": "{low}–{high}",
+    "margin": "সময়সীমাৰ ব্যৱধান",
+    "marginLate": "{duration} দেৰি",
+    "marginSpare": "{duration} বাকী",
+    "marginNone": "কোনো সময়সীমা দিয়া হোৱা নাই",
+    "avoidedClosures": "{count, plural, =0 {এৰাই চলিবলৈ কোনো নিশ্চিত বন্ধ নাই} one {# নিশ্চিত বন্ধ এৰাই চলে} other {# নিশ্চিত বন্ধ এৰাই চলে}}",
+    "unknownConstraints": "{count, plural, =0 {কোনো অনিশ্চিত সীমা নাই} one {# অনিশ্চিত সীমা} other {# অনিশ্চিত সীমা}}",
+    "riskUnavailable": "এই পথৰ বাবে কোনো বিপদৰ স্কোৰ লিপিবদ্ধ হোৱা নাই",
+    "riskMax": "সৰ্বোচ্চ বিপদ {score}",
+    "riskUnscored": "{count, plural, one {# খণ্ডৰ বিপদৰ স্কোৰ নাই} other {# খণ্ডৰ বিপদৰ স্কোৰ নাই}}",
+    "needsReview": "পঠোৱাৰ আগতে পৰীক্ষা লাগে",
+    "select": "মানচিত্ৰত দেখুৱাওক",
+    "selected": "মানচিত্ৰত দেখা গৈছে",
+    "approve": "এই পথ অনুমোদন কৰক",
+    "approving": "অনুমোদন কৰা হৈ আছে…",
+    "approved": "অনুমোদিত",
+    "approveHeading": "পথ অনুমোদন কৰক",
+    "approveVehicle": "বাহন",
+    "approveRoute": "পথ",
+    "approveSnapshot": "নেটৱৰ্ক {version} ৰ ভিত্তিত সজা",
+    "approveUnresolved": "অমীমাংসিত বাধা",
+    "approveNoUnresolved": "এই পথত কোনো অমীমাংসিত বাধা নাই।",
+    "approveConfirm": "অনুমোদন কৰক",
+    "approveCancel": "বাতিল",
+    "staleTitle": "এই পৰিকল্পনা পুৰণি হৈ গৈছে",
+    "staleBody": "এই পথ সজাৰ পিছত ৰাস্তাৰ নেটৱৰ্ক সলনি হ'ল, গতিকে ইয়াক অনুমোদন কৰিব নোৱাৰি। বৰ্তমানৰ বিকল্প চাবলৈ আকৌ সাজক।",
+    "noRouteTitle": "কোনো পথ পোৱা নগ'ল",
+    "noRouteBody": "এই বাহনৰ বাধাসমূহৰ অধীনত কোনো বাট পোৱা নগ'ল।",
+    "reasonHeading": "কাৰণ",
+    "actionsHeading": "আপুনি কি কৰিব পাৰে",
+    "exclusionsHeading": "সন্ধানৰ পৰা বাদ দিয়া",
+    "exclusion": {
+      "segment_closed": "{count, plural, one {# নিশ্চিত বন্ধ} other {# নিশ্চিত বন্ধ}}",
+      "vehicle_exceeds_max_weight": "{count, plural, one {# খণ্ড এই বাহনৰ বাবে বৰ পাতল} other {# খণ্ড এই বাহনৰ বাবে বৰ পাতল}}",
+      "vehicle_exceeds_max_height": "{count, plural, one {# খণ্ড এই বাহনৰ বাবে বৰ চাপৰ} other {# খণ্ড এই বাহনৰ বাবে বৰ চাপৰ}}"
+    },
+    "reason": {
+      "closed_segments_disconnect_route": "নিশ্চিত বন্ধবোৰে গন্তব্যলৈ যোৱা প্ৰতিটো বাট কাটি দিছে।",
+      "vehicle_constraints_disconnect_route": "এই বাহনে বাকী থকা ৰাস্তাবোৰ ব্যৱহাৰ কৰিব নোৱাৰে।",
+      "no_path_in_directed_graph": "এই বিন্দু দুটাৰ মাজত ৰাস্তাৰ গ্ৰাফত কোনো বাট নাই, একো বাদ নিদিলেও।",
+      "origin_has_no_usable_road": "আৰম্ভণিৰ পৰা ওলোৱা প্ৰতিটো ৰাস্তা বন্ধ বা এই বাহনৰ বাবে অনুপযুক্ত।"
+    },
+    "coverage": {
+      "unobserved_network": "{count, plural, one {এই জিলাৰ # খণ্ডৰ অৱস্থা লিপিবদ্ধ হোৱা নাই} other {এই জিলাৰ # খণ্ডৰ অৱস্থা লিপিবদ্ধ হোৱা নাই}}। সেইবোৰৰ ওপৰেৰে যোৱা পথ গণনা কৰা, নিশ্চিত কৰা নহয়।"
+    },
+    "warning": {
+      "unknown_constraint": "এই পথৰ এটা বোজাৰ সীমা কেতিয়াও নিৰ্ধাৰণ কৰা হোৱা নাই।",
+      "unobserved_segment_state": "এই পথৰ এটা অংশৰ বিষয়ে কোনেও জনোৱা নাই; ইয়াৰ অৱস্থা অজ্ঞাত, খোলা নহয়।",
+      "restricted_segment_used": "এই পথে এনে ৰাস্তা ব্যৱহাৰ কৰে যিটো কেৱল নিষেধাজ্ঞাৰ সৈতেহে পাৰ হ'ব পাৰি।"
+    },
+    "notSafeClaim": "RASTA-এ কোনো পথ নিৰাপদ বুলি দাবী নকৰে। ই কয় কি ব্যৱহাৰ হ'ল, কি বাদ দিয়া হ'ল আৰু কি নিৰ্ধাৰণ কৰিব পৰা নগ'ল।",
+    "policyVersion": "খৰচ নীতি {version}",
+    "error": {
+      "plan": "পথ সাজিব পৰা নগ'ল।",
+      "approve": "এই পথ অনুমোদন কৰিব পৰা নগ'ল।",
+      "facilities": "কেন্দ্ৰবোৰ ল'ব পৰা নগ'ল।",
+      "bind": "পথটো অনুমোদিত হ'ল, কিন্তু যাত্ৰাক দিব পৰা নগ'ল।"
+    },
+    "district": "জিলা",
+    "forTrip": "কোন যাত্ৰাৰ বাবে",
+    "noTrip": "কোনো যাত্ৰা নাই (কেৱল পৰিকল্পনা)",
+    "tripOption": "{reference}, {vehicle}, পথ: {route}",
+    "routeWithdrawn": "উঠাই লোৱা হৈছে",
+    "routeNone": "নাই",
+    "bound": "পথটো যাত্ৰা {reference}ক দিয়া হ'ল। চালকে ইয়াক \"মোৰ যাত্ৰাসমূহ\"ত দেখে।"
+  },
+  "alerts": {
+    "title": "সতৰ্কবাণী",
+    "summary": "{total}ৰ ভিতৰত {unacknowledged} এতিয়াও স্বীকৃত নহয়",
+    "filterUnacknowledged": "মই স্বীকাৰ নকৰাবোৰ কেৱল দেখুৱাওক",
+    "acknowledge": "স্বীকাৰ কৰক",
+    "acknowledged": "স্বীকৃত",
+    "validUntil": "{when}লৈ বৈধ",
+    "expired": "This alert has expired.",
+    "notReplaced": "আপোনাৰ পথ প্ৰত্যাহাৰ কৰা হৈছে, সলনি কৰা হোৱা নাই। ডিস্পেচাৰে নতুন পথ অনুমোদন কৰিব লাগিব।",
+    "severity": {
+      "critical": "গুৰুতৰ",
+      "warning": "সতৰ্কতা",
+      "info": "তথ্যৰ বাবে"
+    },
+    "evidence": {
+      "segments": "{count} পথ খণ্ড প্ৰভাৱিত",
+      "consignment": "প্ৰেৰণ {reference}",
+      "blocked": "অনুমোদিত পথৰ {count} খণ্ড বন্ধ",
+      "facility": "সুবিধা: {facility}",
+      "reasons": "কাৰণ: {reasons}"
+    },
+    "empty": {
+      "title": "আপোনাৰ ইনবক্সত কিবা নাই"
+    },
+    "error": {
+      "load": "সতৰ্কবাণী ল’ব পৰা নগ’ল।",
+      "acknowledge": "সেই সতৰ্কবাণী স্বীকাৰ কৰিব পৰা নগ’ল।"
+    },
+    "push": {
+      "title": "এই ডিভাইচত জাননী",
+      "notConfigured": "এই স্থাপনত জাননী বন্ধ আছে: কোনো পুশ চাবি ছেট কৰা হোৱা নাই, সেয়েহে একো পঠোৱা নহয়।",
+      "unsupported": "এই ব্ৰাউজাৰে জাননী দেখুৱাব নোৱাৰে।",
+      "noWorker": "জাননীৰ বাবে ইনষ্টল কৰা এপ লাগে। এই ব্ৰাউজাৰত এপৰ ছাৰ্ভিচ ৱৰ্কাৰ চলি থকা নাই।",
+      "blocked": "ব্ৰাউজাৰৰ ছেটিংছত এই ছাইটৰ জাননী বন্ধ কৰি ৰখা হৈছে।",
+      "on": "এই ডিভাইচৰ বাবে অন।",
+      "off": "এই ডিভাইচৰ বাবে অফ।",
+      "enable": "জাননী অন কৰক",
+      "disable": "অফ কৰক",
+      "test": "পৰীক্ষামূলক জাননী পঠিয়াওক",
+      "testResult": "{attempted}টা পঞ্জীয়নৰ ভিতৰত {sent}টালৈ পৰীক্ষা পঠোৱা হ'ল।",
+      "testNothing": "একো পঠোৱা নহ'ল: {reasons}।",
+      "failed": "এই ব্ৰাউজাৰে জাননীৰ বাবে পঞ্জীয়ন কৰিব নোৱাৰিলে: {reason}",
+      "notificationTitle": "RASTA: নতুন সতৰ্কবাণী",
+      "notificationBody": "পঢ়িবলৈ সতৰ্কবাণী ইনবক্স খোলক।"
+    },
+    "replan": "এই যাত্ৰাৰ বাবে নতুন পথ পৰিকল্পনা কৰক"
+  },
+  "health": {
+    "title": "তথ্যৰ স্বাস্থ্য",
+    "mode": "চালনা ধৰণ: {mode}",
+    "sourcesHeading": "উৎস",
+    "noSources": "এতিয়ালৈকে কোনো উৎস চলোৱা হোৱা নাই।",
+    "coverageHeading": "সামৰণি",
+    "queuesHeading": "শাৰী আৰু ট্ৰেকিং",
+    "pushHeading": "জাননী",
+    "riskModelHeading": "বিপদ মডেল",
+    "riskModel": "সক্ৰিয় মডেল: {version}",
+    "riskModelNotTrained": "নিয়ম-ভিত্তিক ভাৰ, কোনো প্ৰশিক্ষিত মডেল নহয়।",
+    "pushConfigured": "Push is configured ({sender}).",
+    "pushNotConfigured": "এই প্ৰয়োগত পুশ ছেট কৰা হোৱা নাই। প্ৰতিটো সতৰ্কবাণী ইনবক্সত আছে।",
+    "sourceState": {
+      "live": "জীৱন্ত",
+      "recorded": "লিপিবদ্ধ",
+      "stale": "পুৰণি",
+      "failed": "বিফল",
+      "never_run": "কেতিয়াও চলা নাই",
+      "disabled": "ছেট কৰা নাই"
+    },
+    "lastSuccess": "শেষ সফল চলা {when}",
+    "neverSucceeded": "কোনো চলা সফল হোৱা নাই",
+    "records": "{count} ৰেকৰ্ড",
+    "consecutiveFailures": "একেৰাহে {count} বিফলতা",
+    "observed": "{total}ৰ ভিতৰত {observed} পথ খণ্ডৰ অৱস্থা লিপিবদ্ধ",
+    "scored": "{total}ৰ ভিতৰত {scored} পথ খণ্ডৰ বিপদ স্ক’ৰ আছে",
+    "facilities": "{total}ৰ ভিতৰত {onGraph} সুবিধা ৰাউটিং গ্ৰাফত আছে",
+    "noGraphVersion": "কোনো গ্ৰাফ সংস্কৰণ লিপিবদ্ধ নাই",
+    "recompute": "উৎস পুনৰ চলাওক",
+    "recomputed": "{model}ৰ দ্বাৰা {scored} স্ক’ৰ কৰা হ’ল, {unscored} স্ক’ৰ নোহোৱাকৈ থাকিল।",
+    "outbox": "অপ্ৰক্ৰিয়াকৃত ঘটনা",
+    "ledger": "আইডেমপ’টেন্সি খতিয়ান",
+    "reporting": "প্ৰতিবেদন কৰা যাত্ৰা",
+    "stale": "দেৰি হোৱা যাত্ৰা",
+    "silent": "মৌন যাত্ৰা",
+    "error": {
+      "load": "তথ্যৰ স্বাস্থ্য ল’ব পৰা নগ’ল।",
+      "recompute": "উৎস পুনৰ চলাব পৰা নগ’ল।"
+    }
+  },
+  "settings": {
+    "title": "ছেটিংছ",
+    "build": {
+      "title": "এই বিল্ড",
+      "appVersion": "এপ সংস্কৰণ",
+      "mode": "ডিপ্লয়মেণ্ট ম'ড"
+    },
+    "update": {
+      "ready": "নতুন সংস্কৰণ সাজু। পঠাবলৈ কিছুও বাকী নাই, সেয়েহে পুনৰ ল'ড কৰা সুৰক্ষিত।",
+      "apply": "এতিয়াই পুনৰ ল'ড কৰক",
+      "held": "নতুন সংস্কৰণ ডাউনল'ড হৈছে কিন্তু ৰখা হৈছে: {count}টা প্ৰতিবেদন এতিয়াও নিয়ন্ত্ৰণ কক্ষত পোৱা নাই। সকলো পঠোৱাৰ পিছত ই আগবঢ়োৱা হ'ব।",
+      "unsupported": "এই ব্ৰাউজাৰে সাৰ্ভিচ ৱৰ্কাৰ চলাই নাই, সেয়েহে ইয়াত আপডেট কৰিবলৈ কিছু নাই।"
+    },
+    "pack": {
+      "title": "অফলাইন ডেটা পেক",
+      "version": "পেক সংস্কৰণ",
+      "age": "বয়স",
+      "ageDays": "{days} দিন পুৰণি",
+      "stale": "পুৰণি",
+      "staleExplainer": "This pack is out of date. Download a newer one when you can.",
+      "contents": "সমগ্ৰী",
+      "counts": "{edges} পথ খণ্ড, {facilities} সুবিধা",
+      "checksum": "চেকছাম",
+      "attribution": "উৎস",
+      "noneTitle": "কোনো পেক ডাউনল'ড হোৱা নাই",
+      "download": "ডাউনল'ড",
+      "downloading": "{percent}%",
+      "alreadyHave": "ইতিমধ্যে আছে",
+      "activated": "প্ৰকাশিত চেকছামৰ সৈতে সত্যাপিত আৰু সক্ৰিয়।",
+      "offerDetail": "সংস্কৰণ {version}, {megabytes} MB",
+      "manifestError": "পেক তালিকা পঢ়িব নোৱাৰি"
+    }
+  },
+  "report": {
+    "title": "নতুন ক্ষেত্ৰ প্ৰতিবেদন",
+    "lede": "Saved on this device as you type, until the control room has it.",
+    "typeLabel": "আপুনি কি দেখিলে?",
+    "typePlaceholder": "বাছক…",
+    "locationHeading": "ক'ত",
+    "useGps": "মোৰ বৰ্তমান অৱস্থান লওক",
+    "locating": "অৱস্থান লোৱা হৈছে…",
+    "gpsFix": "GPS অৱস্থান ±{accuracy} মি, {time}ত",
+    "gpsFailed": "GPS অৱস্থান পোৱা নগ'ল: {reason} তাৰ সলনি তলত অৱস্থান দিয়ক।",
+    "gpsUnknownError": "ডিভাইচে কোনো অৱস্থান নিদিলে।",
+    "pinRecorded": "মেনুৱেল পিন হিচাপে লিপিবদ্ধ, GPS অৱস্থান নহয়",
+    "fromMap": "মানচিত্ৰত বাছি লোৱা পথ: {road}",
+    "unnamedRoad": "নামবিহীন পথ",
+    "latitude": "অক্ষাংশ",
+    "longitude": "দ্ৰাঘিমাংশ",
+    "manualHint": "ইয়াত লিখা বা মানচিত্ৰৰ পৰা লোৱা অৱস্থান পিন হিচাপে লিপিবদ্ধ হয়। পৰ্যালোচকে জোখা GPS অৱস্থানৰ পৰা পাৰ্থক্য দেখে।",
+    "photoHeading": "ফটো (ঐচ্ছিক)",
+    "addPhoto": "ফটো তোলক বা বাছক",
+    "removePhoto": "ফটো আঁতৰাওক",
+    "photoAlt": "এই প্ৰতিবেদনৰ লগত সংলগ্ন ফটো",
+    "photoMeta": "{size}, চেকছাম {checksum}…",
+    "photoKept": "ছাৰ্ভাৰে সত্যাপন নকৰালৈকে এই ডিভাইচত ৰখা হয়।",
+    "photoRefused": {
+      "too_large": "এই ফটো 5 MB-তকৈ ডাঙৰ। মূল ফটোটোৱেই প্ৰমাণ, সেয়ে ইয়াক সৰু কৰা নহয়, সৰু ফটো তোলক।",
+      "unsupported_type": "কেৱল JPEG, PNG বা WebP ফটো সংলগ্ন কৰিব পাৰি।",
+      "empty": "ফটোটো খালী আছিল।",
+      "storage_unavailable": "এই ব্ৰাউজাৰে স্থানীয় তথ্য ৰখা নাই, সেয়ে পঠোৱালৈকে ফটো ৰাখিব নোৱাৰি।",
+      "capture_failed": "কোনো ফটো তোলা নহ'ল।"
+    },
+    "noteLabel": "টোকা (ঐচ্ছিক)",
+    "notePlaceholder": "বন্ধ লেন, ৰৈ থকা বাহন, পানীৰ গভীৰতা…",
+    "noteCount": "4000ৰ ভিতৰত {count}টা আখৰ",
+    "savedLocally": "এই ডিভাইচত সংৰক্ষিত",
+    "notSaved": "সংৰক্ষিত হোৱা নাই: এই ব্ৰাউজাৰে স্থানীয় তথ্য ৰখা নাই",
+    "submitHint": "সংযোগ পোৱাৰ লগে লগে প্ৰতিবেদন পঠোৱা হয়।",
+    "stillNeeded": "এতিয়াও লাগে: {items}",
+    "missing": {
+      "type": "আপুনি কি দেখিলে",
+      "location": "এটা অৱস্থান"
+    },
+    "submit": "প্ৰতিবেদন শাৰীত ৰাখক",
+    "queueFailed": "প্ৰতিবেদনটো এই ডিভাইচত শাৰীত ৰাখিব পৰা নগ'ল।",
+    "discard": "খচৰা বাতিল কৰক",
+    "discardConfirm": "এই প্ৰতিবেদন আৰু ইয়াৰ ফটো এই ডিভাইচৰ পৰা বাতিল কৰিবনে? ইয়াক ওভতাব নোৱাৰি।",
+    "queuedTitle": "প্ৰতিবেদন শাৰীত",
+    "queuedBody": "নিয়ন্ত্ৰণ কক্ষই নোপোৱালৈকে ই এই ডিভাইচত থাকে। আপুনি এই পৃষ্ঠা বন্ধ কৰিব পাৰে; সংযোগ পালে পঠোৱা হয়।",
+    "step": {
+      "report": "প্ৰতিবেদন",
+      "photo": "ফটো আপলোড",
+      "check": "ফটো পৰীক্ষা"
+    },
+    "state": {
+      "waiting": "পঠোৱাৰ অপেক্ষাত",
+      "sending": "পঠোৱা হৈছে",
+      "done": "সম্পূৰ্ণ",
+      "attention": "আপোনাৰ মনোযোগ লাগে"
+    },
+    "receivedAs": "নিয়ন্ত্ৰণ কক্ষই পালে (প্ৰসংগ {id})",
+    "check": {
+      "verified": "চেকছামৰ বিপৰীতে ছাৰ্ভাৰে সত্যাপন কৰিলে",
+      "notVerified": "সত্যাপিত নহয়: {reason}"
+    },
+    "fileAnother": "আন এখন প্ৰতিবেদন দাখিল কৰক",
+    "openQueue": "ছিংক শাৰী খোলক"
+  },
+  "fieldHome": {
+    "title": "মোৰ ক্ষেত্ৰ কাম",
+    "heading": "আপোনাক অৰ্পণ কৰা",
+    "lede": "Works without signal. Each change is sent once a connection returns.",
+    "newReport": "নতুন প্ৰতিবেদন",
+    "openQueue": "ছিংক শাৰী",
+    "assignedHeading": "মুকলি কাম",
+    "empty": {
+      "title": "একো অৰ্পণ কৰা হোৱা নাই"
+    },
+    "error": "আপোনাৰ কামবোৰ ল'ড কৰিব পৰা নগ'ল",
+    "queueFailed": "এই পদক্ষেপটো এই ডিভাইচত ৰাখিব পৰা নগ'ল।",
+    "accept": "গ্ৰহণ কৰক",
+    "start": "আৰম্ভ কৰক",
+    "submitFindings": "বিচাৰি পোৱা কথা দাখিল কৰক",
+    "findingsLabel": "আপুনি কি পালে (ঐচ্ছিক)",
+    "queueFindings": "দাখিল শাৰীত ৰাখক",
+    "reportHere": "এই পথৰ বিষয়ে প্ৰতিবেদন দিয়ক",
+    "moveQueued": "{move}: পঠোৱাৰ অপেক্ষাত",
+    "moveNeedsAttention": "এই পদক্ষেপত ছিংক শাৰীত আপোনাৰ মনোযোগ লাগে।"
+  },
+  "driverTrips": {
+    "title": "মোৰ যাত্ৰা",
+    "heading": "আপোনাৰ যাত্ৰা",
+    "phoneOnly": "যাত্ৰা আৰম্ভ, অৱস্থান প্ৰেৰণ আৰু ডেলিভাৰী ৰচিদ আপোনাৰ ফোনৰ RASTA চালক এপত হয়। স্ক্ৰীণ লক হ'লে ব্ৰাউজাৰে আপোনাৰ অৱস্থান পঠিয়াব নোৱাৰে, সেয়ে এই পৃষ্ঠাই কেৱল আপোনাৰ যাত্ৰা আৰু পথ দেখুৱায়।",
+    "error": "আপোনাৰ যাত্ৰা ল'ড কৰিব পৰা নগ'ল",
+    "empty": {
+      "title": "কোনো যাত্ৰা অৰ্পণ কৰা হোৱা নাই"
+    },
+    "listLabel": "আপোনাৰ যাত্ৰা",
+    "noReference": "প্ৰসংগবিহীন চালান",
+    "noVehicle": "কোনো বাহন লিপিবদ্ধ নাই",
+    "routeHeading": "অনুমোদিত পথ",
+    "startedAt": "{when}ত আৰম্ভ",
+    "noRoute": "নিয়ন্ত্ৰণ কক্ষই এই যাত্ৰাৰ বাবে কোনো পথ অনুমোদন কৰা নাই। আন কোনো পথক অনুমোদিত বুলি ধৰি নাযাব।",
+    "routeError": "পথ ল'ড কৰিব পৰা নগ'ল",
+    "noGeometry": "The approved route has no map line to draw.",
+    "approvedSummary": "{distance}, পৰিকল্পকৰ অনুমান অনুসৰি {low}ৰ পৰা {high}",
+    "approvedAgainst": "নেটৱৰ্ক সংস্কৰণ {version}ৰ ভিত্তিত {when}ত অনুমোদিত",
+    "planState": {
+      "proposed": "এই পথটো কেৱল প্ৰস্তাৱ, অনুমোদিত নহয়। নিয়ন্ত্ৰণ কক্ষৰ বাবে অপেক্ষা কৰক।",
+      "superseded": "এই পথটো নতুন পথেৰে সলনি কৰা হৈছে। ইয়াক অনুসৰণ নকৰিব; বৰ্তমান পথৰ বাবে চালক এপ খোলক।",
+      "invalidated": "পথ সলনি হোৱাৰ বাবে নিয়ন্ত্ৰণ কক্ষই এই পথ উঠাই ল'লে। ইয়াক অনুসৰণ নকৰিব; নতুন পথৰ বাবে অপেক্ষা কৰক।",
+      "rejected": "এই পথটো নাকচ কৰা হৈছে। ইয়াক অনুসৰণ নকৰিব; নিয়ন্ত্ৰণ কক্ষৰ বাবে অপেক্ষা কৰক।"
+    }
+  },
+  "permissions": {
+    "title": "ডিভাইচ পৰীক্ষা",
+    "lede": "পথলৈ ওলোৱাৰ আগতে জানক এই ডিভাইচে এপক ফটো আৰু অৱস্থান ল'বলৈ দিব নে নাই।",
+    "checksHeading": "ডিভাইচ পৰীক্ষা",
+    "checksBody": "প্ৰতিটো অনুমতি কেৱল আপুনি পৰীক্ষা আৰম্ভ কৰিলেহে বিচৰা হয়।",
+    "localOnlyTitle": "কেৱল স্থানীয় পৰীক্ষা",
+    "localOnlyBody": "এই পৰীক্ষাসমূহে কোনো প্ৰতিবেদন নবনায়, ট্ৰেকিং আৰম্ভ নকৰে, বা কোনো ছাৰ্ভাৰলৈ ফটো বা অৱস্থান নপঠায়।",
+    "camera": {
+      "title": "কেমেৰা",
+      "idle": "কেমেৰাৰ কোনো অনুৰোধ কৰা হোৱা নাই।",
+      "running": "কেমেৰা বা ফাইল বাছনিকৰ্তাৰ বাবে অপেক্ষা।",
+      "passed": "এই ডিভাইচত ফটো তোলা হ'ল। ইয়াক আপলোড বা সংৰক্ষণ কৰা হোৱা নাই।",
+      "none": "কোনো ফটো তোলা হোৱা নাই",
+      "previewAlt": "কেমেৰা পৰীক্ষাৰ ফটো, এই ডিভাইচত ৰখা",
+      "test": "কেমেৰা পৰীক্ষা কৰক"
+    },
+    "location": {
+      "title": "বৰ্তমান অৱস্থান",
+      "idle": "অৱস্থানৰ কোনো অনুৰোধ কৰা হোৱা নাই।",
+      "running": "ডিভাইচৰ পৰা এটা অৱস্থান বিচৰা হৈছে।",
+      "passed": "{time}ত অৱস্থান পোৱা গ'ল। ই এই ডিভাইচত থাকে।",
+      "passedWithAccuracy": "{time}ত ±{accuracy} মি সঠিকতাৰে অৱস্থান পোৱা গ'ল। ই এই ডিভাইচত থাকে।",
+      "received": "অৱস্থান পোৱা গ'ল",
+      "noCoordinates": "এই পৰীক্ষাত স্থানাংক ইচ্ছাকৃতভাৱে দেখুওৱা নহয়।",
+      "test": "বৰ্তমান অৱস্থান পৰীক্ষা কৰক"
+    },
+    "error": {
+      "camera_unavailable": "এই ডিভাইচ বা ব্ৰাউজাৰে এপক কোনো কেমেৰা নিদিয়ে।",
+      "location_unavailable": "এই ব্ৰাউজাৰে এপক অৱস্থান নিদিয়ে।",
+      "permission_denied": "অনুমতি দিয়া নহ'ল। ডিভাইচৰ ছেটিংছত অনুমতি দিয়ক আৰু পুনৰ চেষ্টা কৰক।",
+      "request_cancelled": "অনুৰোধ বাতিল কৰা হ'ল।",
+      "location_failed": "অনুৰোধ শেষ হোৱাৰ আগতে কোনো অৱস্থান পোৱা নগ'ল।",
+      "unknown": "ডিভাইচ পৰীক্ষা কোনো চিনাক্ত উত্তৰ নোহোৱাকৈ বিফল হ'ল।"
+    }
+  },
+  "gate": {
+    "frameBody": "RASTA-ই কেৱল ব্ৰাউজাৰ ছেচনৰ ভিত্তিত কাৰ্যকৰী দৃশ্য নোখোলে।",
+    "checkingTitle": "কৰ্মক্ষেত্ৰ প্ৰৱেশ পৰীক্ষা",
+    "checkingBody": "সক্ৰিয় প্ৰফাইল, ভূমিকা অনুমতি আৰু জিলা পৰিসৰ সত্যাপন কৰা হৈছে।",
+    "unconfiguredTitle": "প্ৰমাণীকৰণ কনফিগাৰ কৰা হোৱা নাই",
+    "unconfiguredHeading": "কাৰ্যকৰী দৃশ্য বন্ধ থাকে",
+    "unconfiguredBody": "এই বিল্ডত Supabase প্ৰজেক্ট URL আৰু প্ৰকাশযোগ্য চাবি কনফিগাৰ কৰা নাই। কোনো ডেমো একাউণ্ট বা স্থানীয় বাইপাছ উপলব্ধ নহয়।",
+    "reason": {
+      "scopeDenied": "ছাৰ্ভাৰে এই একাউণ্টক অনুৰোধ কৰা কৰ্মক্ষেত্ৰৰ বাবে অনুমোদন নিদিলে।",
+      "sessionExpired": "API-এ এই ব্ৰাউজাৰ ছেচন গ্ৰহণ নকৰিলে। নবীকৰণৰ বাবে পুনৰ ছাইন ইন কৰক।",
+      "unavailable": "পৰিচয় সেৱা উপলব্ধ নহয়, সেয়ে ভূমিকা আৰু জিলা পৰিসৰ সত্যাপন কৰিব নোৱাৰি।",
+      "signIn": "ছাৰ্ভাৰ-সত্যাপিত কৰ্মক্ষেত্ৰৰ বাবে প্ৰশাসকে দিয়া একাউণ্টেৰে ছাইন ইন কৰক।"
+    },
+    "requiredTitle": "কৰ্মক্ষেত্ৰ প্ৰৱেশ প্ৰয়োজন",
+    "requiredHeading": "কোনো কাৰ্যকৰী তথ্য দেখুওৱা হোৱা নাই",
+    "deniedTitle": "এই দৃশ্য এই ভূমিকাৰ বাবে উপলব্ধ নহয়",
+    "deniedHeading": "প্ৰৱেশ অস্বীকাৰ",
+    "deniedBody": "ছাৰ্ভাৰ-সত্যাপিত ভূমিকা অনুমতিয়ে এই পথৰ অনুমতি নিদিয়ে। কোনো তথ্য বা কাৰ্য ল'ড কৰা হোৱা নাই।",
+    "returnToWorkspace": "কৰ্মক্ষেত্ৰলৈ উভতি যাওক",
+    "offlineNotice": "অফলাইন। আপোনাৰ প্ৰৱেশাধিকাৰ শেষবাৰ {when}ত নিশ্চিত কৰা হৈছিল। প্ৰতিবেদনসমূহ এই ডিভাইচত ৰখা হয় আৰু সংযোগ ঘূৰি অহাৰ পিছত পঠোৱা হয়।"
+  }
+}

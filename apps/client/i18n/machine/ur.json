@@ -1,0 +1,6 @@
+{
+  "_comment": "Which strings in ../ur.json are machine output, and the English each was drafted from. A string not listed here was written by a person and is never overwritten by the generator.",
+  "provider": "Sarvam Translate",
+  "model": "sarvam-translate:v1",
+  "strings": {}
+}

@@ -1,0 +1,994 @@
+{
+  "_meta": {
+    "locale": "hi",
+    "label": "Hindi",
+    "nativeLabel": "हिन्दी",
+    "reviewed": false,
+    "reviewedBy": null,
+    "notes": "Drafted by the team without a native-speaker review. Keys missing here fall back to English at display time. Do not claim Hindi support until reviewed is true.",
+    "script": "Deva",
+    "dir": "ltr",
+    "machine": {
+      "provider": "Sarvam Translate",
+      "model": "sarvam-translate:v1",
+      "strings": 135,
+      "generatedAt": "2026-09-27T03:22:41Z"
+    },
+    "fallbackKeys": [
+      "alerts.expired",
+      "deliveries.noReceipt",
+      "driverTrips.noGeometry",
+      "fieldHome.lede",
+      "health.pushConfigured",
+      "report.lede",
+      "settings.pack.staleExplainer"
+    ]
+  },
+  "app": {
+    "name": "RASTA",
+    "skipToContent": "मुख्य सामग्री पर जाएँ"
+  },
+  "nav": {
+    "operations": "संचालन",
+    "overview": "अवलोकन",
+    "map": "पहुँच मानचित्र",
+    "planner": "मार्ग योजनाकार",
+    "deliveries": "डिलीवरी",
+    "fleet": "वाहन बेड़ा",
+    "incidents": "घटनाएँ",
+    "inspections": "निरीक्षण",
+    "alerts": "अलर्ट",
+    "dataHealth": "डेटा स्वास्थ्य",
+    "settings": "सेटिंग",
+    "toggleSidebar": "साइडबार टॉगल करें",
+    "signIn": "साइन इन",
+    "fieldWork": "फ़ील्ड कार्य",
+    "fieldHome": "मेरा फ़ील्ड कार्य",
+    "newReport": "नई रिपोर्ट",
+    "myTrips": "मेरी यात्राएँ",
+    "syncQueue": "सिंक कतार",
+    "permissions": "डिवाइस जाँच"
+  },
+  "locale": {
+    "label": "भाषा",
+    "unreviewed": "अनुवाद का मसौदा, मूल भाषी की समीक्षा अभी बाकी"
+  },
+  "status": {
+    "passability": {
+      "label": "सड़क की स्थिति",
+      "open": "खुली",
+      "restricted": "प्रतिबंधित",
+      "closed": "बंद",
+      "unknown": "अज्ञात"
+    },
+    "risk": {
+      "label": "अनुमानित जोखिम",
+      "low": "कम जोखिम",
+      "moderate": "मध्यम जोखिम",
+      "high": "उच्च जोखिम",
+      "unavailable": "जोखिम उपलब्ध नहीं"
+    },
+    "sync": {
+      "label": "सिंक स्थिति",
+      "saved_locally": "इस डिवाइस पर सहेजा गया",
+      "waiting": "कनेक्शन की प्रतीक्षा",
+      "uploading": "फ़ोटो अभी अपलोड हो रही है",
+      "sent": "नियंत्रण कक्ष को भेजा गया",
+      "awaiting_verification": "सत्यापन लंबित",
+      "conflict": "आपकी समीक्षा आवश्यक",
+      "failed": "भेजा नहीं जा सका"
+    },
+    "review": {
+      "label": "समीक्षा स्थिति",
+      "reported": "रिपोर्ट किया गया, असत्यापित",
+      "confirmed_closed": "बंद होने की पुष्टि",
+      "confirmed_restricted": "प्रतिबंध की पुष्टि",
+      "rejected": "अस्वीकृत",
+      "clarification": "स्पष्टीकरण माँगा गया",
+      "submitted": "प्रस्तुत किया गया",
+      "under_review": "समीक्षाधीन",
+      "confirmed": "पुष्टि की गई",
+      "superseded": "अतिक्रमित",
+      "pending": "अपलोड लंबित है",
+      "uploaded": "अपलोड किया गया, सत्यापित नहीं।",
+      "verified": "सत्यापित",
+      "expired": "अपलोड की समय सीमा समाप्त हो गई",
+      "draft": "ड्राफ्ट",
+      "queued": "भेजने के लिए पंक्तिबद्ध"
+    },
+    "consignment": {
+      "label": "खेप की स्थिति",
+      "draft": "मसौदा",
+      "planned": "नियोजित",
+      "assigned": "सौंपी गई",
+      "in_transit": "रास्ते में",
+      "delivered": "पहुँच गई",
+      "partially_delivered": "आंशिक रूप से पहुँची",
+      "failed": "विफल",
+      "cancelled": "रद्द"
+    },
+    "trip": {
+      "label": "यात्रा की स्थिति",
+      "planned": "नियोजित",
+      "awaiting_driver": "चालक की प्रतीक्षा",
+      "active": "चल रही है",
+      "paused": "रुकी हुई",
+      "completed": "पूर्ण",
+      "failed": "विफल",
+      "cancelled": "रद्द"
+    },
+    "request": {
+      "label": "माँग की स्थिति",
+      "open": "खुली",
+      "planned": "नियोजित",
+      "partially_fulfilled": "आंशिक रूप से पूरी",
+      "fulfilled": "पूरी",
+      "cancelled": "रद्द"
+    }
+  },
+  "mode": {
+    "label": "डेटा मोड",
+    "synthetic": "सिम्युलेटेड परिदृश्य",
+    "recorded": "रिकॉर्ड किया गया डेटा",
+    "live": "लाइव डेटा",
+    "local_demo": "स्थानीय डेमो",
+    "hosted_demo": "होस्टेड डेमो",
+    "pilot": "पायलट",
+    "production": "उत्पादन",
+    "noData": "कोई डेटा जुड़ा नहीं"
+  },
+  "freshness": {
+    "updated": "अद्यतन {relative}",
+    "justNow": "अभी-अभी",
+    "minutesAgo": "{count, plural, one {# मिनट पहले} other {# मिनट पहले}}",
+    "hoursAgo": "{count, plural, one {# घंटा पहले} other {# घंटे पहले}}",
+    "daysAgo": "{count, plural, one {# दिन पहले} other {# दिन पहले}}",
+    "stale": "पुराना",
+    "never": "कभी अद्यतन नहीं",
+    "timezone": "IST",
+    "source": "स्रोत: {source}"
+  },
+  "offline": {
+    "title": "अंतिम सहेजे गए डेटा से काम हो रहा है",
+    "body": "कनेक्शन लौटने तक बदलाव इसी डिवाइस पर रहेंगे। नियंत्रण कक्ष को अभी कुछ नहीं भेजा गया है।",
+    "queued": "{count, plural, =0 {कुछ भी कतार में नहीं} one {# आइटम भेजने की प्रतीक्षा में} other {# आइटम भेजने की प्रतीक्षा में}}",
+    "retry": "अभी पुनः प्रयास करें",
+    "viewQueue": "सिंक केंद्र खोलें"
+  },
+  "error": {
+    "title": "डेटा लोड नहीं हो सका",
+    "body": "आपकी प्रविष्टि इस स्क्रीन पर सुरक्षित रखी गई है।",
+    "requestId": "अनुरोध आईडी {id}",
+    "retry": "फिर से प्रयास करें",
+    "dismiss": "बंद करें"
+  },
+  "empty": {
+    "noDecisions": "समीक्षा के लिए कोई निर्णय नहीं",
+    "noMap": "कोई मानचित्र डेटा लोड नहीं"
+  },
+  "confirm": {
+    "title": "इस कार्रवाई की पुष्टि करें",
+    "reasonLabel": "कारण",
+    "reasonPlaceholder": "आवश्यक। ऑडिट ट्रेल के लिए निर्णय स्पष्ट करें।",
+    "reasonRequired": "कारण देना आवश्यक है।",
+    "confirm": "पुष्टि करें",
+    "cancel": "रद्द करें",
+    "working": "प्रक्रिया जारी…"
+  },
+  "list": {
+    "viewAsTable": "तालिका के रूप में देखें",
+    "viewAsList": "सूची के रूप में देखें",
+    "actions": "कार्रवाइयाँ",
+    "noRows": "दिखाने के लिए कोई पंक्ति नहीं",
+    "loading": "लोड हो रहा है…",
+    "itemCount": "{count, plural, one {# वस्तु} other {# वस्तुएँ}}"
+  },
+  "overview": {
+    "title": "लॉजिस्टिक्स पहुँच अवलोकन",
+    "subtitle": "इस खाते के लिए कोई ज़िला निर्धारित नहीं है।",
+    "summaries": "परिचालन सारांश",
+    "reachableFacilities": "पहुँच योग्य सुविधाएँ",
+    "activeDeliveries": "सक्रिय डिलीवरी",
+    "reasonNoNetwork": "पायलट नेटवर्क आयात नहीं हुआ",
+    "reasonNoIncidents": "घटना स्रोत जुड़ा नहीं",
+    "reasonNoReports": "कोई रिपोर्ट जमा नहीं हुई",
+    "networkCard": "पहुँच नेटवर्क",
+    "queueCard": "निर्णय कतार"
+  },
+  "units": {
+    "km": "{value} किमी",
+    "m": "{value} मी",
+    "kg": "{value} किग्रा",
+    "t": "{value} टन",
+    "minutes": "{count, plural, one {# मिनट} other {# मिनट}}",
+    "hours": "{count, plural, one {# घं} other {# घं}}"
+  },
+  "signIn": {
+    "title": "RASTA में साइन इन करें",
+    "rejected": "ईमेल या पासवर्ड स्वीकार नहीं हुआ। खाता जाँचें और फिर प्रयास करें।",
+    "unconfiguredTitle": "प्रमाणीकरण कॉन्फ़िगर नहीं है",
+    "unconfiguredBody": "Supabase प्रोजेक्ट URL और प्रकाशनीय कुंजी स्थानीय पर्यावरण फ़ाइल में जोड़ें। इस क्लाइंट में कोई डेमो क्रेडेंशियल नहीं है।",
+    "sessionExists": "{name} के लिए सत्र मौजूद है। सर्वर द्वारा प्रोफ़ाइल, भूमिका अनुमतियाँ और ज़िला दायरा सत्यापित होने के बाद ही कार्यक्षेत्र खुलता है।",
+    "currentUser": "वर्तमान उपयोगकर्ता",
+    "continue": "कार्यक्षेत्र पर जारी रखें",
+    "checkAgain": "पहुँच फिर से जाँचें",
+    "signOutLocally": "स्थानीय रूप से साइन आउट करें",
+    "unsentTitle": "सब कुछ अभी भेजा नहीं गया है",
+    "unsentText": "{count, plural, one {इस डिवाइस की # रिपोर्ट या मसौदा} other {इस डिवाइस की # रिपोर्टें या मसौदे}} नियंत्रण कक्ष तक नहीं पहुँचे हैं। साइन आउट करने पर ये इस डिवाइस से हट जाएँगे।",
+    "stay": "साइन इन रहें",
+    "discardAndSignOut": "इन्हें हटाएँ और साइन आउट करें",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "submit": "साइन इन करें",
+    "signingIn": "साइन इन हो रहा है…",
+    "bootstrap": {
+      "error": {
+        "title": "परिचालन पहुँच सत्यापित नहीं हो सकी",
+        "text": "सर्वर ने अमान्य या अप्रत्याशित पहचान उत्तर दिया। कोई कार्यक्षेत्र नहीं खोला गया।"
+      },
+      "idle": {
+        "title": "परिचालन पहुँच लोड नहीं है",
+        "text": "इस ब्राउज़र सत्र में अभी कोई सर्वर-सत्यापित कार्यक्षेत्र नहीं है।"
+      },
+      "loading": {
+        "title": "परिचालन पहुँच की जाँच",
+        "text": "सर्वर आपकी सक्रिय प्रोफ़ाइल, भूमिका अनुमतियाँ और ज़िला दायरा सत्यापित कर रहा है।"
+      },
+      "ready": {
+        "title": "परिचालन पहुँच सत्यापित",
+        "text": "सर्वर ने इस खाते के लिए सक्रिय कार्यक्षेत्र सत्यापित किया।"
+      },
+      "scope_denied": {
+        "title": "इस खाते की कोई कार्यक्षेत्र पहुँच नहीं है",
+        "text": "सर्वर ने इस खाते को परिचालन कार्यक्षेत्र के लिए अधिकृत नहीं किया।"
+      },
+      "session_expired": {
+        "title": "सत्र नवीनीकृत करना होगा",
+        "text": "API ने यह ब्राउज़र सत्र स्वीकार नहीं किया। साइन आउट करें, फिर से साइन इन करें।"
+      },
+      "unavailable": {
+        "title": "पहचान सेवा उपलब्ध नहीं है",
+        "text": "खाते का सत्र मौजूद है, पर उसकी परिचालन भूमिका और ज़िला दायरा सत्यापित नहीं हो सका।"
+      },
+      "offline": {
+        "title": "ऑफ़लाइन काम जारी",
+        "text": "सर्वर तक पहुँच नहीं है। यह डिवाइस इस खाते के लिए सर्वर द्वारा पिछली बार पुष्टि की गई पहुँच का उपयोग कर रहा है, और कनेक्शन लौटने तक कुछ भी बाहर नहीं जाता।"
+      }
+    }
+  },
+  "map": {
+    "title": "पहुँच मानचित्र",
+    "district": "ज़िला",
+    "allDistricts": "दायरे के सभी ज़िले",
+    "statusFilter": "सड़क की स्थिति",
+    "layers": "परतें",
+    "layerBasemap": "आधार मानचित्र (OpenStreetMap)",
+    "layerFacilities": "सुविधाएँ",
+    "layerBridges": "पुल",
+    "layerCoverage": "कवरेज सीमा",
+    "legend": "संकेत",
+    "legendOpen": "खुली (ठोस रेखा)",
+    "legendRestricted": "प्रतिबंधित (खंडित रेखा)",
+    "legendClosed": "बंद (धारीदार)",
+    "legendUnknown": "अज्ञात (बिंदुदार)",
+    "legendFacility": "सुविधा (पहुँच योग्य / अलग-थलग / कवरेज अज्ञात)",
+    "viewMap": "मानचित्र दृश्य",
+    "viewList": "सूची दृश्य",
+    "segmentsInView": "दृश्य में {shown, plural, one {# खंड} other {# खंड}}, दायरे में कुल {total}",
+    "truncated": "पहले {shown} दिखाए गए; सभी खंड देखने के लिए ज़ूम करें",
+    "coverage": "दायरे में {count, plural, one {# खंड} other {# खंड}}, {districts, plural, one {# ज़िला} other {# ज़िले}}",
+    "noSelection": "मानचित्र या सूची में कोई सड़क चुनें",
+    "selectedRoad": "चयनित सड़क",
+    "unnamedRoad": "बिना नाम की सड़क",
+    "roadClass": "सड़क श्रेणी",
+    "length": "लंबाई",
+    "direction": "दिशा",
+    "bridge": "पुल",
+    "bridgeLimit": "भार सीमा",
+    "bridgeLimitUnknown": "अज्ञात: अनुमति नहीं",
+    "noBridge": "इस खंड पर कोई पुल नहीं",
+    "tabEvidence": "वर्तमान साक्ष्य",
+    "tabRisk": "भावी जोखिम",
+    "tabHistory": "इतिहास",
+    "basis": "आधार",
+    "lastDecision": "अंतिम निर्णय",
+    "decisionBy": "समीक्षा {when}",
+    "reason": "कारण",
+    "riskUnavailable": "पूर्वानुमानित जोखिम उपलब्ध नहीं",
+    "riskUnavailableBody": "जोखिम इंजन अभी जुड़ा नहीं है। बिना स्रोत के अंक दिखाने के बजाय कोई अंक नहीं दिखाया जाता।",
+    "noObservations": "इस खंड के लिए कोई अवलोकन दर्ज नहीं",
+    "observedAt": "देखा गया",
+    "actions": "कार्रवाइयाँ",
+    "actionInspect": "निरीक्षण सौंपें",
+    "actionReport": "अवलोकन दर्ज करें",
+    "actionPlan": "मार्ग योजना",
+    "close": "बंद करें",
+    "select": "चुनें",
+    "loading": "नेटवर्क लोड हो रहा है…",
+    "emptyScope": "आपके दायरे में कोई सड़क नेटवर्क नहीं",
+    "listCaption": "वर्तमान दृश्य के सड़क खंड"
+  },
+  "overview2": {
+    "reachableOf": "{monitored} में से {reachable}",
+    "computedAt": "गणना {when}",
+    "blockedSegments": "अवरुद्ध खंड",
+    "blockedDetail": "{closed} बंद, {restricted} प्रतिबंधित",
+    "awaitingReview": "समीक्षा लंबित रिपोर्ट",
+    "awaitingDetail": "{count, plural, =0 {कोई लंबित नहीं} one {# लंबित} other {# लंबित}}",
+    "queueIsolated": "सुविधा अलग-थलग हो सकती है",
+    "queueIsolatedBody": "वर्तमान नेटवर्क संस्करण में आपूर्ति केंद्र से कोई खुला मार्ग नहीं।",
+    "queueReport": "फ़ील्ड रिपोर्ट सत्यापन लंबित",
+    "queueReportBody": "{type}, रिपोर्ट {when}",
+    "openIncidents": "समीक्षा कतार खोलें",
+    "openMap": "पहुँच मानचित्र खोलें",
+    "districtTable": "ज़िला स्थिति",
+    "colDistrict": "ज़िला",
+    "colReachable": "पहुँच योग्य सुविधाएँ",
+    "colClosed": "बंद",
+    "colUnknown": "अज्ञात",
+    "colComputed": "गणना",
+    "coveragePartial": "आंशिक कवरेज",
+    "coverageNone": "कोई नेटवर्क नहीं",
+    "coverageComplete": "पूर्ण",
+    "deliveriesDetail": "{moving} चल रहे, {paused} रुके हुए",
+    "deliveriesOutOfScope": "आपकी भूमिका को यात्राएँ नहीं दिखाई जातीं",
+    "deliveriesUnavailable": "यात्रा सेवा ने उत्तर नहीं दिया"
+  },
+  "incidentType": {
+    "landslide_debris": "भूस्खलन / मलबा",
+    "flooding": "बाढ़",
+    "bridge_damage": "पुल क्षति",
+    "road_damage": "सड़क क्षति",
+    "congestion": "जाम",
+    "road_reopened": "सड़क फिर खुली",
+    "other": "अन्य"
+  },
+  "incidents": {
+    "title": "रिपोर्ट समीक्षा",
+    "queueLabel": "समीक्षा कतार",
+    "detailLabel": "रिपोर्ट का विवरण",
+    "filterLabel": "पंक्ति फ़िल्टर",
+    "filter": {
+      "submitted": "समीक्षा की प्रतीक्षा है",
+      "underReview": "समीक्षाधीन",
+      "all": "सभी"
+    },
+    "badge": {
+      "awaiting": "निर्णय की प्रतीक्षा है",
+      "decided": "तय किया"
+    },
+    "empty": {
+      "title": "कतार खाली है।"
+    },
+    "noSelection": {
+      "title": "एक रिपोर्ट का चयन करें"
+    },
+    "noNote": "रिपोर्टर द्वारा कोई नोट नहीं लिखा गया था।",
+    "noEvidence": "कोई सबूत नहीं",
+    "evidenceCount": "{count} सत्यापित फोटो(तस्वीरें)",
+    "noPosition": "कोई पद नहीं",
+    "reportedLabel": "रिपोर्ट किया गया",
+    "loadingDetail": "पूरी रिपोर्ट लोड हो रही है...",
+    "alreadyDecided": "यह रिपोर्ट पहले ही तय हो चुकी है। इसका रिकॉर्ड केवल पढ़ने के लिए है।",
+    "decisionLabel": "निर्णय",
+    "decision": {
+      "confirmClosure": "बंद करने की पुष्टि करें",
+      "confirmRestriction": "प्रतिबंध की पुष्टि करें",
+      "reopen": "सड़क फिर से खोल दो",
+      "requestClarification": "स्पष्टीकरण का अनुरोध करें",
+      "reject": "खारिज करें"
+    },
+    "segmentsLabel": "प्रभावित सड़क खंड",
+    "segmentsHelp": "केवल वे खंड जिन्हें आप टिक करते हैं, उनकी स्थिति बदलती है। कुछ भी स्वचालित रूप से लागू नहीं होता है।",
+    "noSegments": "इस रिपोर्ट से कोई सड़क खंड जुड़ा हुआ नहीं है, इसलिए यह सड़क की स्थिति नहीं बदल सकती। इसके बजाय स्पष्टीकरण का अनुरोध करें।",
+    "unnamedSegment": "अनाम खंड",
+    "reasonLabel": "कारण",
+    "reasonPlaceholder": "इस निर्णय का समर्थन करने वाले साक्ष्य में क्या है?",
+    "reasonHelp": "आपके नाम के विरुद्ध ऑडिट ट्रेल में दर्ज किया गया।",
+    "evidenceLabel": "सबूत",
+    "evidenceHelp": "केवल सत्यापित फ़ाइलें सर्वर के आकार और चेकसम जांच में पास हुईं।",
+    "noEvidenceWarning": "कोई सबूत नहीं संलग्न किया गया था। बिना सबूत की रिपोर्ट को सड़क बंद नहीं करनी चाहिए।",
+    "noPositionWarning": "कोई पद संलग्न नहीं था, इसलिए इस रिपोर्ट को नेटवर्क पर नहीं रखा जा सकता है।",
+    "submitDecision": "रिकॉर्ड निर्णय",
+    "submitting": "रिकॉर्डिंग...",
+    "needSegment": "कम से कम एक खंड पर टिक करें।",
+    "outcome": {
+      "title": "निर्णय दर्ज किया गया",
+      "replayed": "यह निर्णय पहले से ही दर्ज किया गया था; संग्रहीत परिणाम दिखाया गया है।",
+      "noChange": "किसी भी सड़क की स्थिति नहीं बदली।",
+      "skipped": "लागू नहीं किया गया: {outcome}",
+      "networkVersion": "नया नेटवर्क संस्करण",
+      "audit": "{audit} ऑडिट इवेंट(s), {outbox} कतारबद्ध सूचना(s)।",
+      "backToQueue": "कतार में वापस जाएँ"
+    },
+    "error": {
+      "queue": "समीक्षा कतार लोड नहीं हो सकी",
+      "review": "निर्णय दर्ज नहीं किया गया।"
+    },
+    "loadingSegments": "रिपोर्ट की गई स्थिति के पास सड़कें ढूँढना...",
+    "noSegmentsNearby": "इस स्थान के पास कोई सड़क खंड नहीं मिला, इसलिए यह रिपोर्ट सड़क की स्थिति को नहीं बदल सकती।",
+    "segmentsNearbyHelp": "रिपोर्ट जहाँ से ली गई थी उसके पास की सड़कें। केवल वे सड़कें जिनमें आप टिक लगाते हैं, राज्य बदलती हैं।",
+    "evidenceNotViewable": "सत्यापित नहीं: इसे सबूत के तौर पर नहीं दिखाया जा सकता।",
+    "evidenceLoading": "फोटो लोड हो रही है...",
+    "evidenceOpen": "इस फ़ोटो को पूरे आकार में खोलें",
+    "evidenceAlt": "इस रिपोर्ट के साथ फोटो जमा की गई।",
+    "evidenceClose": "फोटो बंद करें",
+    "segmentDistance": "{metres} मी दूर",
+    "pinnedPosition": "पिन की गई स्थिति"
+  },
+  "outbox": {
+    "title": "पंक्ति सिंक करें",
+    "queueLabel": "पंक्तिबद्ध परिवर्तन",
+    "empty": {
+      "title": "सब कुछ भेज दिया गया है।"
+    },
+    "state": {
+      "queued": "भेजने का इंतज़ार कर रही हूँ",
+      "uploading": "भेजा जा रहा है",
+      "accepted": "भेजा गया",
+      "conflict": "आपको निर्णय की आवश्यकता है।",
+      "needs_action": "आपके ध्यान की आवश्यकता है।",
+      "blocked": "एक और बदलाव का इंतज़ार है"
+    },
+    "stateHelp": {
+      "queued": "कनेक्शन होने पर भेजा जाएगा।",
+      "uploading": "अभी भेजा जा रहा है।",
+      "accepted": "सर्वर के पास है।",
+      "conflict": "सर्वर ने इसके लिए पहले से ही कुछ रिकॉर्ड कर लिया है। समीक्षा करें और फिर से भेजें।",
+      "needs_action": "इसे अभी जैसा है वैसा नहीं भेजा जा सकता।"
+    },
+    "type": {
+      "incident.create": "क्षेत्रीय रिपोर्ट",
+      "incident.attachment.complete": "साक्ष्य फ़ोटो जाँच",
+      "incident.review": "समीक्षा निर्णय",
+      "inspection.accept": "कार्य स्वीकार किया गया।",
+      "inspection.start": "कार्य शुरू हो गया।",
+      "inspection.complete": "कार्य जमा किया गया।",
+      "incident.attachment.upload": "साक्ष्य फ़ोटो अपलोड"
+    },
+    "blockedReason": "पहले रिपोर्ट के भेजे जाने का इंतज़ार है।",
+    "attempts": "अब तक {count} प्रयास किए गए हैं",
+    "notYetSent": "अभी तक नहीं भेजा गया",
+    "retry": "फिर से कोशिश करो"
+  },
+  "inspections": {
+    "title": "निरीक्षण",
+    "assign": "एक निरीक्षण सौंपें",
+    "assigning": "नियुक्त किया जा रहा है...",
+    "cancel": "निकालें",
+    "choose": "चुनें...",
+    "district": "जिला",
+    "assignee": "फील्ड ऑफिसर",
+    "instructions": "निर्देश",
+    "instructionsPlaceholder": "वहाँ पहुँचने पर उन्हें क्या देखना चाहिए?",
+    "noOfficers": "किसी भी सक्रिय महिला फील्ड अधिकारी के पास इस जिले को कवर करने वाला अनुदान नहीं है।",
+    "openHeading": "खोलें",
+    "closedHeading": "बंद",
+    "unnamedTarget": "अनाम लक्ष्य",
+    "unnamedAssignee": "असाइनर का नाम नहीं दिया गया",
+    "dueAt": "देय {when}",
+    "noDueDate": "कोई नियत तारीख नहीं",
+    "empty": {
+      "title": "कोई निरीक्षण नहीं"
+    },
+    "target": {
+      "incident": "क्षेत्रीय रिपोर्ट",
+      "segment": "सड़क खंड",
+      "bridge": "पुल",
+      "facility": "सुविधा"
+    },
+    "status": {
+      "assigned": "सौंपा गया",
+      "accepted": "स्वीकृत",
+      "in_progress": "जारी है",
+      "submitted": "प्रस्तुत किया गया",
+      "reviewed": "समीक्षित",
+      "cancelled": "वापस लिया गया",
+      "overdue": "देर से"
+    },
+    "error": {
+      "queue": "निरीक्षण लोड नहीं हो सके",
+      "assign": "निरीक्षण सौंपा नहीं गया था।",
+      "cancel": "निरीक्षण वापस नहीं लिया गया था।"
+    }
+  },
+  "priority": {
+    "label": "प्राथमिकता",
+    "low": "कम",
+    "normal": "सामान्य",
+    "high": "अधिक",
+    "critical": "अत्यावश्यक"
+  },
+  "deliveries": {
+    "title": "आपूर्ति",
+    "requestsHeading": "माँगें",
+    "consignmentsHeading": "खेप",
+    "filter": {
+      "all": "सभी",
+      "draft": "मसौदा",
+      "planned": "तैयार",
+      "moving": "रास्ते में",
+      "arrived": "पहुँच गई"
+    },
+    "empty": {
+      "title": "अभी कोई खेप नहीं"
+    },
+    "requestsEmpty": "कोई खुली माँग नहीं।",
+    "filterEmpty": "इस छँटाई से कोई खेप मेल नहीं खाती।",
+    "fulfilment": "{total} में से {delivered} खेप पहुँचीं",
+    "noConsignments": "कोई खेप दर्ज नहीं",
+    "neededBy": "{when} तक आवश्यक",
+    "noDeadline": "कोई समय-सीमा नहीं",
+    "selectTitle": "कोई खेप चुनें",
+    "unnamedFacility": "अनाम केंद्र",
+    "itemsHeading": "सामग्री सूची",
+    "commodity": "वस्तु",
+    "ordered": "भेजी गई",
+    "delivered": "पहुँची",
+    "weight": "वज़न",
+    "totalWeight": "कुल {weight} कि.ग्रा.",
+    "weightUnknown": "कुल वज़न अज्ञात: कम से कम एक पंक्ति का वज़न दर्ज नहीं है",
+    "tripHeading": "यात्रा",
+    "noTrip": "अभी कोई वाहन नहीं सौंपा गया।",
+    "vehicle": "वाहन",
+    "driver": "चालक",
+    "startedAt": "{when} को शुरू",
+    "notStarted": "शुरू नहीं हुई",
+    "receiptHeading": "रसीद",
+    "noReceipt": "Nothing has been received yet.",
+    "receivedBy": "{who} ने प्राप्त किया",
+    "receivedAt": "{when} को प्राप्त",
+    "shortBy": "{amount} {unit} कम",
+    "action": {
+      "plan": "नियोजन के लिए जारी करें",
+      "assign": "वाहन और चालक सौंपें",
+      "planHint": "इससे पुष्टि होती है कि सूची सही है। इसके बाद ही यात्रा बन सकती है।"
+    },
+    "capacity": {
+      "within": "{capacity} कि.ग्रा. क्षमता में से {load} कि.ग्रा."
+    },
+    "error": {
+      "list": "आपूर्ति सूची नहीं खुल सकी।",
+      "plan": "यह खेप जारी नहीं हो सकी।",
+      "assign": "यह यात्रा नहीं सौंपी जा सकी।",
+      "requests": "माँगें नहीं खुल सकीं।"
+    },
+    "startedLabel": "शुरू"
+  },
+  "assignTrip": {
+    "title": "वाहन और चालक सौंपें",
+    "vehicle": "वाहन",
+    "driver": "चालक",
+    "choose": "चुनें…",
+    "noVehicles": "इस संगठन के लिए कोई वाहन पंजीकृत नहीं है।",
+    "noDrivers": "इस ज़िले में किसी योग्य चालक के पास वर्तमान अधिकार नहीं है।",
+    "loadWeight": "भार {weight} कि.ग्रा.",
+    "loadUnknown": "भार का वज़न अज्ञात",
+    "capacityOf": "क्षमता {capacity} कि.ग्रा.",
+    "capacityUnknown": "क्षमता दर्ज नहीं",
+    "overCapacity": "यह भार वाहन की घोषित क्षमता से अधिक है।",
+    "uncheckable": "क्षमता जाँची नहीं जा सकती: {reason}। तभी सौंपें जब आपको पता हो कि भार समा जाएगा।",
+    "submit": "सौंपें",
+    "cancel": "रद्द करें"
+  },
+  "fleet": {
+    "title": "वाहन बेड़ा",
+    "vehiclesHeading": "वाहन",
+    "tripsHeading": "यात्राएँ",
+    "capacity": "{capacity} कि.ग्रा.",
+    "capacityUnknown": "क्षमता दर्ज नहीं",
+    "height": "अधिकतम ऊँचाई {height} मी.",
+    "outOfService": "सेवा से बाहर",
+    "scope": {
+      "district": "आपके ज़िलों की यात्राएँ",
+      "assigned_to_me": "आपको सौंपी गई यात्राएँ"
+    },
+    "empty": {
+      "vehiclesTitle": "सूची में कोई वाहन नहीं",
+      "tripsTitle": "कोई यात्रा नहीं"
+    },
+    "action": {
+      "offer": "चालक को सौंपें",
+      "cancel": "यात्रा रद्द करें"
+    },
+    "error": {
+      "vehicles": "वाहन सूची नहीं खुल सकी।",
+      "trips": "यात्राएँ नहीं खुल सकीं।",
+      "transition": "यह यात्रा नहीं बदली जा सकी।",
+      "locations": "वाहन स्थिति लोड नहीं हो सकी।"
+    },
+    "livePositionsHeading": "बेड़ा इस समय कहाँ है",
+    "livePositionsSummary": "{live} रिपोर्ट कर रहे, {stale} देर से, {silent} रिपोर्ट नहीं कर रहे",
+    "livePositionsEmptyTitle": "कोई यात्रा नहीं चल रही",
+    "reportingLive": "रिपोर्ट कर रहा है",
+    "reportingStale": "देर से",
+    "reportingNever": "रिपोर्ट नहीं कर रहा",
+    "neverReported": "इस यात्रा ने अभी कोई स्थिति नहीं भेजी",
+    "staleExplained": "{minutes} मिनट से कुछ नहीं आया। इसे वाहन के वर्तमान स्थान के रूप में न मानें।",
+    "coordinates": "{latitude}, {longitude}",
+    "accuracy": "±{accuracy} मी"
+  },
+  "planner": {
+    "title": "मार्ग योजना",
+    "inputsHeading": "मार्ग अनुरोध",
+    "origin": "कहाँ से",
+    "destination": "कहाँ तक",
+    "vehicle": "वाहन",
+    "anyVehicle": "कोई वाहन नहीं चुना",
+    "priority": "प्राथमिकता",
+    "departure": "प्रस्थान",
+    "deadline": "समय-सीमा",
+    "choose": "चुनें…",
+    "plan": "मार्ग बनाएँ",
+    "planning": "बनाया जा रहा है…",
+    "replan": "फिर से बनाएँ",
+    "alternativesHeading": "विकल्प",
+    "showOptions": "विकल्प ({count})",
+    "hideOptions": "विकल्प छिपाएँ",
+    "noFacilities": "इस ज़िले में किसी केंद्र का रूटिंग नोड नहीं है, इसलिए मार्ग बनाने के लिए कोई बिंदु नहीं है।",
+    "sameFacility": "दो अलग-अलग केंद्र चुनें।",
+    "emptyTitle": "अभी कोई मार्ग नहीं बना",
+    "mapEmptyTitle": "दिखाने के लिए कुछ नहीं",
+    "category": {
+      "fastest_feasible": "सबसे तेज़ संभव",
+      "lower_exposure": "कम जोखिम",
+      "alternate": "वैकल्पिक"
+    },
+    "distance": "दूरी",
+    "eta": "अनुमानित समय",
+    "etaRange": "{low}–{high}",
+    "margin": "समय-सीमा से अंतर",
+    "marginLate": "{duration} देर",
+    "marginSpare": "{duration} शेष",
+    "marginNone": "कोई समय-सीमा नहीं",
+    "avoidedClosures": "{count, plural, =0 {बचने के लिए कोई पुष्ट अवरोध नहीं} one {# पुष्ट अवरोध से बचता है} other {# पुष्ट अवरोधों से बचता है}}",
+    "unknownConstraints": "{count, plural, =0 {कोई अपुष्ट सीमा नहीं} one {# अपुष्ट सीमा} other {# अपुष्ट सीमाएँ}}",
+    "riskUnavailable": "इस सड़क के लिए कोई जोखिम अंक दर्ज नहीं",
+    "riskMax": "उच्चतम जोखिम {score}",
+    "riskUnscored": "{count, plural, one {# खंड का जोखिम अंक नहीं है} other {# खंडों का जोखिम अंक नहीं है}}",
+    "needsReview": "भेजने से पहले समीक्षा आवश्यक",
+    "select": "मानचित्र पर दिखाएँ",
+    "selected": "मानचित्र पर दिख रहा है",
+    "approve": "यह मार्ग स्वीकृत करें",
+    "approving": "स्वीकृत किया जा रहा है…",
+    "approved": "स्वीकृत",
+    "approveHeading": "मार्ग स्वीकृत करें",
+    "approveVehicle": "वाहन",
+    "approveRoute": "मार्ग",
+    "approveSnapshot": "नेटवर्क {version} के आधार पर बनाया गया",
+    "approveUnresolved": "अनसुलझी बाधाएँ",
+    "approveNoUnresolved": "इस मार्ग पर कोई अनसुलझी बाधा नहीं।",
+    "approveConfirm": "स्वीकृत करें",
+    "approveCancel": "रद्द करें",
+    "staleTitle": "यह योजना पुरानी हो चुकी है",
+    "staleBody": "यह मार्ग बनने के बाद सड़क नेटवर्क बदल गया, इसलिए इसे स्वीकृत नहीं किया जा सकता। वर्तमान विकल्प देखने के लिए फिर से बनाएँ।",
+    "noRouteTitle": "कोई मार्ग नहीं मिला",
+    "noRouteBody": "इस वाहन की बाधाओं के तहत कोई रास्ता नहीं मिला।",
+    "reasonHeading": "कारण",
+    "actionsHeading": "आप क्या कर सकते हैं",
+    "exclusionsHeading": "खोज से बाहर रखे गए",
+    "exclusion": {
+      "segment_closed": "{count, plural, one {# पुष्ट अवरोध} other {# पुष्ट अवरोध}}",
+      "vehicle_exceeds_max_weight": "{count, plural, one {# खंड इस वाहन के लिए बहुत हल्का} other {# खंड इस वाहन के लिए बहुत हल्के}}",
+      "vehicle_exceeds_max_height": "{count, plural, one {# खंड इस वाहन के लिए बहुत नीचा} other {# खंड इस वाहन के लिए बहुत नीचे}}"
+    },
+    "reason": {
+      "closed_segments_disconnect_route": "पुष्ट अवरोधों ने गंतव्य तक हर रास्ता काट दिया है।",
+      "vehicle_constraints_disconnect_route": "यह वाहन शेष सड़कों का उपयोग नहीं कर सकता।",
+      "no_path_in_directed_graph": "इन बिंदुओं के बीच सड़क ग्राफ़ में कोई रास्ता नहीं है, कुछ भी बाहर रखे बिना भी।",
+      "origin_has_no_usable_road": "आरंभ बिंदु से निकलने वाली हर सड़क बंद है या इस वाहन के लिए अनुपयुक्त।"
+    },
+    "coverage": {
+      "unobserved_network": "{count, plural, one {इस ज़िले के # खंड की स्थिति दर्ज नहीं है} other {इस ज़िले के # खंडों की स्थिति दर्ज नहीं है}}। उन पर बने मार्ग गणना से हैं, पुष्ट नहीं।"
+    },
+    "warning": {
+      "unknown_constraint": "इस मार्ग पर एक भार सीमा कभी दर्ज नहीं हुई।",
+      "unobserved_segment_state": "इस मार्ग के एक हिस्से की कोई सूचना नहीं है; उसकी स्थिति अज्ञात है, खुली नहीं।",
+      "restricted_segment_used": "यह मार्ग ऐसी सड़क का उपयोग करता है जो केवल प्रतिबंध के साथ पार की जा सकती है।"
+    },
+    "notSafeClaim": "RASTA यह दावा नहीं करता कि कोई मार्ग सुरक्षित है। वह बताता है कि क्या उपयोग हुआ, क्या बाहर रखा गया और क्या तय नहीं हो सका।",
+    "policyVersion": "लागत नीति {version}",
+    "error": {
+      "plan": "मार्ग नहीं बनाया जा सका।",
+      "approve": "यह मार्ग स्वीकृत नहीं हो सका।",
+      "facilities": "केंद्र नहीं खुल सके।",
+      "bind": "मार्ग स्वीकृत हुआ, पर यात्रा को नहीं दिया जा सका।"
+    },
+    "district": "ज़िला",
+    "forTrip": "किस यात्रा के लिए",
+    "noTrip": "कोई यात्रा नहीं (केवल योजना)",
+    "tripOption": "{reference}, {vehicle}, मार्ग: {route}",
+    "routeWithdrawn": "वापस लिया गया",
+    "routeNone": "कोई नहीं",
+    "bound": "मार्ग यात्रा {reference} को दिया गया। चालक इसे \"मेरी यात्राएँ\" में देखता है।"
+  },
+  "alerts": {
+    "title": "अलर्ट",
+    "summary": "{total} में से {unacknowledged} अभी स्वीकार नहीं किए गए",
+    "filterUnacknowledged": "केवल वे दिखाएँ जो मैंने स्वीकार नहीं किए",
+    "acknowledge": "स्वीकार करें",
+    "acknowledged": "स्वीकृत",
+    "validUntil": "{when} तक वैध",
+    "expired": "This alert has expired.",
+    "notReplaced": "आपका मार्ग वापस लिया गया है, बदला नहीं गया। डिस्पैचर को नया मार्ग बनाकर स्वीकृत करना होगा।",
+    "severity": {
+      "critical": "गंभीर",
+      "warning": "चेतावनी",
+      "info": "सूचना"
+    },
+    "evidence": {
+      "segments": "{count} सड़क खंड प्रभावित",
+      "consignment": "खेप {reference}",
+      "blocked": "स्वीकृत मार्ग के {count} खंड अवरुद्ध हैं",
+      "facility": "सुविधा: {facility}",
+      "reasons": "कारण: {reasons}"
+    },
+    "empty": {
+      "title": "आपके इनबॉक्स में कुछ नहीं"
+    },
+    "error": {
+      "load": "अलर्ट लोड नहीं हो सके।",
+      "acknowledge": "वह अलर्ट स्वीकार नहीं हो सका।"
+    },
+    "push": {
+      "title": "इस डिवाइस पर सूचनाएँ",
+      "notConfigured": "इस परिनियोजन पर सूचनाएँ बंद हैं: कोई पुश कुंजी सेट नहीं है, इसलिए कुछ भी नहीं भेजा जाता।",
+      "unsupported": "यह ब्राउज़र सूचनाएँ नहीं दिखा सकता।",
+      "noWorker": "सूचनाओं के लिए इंस्टॉल किया गया ऐप चाहिए। इस ब्राउज़र में ऐप का सर्विस वर्कर नहीं चल रहा है।",
+      "blocked": "ब्राउज़र की सेटिंग में इस साइट की सूचनाएँ रोकी गई हैं।",
+      "on": "इस डिवाइस के लिए चालू।",
+      "off": "इस डिवाइस के लिए बंद।",
+      "enable": "सूचनाएँ चालू करें",
+      "disable": "बंद करें",
+      "test": "परीक्षण सूचना भेजें",
+      "testResult": "परीक्षण {attempted} में से {sent} पंजीकरणों को भेजा गया।",
+      "testNothing": "कुछ नहीं भेजा गया: {reasons}।",
+      "failed": "यह ब्राउज़र सूचनाओं के लिए पंजीकरण नहीं कर सका: {reason}",
+      "notificationTitle": "RASTA: नया अलर्ट",
+      "notificationBody": "पढ़ने के लिए अलर्ट इनबॉक्स खोलें।"
+    },
+    "replan": "इस यात्रा के लिए नया मार्ग बनाएँ"
+  },
+  "health": {
+    "title": "डेटा स्वास्थ्य",
+    "mode": "संचालन मोड: {mode}",
+    "sourcesHeading": "स्रोत",
+    "noSources": "अभी कोई स्रोत नहीं चलाया गया।",
+    "coverageHeading": "कवरेज",
+    "queuesHeading": "क़तारें और ट्रैकिंग",
+    "pushHeading": "सूचनाएँ",
+    "riskModelHeading": "जोखिम मॉडल",
+    "riskModel": "सक्रिय मॉडल: {version}",
+    "riskModelNotTrained": "नियम-आधारित भार, प्रशिक्षित मॉडल नहीं।",
+    "pushConfigured": "Push is configured ({sender}).",
+    "pushNotConfigured": "इस परिनियोजन में पुश कॉन्फ़िगर नहीं है। हर अलर्ट इनबॉक्स में है।",
+    "sourceState": {
+      "live": "लाइव",
+      "recorded": "रिकॉर्ड किया",
+      "stale": "पुराना",
+      "failed": "विफल",
+      "never_run": "कभी नहीं चला",
+      "disabled": "कॉन्फ़िगर नहीं"
+    },
+    "lastSuccess": "अंतिम सफल रन {when}",
+    "neverSucceeded": "कोई रन कभी सफल नहीं हुआ",
+    "records": "{count} रिकॉर्ड",
+    "consecutiveFailures": "लगातार {count} विफलताएँ",
+    "observed": "{total} में से {observed} सड़क खंडों की स्थिति दर्ज है",
+    "scored": "{total} में से {scored} सड़क खंडों का जोखिम स्कोर है",
+    "facilities": "{total} में से {onGraph} सुविधाएँ रूटिंग ग्राफ़ पर हैं",
+    "noGraphVersion": "कोई ग्राफ़ संस्करण दर्ज नहीं",
+    "recompute": "स्रोत फिर चलाएँ",
+    "recomputed": "{model} से {scored} को स्कोर किया, {unscored} बिना स्कोर रहे।",
+    "outbox": "अप्रसंस्कृत घटनाएँ",
+    "ledger": "इडेम्पोटेंसी बही",
+    "reporting": "रिपोर्ट करती यात्राएँ",
+    "stale": "देर से यात्राएँ",
+    "silent": "मौन यात्राएँ",
+    "error": {
+      "load": "डेटा स्वास्थ्य लोड नहीं हो सका।",
+      "recompute": "स्रोत फिर नहीं चल सके।"
+    }
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "build": {
+      "title": "यह बिल्ड",
+      "appVersion": "ऐप संस्करण",
+      "mode": "परिनियोजन मोड"
+    },
+    "update": {
+      "ready": "नया संस्करण तैयार है। भेजने के लिए कुछ लंबित नहीं है, इसलिए पुनः लोड करना सुरक्षित है।",
+      "apply": "अभी पुनः लोड करें",
+      "held": "नया संस्करण डाउनलोड हो गया है पर रोका गया है: {count} रिपोर्ट अभी नियंत्रण कक्ष तक नहीं पहुँची हैं। सब कुछ भेजे जाने पर यह प्रस्तावित होगा।",
+      "unsupported": "यह ब्राउज़र सर्विस वर्कर नहीं चला रहा, इसलिए यहाँ अद्यतन करने के लिए कुछ नहीं है।"
+    },
+    "pack": {
+      "title": "ऑफ़लाइन डेटा पैक",
+      "version": "पैक संस्करण",
+      "age": "आयु",
+      "ageDays": "{days} दिन पुराना",
+      "stale": "पुराना",
+      "staleExplainer": "This pack is out of date. Download a newer one when you can.",
+      "contents": "सामग्री",
+      "counts": "{edges} सड़क खंड, {facilities} सुविधाएँ",
+      "checksum": "चेकसम",
+      "attribution": "स्रोत",
+      "noneTitle": "कोई पैक डाउनलोड नहीं",
+      "download": "डाउनलोड",
+      "downloading": "{percent}%",
+      "alreadyHave": "यह पहले से है",
+      "activated": "प्रकाशित चेकसम से सत्यापित और सक्रिय।",
+      "offerDetail": "संस्करण {version}, {megabytes} MB",
+      "manifestError": "पैक सूची पढ़ी नहीं जा सकी"
+    }
+  },
+  "report": {
+    "title": "नई फ़ील्ड रिपोर्ट",
+    "lede": "Saved on this device as you type, until the control room has it.",
+    "typeLabel": "आपने क्या देखा?",
+    "typePlaceholder": "चुनें…",
+    "locationHeading": "कहाँ",
+    "useGps": "मेरा वर्तमान स्थान लें",
+    "locating": "स्थान प्राप्त हो रहा है…",
+    "gpsFix": "GPS स्थान ±{accuracy} मी, {time} पर",
+    "gpsFailed": "GPS स्थान नहीं मिला: {reason} इसके बजाय नीचे स्थिति दर्ज करें।",
+    "gpsUnknownError": "डिवाइस ने कोई स्थिति नहीं दी।",
+    "pinRecorded": "मैनुअल पिन के रूप में दर्ज, GPS स्थान नहीं",
+    "fromMap": "मानचित्र पर चुनी गई सड़क: {road}",
+    "unnamedRoad": "बिना नाम की सड़क",
+    "latitude": "अक्षांश",
+    "longitude": "देशांतर",
+    "manualHint": "यहाँ लिखी गई या मानचित्र से ली गई स्थिति पिन के रूप में दर्ज होती है। समीक्षक मापे गए GPS स्थान से अंतर देखता है।",
+    "photoHeading": "फ़ोटो (वैकल्पिक)",
+    "addPhoto": "फ़ोटो लें या चुनें",
+    "removePhoto": "फ़ोटो हटाएँ",
+    "photoAlt": "इस रिपोर्ट से जुड़ी फ़ोटो",
+    "photoMeta": "{size}, चेकसम {checksum}…",
+    "photoKept": "सर्वर द्वारा सत्यापित होने तक इस डिवाइस पर रखी जाती है।",
+    "photoRefused": {
+      "too_large": "यह फ़ोटो 5 MB से बड़ी है। मूल फ़ोटो ही साक्ष्य है, इसलिए इसे छोटा नहीं किया जाता, छोटी फ़ोटो लें।",
+      "unsupported_type": "केवल JPEG, PNG या WebP फ़ोटो जोड़ी जा सकती हैं।",
+      "empty": "फ़ोटो खाली थी।",
+      "storage_unavailable": "यह ब्राउज़र स्थानीय डेटा नहीं रख रहा, इसलिए भेजे जाने तक फ़ोटो नहीं रखी जा सकती।",
+      "capture_failed": "कोई फ़ोटो नहीं ली गई।"
+    },
+    "noteLabel": "टिप्पणी (वैकल्पिक)",
+    "notePlaceholder": "बंद लेन, रुके वाहन, पानी की गहराई…",
+    "noteCount": "4000 में से {count} अक्षर",
+    "savedLocally": "इस डिवाइस पर सहेजा गया",
+    "notSaved": "सहेजा नहीं गया: यह ब्राउज़र स्थानीय डेटा नहीं रख रहा",
+    "submitHint": "कनेक्शन मिलते ही रिपोर्ट भेजी जाती है।",
+    "stillNeeded": "अभी चाहिए: {items}",
+    "missing": {
+      "type": "आपने क्या देखा",
+      "location": "एक स्थिति"
+    },
+    "submit": "रिपोर्ट कतार में डालें",
+    "queueFailed": "रिपोर्ट इस डिवाइस पर कतार में नहीं डाली जा सकी।",
+    "discard": "ड्राफ़्ट हटाएँ",
+    "discardConfirm": "इस रिपोर्ट और इसकी फ़ोटो को इस डिवाइस से हटाएँ? इसे वापस नहीं किया जा सकता।",
+    "queuedTitle": "रिपोर्ट कतार में",
+    "queuedBody": "नियंत्रण कक्ष को मिलने तक यह इस डिवाइस पर रहती है। आप यह पेज बंद कर सकते हैं; कनेक्शन मिलने पर यह भेजी जाती है।",
+    "step": {
+      "report": "रिपोर्ट",
+      "photo": "फ़ोटो अपलोड",
+      "check": "फ़ोटो जाँच"
+    },
+    "state": {
+      "waiting": "भेजने की प्रतीक्षा",
+      "sending": "भेजा जा रहा है",
+      "done": "पूर्ण",
+      "attention": "आपका ध्यान चाहिए"
+    },
+    "receivedAs": "नियंत्रण कक्ष को प्राप्त (संदर्भ {id})",
+    "check": {
+      "verified": "चेकसम से सर्वर द्वारा सत्यापित",
+      "notVerified": "सत्यापित नहीं: {reason}"
+    },
+    "fileAnother": "एक और रिपोर्ट दर्ज करें",
+    "openQueue": "सिंक कतार खोलें"
+  },
+  "fieldHome": {
+    "title": "मेरा फ़ील्ड कार्य",
+    "heading": "आपको सौंपा गया",
+    "lede": "Works without signal. Each change is sent once a connection returns.",
+    "newReport": "नई रिपोर्ट",
+    "openQueue": "सिंक कतार",
+    "assignedHeading": "खुले कार्य",
+    "empty": {
+      "title": "कुछ भी सौंपा नहीं गया"
+    },
+    "error": "आपके कार्य लोड नहीं हो सके",
+    "queueFailed": "यह कदम इस डिवाइस पर नहीं रखा जा सका।",
+    "accept": "स्वीकार करें",
+    "start": "शुरू करें",
+    "submitFindings": "निष्कर्ष जमा करें",
+    "findingsLabel": "आपको क्या मिला (वैकल्पिक)",
+    "queueFindings": "जमा करने को कतार में डालें",
+    "reportHere": "इस सड़क पर रिपोर्ट करें",
+    "moveQueued": "{move}: भेजने की प्रतीक्षा",
+    "moveNeedsAttention": "इस कदम पर सिंक कतार में आपका ध्यान चाहिए।"
+  },
+  "driverTrips": {
+    "title": "मेरी यात्राएँ",
+    "heading": "आपकी यात्राएँ",
+    "phoneOnly": "यात्रा शुरू करना, स्थिति भेजना और डिलीवरी रसीद आपके फ़ोन पर RASTA ड्राइवर ऐप में होते हैं। स्क्रीन लॉक होने पर ब्राउज़र आपकी स्थिति नहीं भेज सकता, इसलिए यह पेज केवल आपकी यात्राएँ और मार्ग दिखाता है।",
+    "error": "आपकी यात्राएँ लोड नहीं हो सकीं",
+    "empty": {
+      "title": "कोई यात्रा सौंपी नहीं गई"
+    },
+    "listLabel": "आपकी यात्राएँ",
+    "noReference": "बिना संदर्भ की खेप",
+    "noVehicle": "कोई वाहन दर्ज नहीं",
+    "routeHeading": "स्वीकृत मार्ग",
+    "startedAt": "{when} को शुरू",
+    "noRoute": "नियंत्रण कक्ष ने इस यात्रा के लिए कोई मार्ग स्वीकृत नहीं किया है। किसी अन्य मार्ग को स्वीकृत मानकर न चलें।",
+    "routeError": "मार्ग लोड नहीं हो सका",
+    "noGeometry": "The approved route has no map line to draw.",
+    "approvedSummary": "{distance}, योजनाकार के अनुमान से {low} से {high}",
+    "approvedAgainst": "नेटवर्क संस्करण {version} के आधार पर {when} को स्वीकृत",
+    "planState": {
+      "proposed": "यह मार्ग केवल प्रस्ताव है और स्वीकृत नहीं है। नियंत्रण कक्ष की प्रतीक्षा करें।",
+      "superseded": "इस मार्ग को नए मार्ग से बदल दिया गया है। इस पर न चलें; वर्तमान मार्ग के लिए ड्राइवर ऐप खोलें।",
+      "invalidated": "सड़क बदलने के कारण नियंत्रण कक्ष ने यह मार्ग वापस ले लिया। इस पर न चलें; नए मार्ग की प्रतीक्षा करें।",
+      "rejected": "यह मार्ग अस्वीकार कर दिया गया। इस पर न चलें; नियंत्रण कक्ष की प्रतीक्षा करें।"
+    }
+  },
+  "permissions": {
+    "title": "डिवाइस जाँच",
+    "lede": "सड़क पर निकलने से पहले जानें कि यह डिवाइस ऐप को फ़ोटो और स्थान लेने देगा या नहीं।",
+    "checksHeading": "डिवाइस जाँच",
+    "checksBody": "हर अनुमति तभी माँगी जाती है जब आप उसकी जाँच शुरू करते हैं।",
+    "localOnlyTitle": "केवल स्थानीय जाँच",
+    "localOnlyBody": "ये जाँचें कोई रिपोर्ट नहीं बनातीं, ट्रैकिंग शुरू नहीं करतीं, न ही कोई फ़ोटो या स्थान किसी सर्वर को भेजती हैं।",
+    "camera": {
+      "title": "कैमरा",
+      "idle": "कैमरे का कोई अनुरोध नहीं किया गया।",
+      "running": "कैमरे या फ़ाइल चयनकर्ता की प्रतीक्षा।",
+      "passed": "इस डिवाइस पर फ़ोटो ली गई। इसे अपलोड या सहेजा नहीं गया है।",
+      "none": "कोई फ़ोटो नहीं ली गई",
+      "previewAlt": "कैमरा जाँच की फ़ोटो, इस डिवाइस पर रखी गई",
+      "test": "कैमरा जाँचें"
+    },
+    "location": {
+      "title": "वर्तमान स्थान",
+      "idle": "स्थान का कोई अनुरोध नहीं किया गया।",
+      "running": "डिवाइस से एक स्थान माँगा जा रहा है।",
+      "passed": "{time} पर स्थान प्राप्त हुआ। यह इस डिवाइस पर रहता है।",
+      "passedWithAccuracy": "{time} पर ±{accuracy} मी सटीकता के साथ स्थान प्राप्त हुआ। यह इस डिवाइस पर रहता है।",
+      "received": "स्थान प्राप्त",
+      "noCoordinates": "इस जाँच में निर्देशांक जानबूझकर नहीं दिखाए जाते।",
+      "test": "वर्तमान स्थान जाँचें"
+    },
+    "error": {
+      "camera_unavailable": "यह डिवाइस या ब्राउज़र ऐप को कोई कैमरा नहीं देता।",
+      "location_unavailable": "यह ब्राउज़र ऐप को स्थान नहीं देता।",
+      "permission_denied": "अनुमति नहीं दी गई। डिवाइस सेटिंग्स में अनुमति दें और फिर प्रयास करें।",
+      "request_cancelled": "अनुरोध रद्द कर दिया गया।",
+      "location_failed": "अनुरोध समाप्त होने से पहले कोई स्थान नहीं मिला।",
+      "unknown": "डिवाइस जाँच बिना किसी पहचाने गए उत्तर के विफल हुई।"
+    }
+  },
+  "gate": {
+    "frameBody": "RASTA केवल ब्राउज़र सत्र के आधार पर परिचालन दृश्य नहीं खोलता।",
+    "checkingTitle": "कार्यक्षेत्र पहुँच की जाँच",
+    "checkingBody": "सक्रिय प्रोफ़ाइल, भूमिका अनुमतियाँ और ज़िला दायरा सत्यापित किया जा रहा है।",
+    "unconfiguredTitle": "प्रमाणीकरण कॉन्फ़िगर नहीं है",
+    "unconfiguredHeading": "परिचालन दृश्य बंद रहते हैं",
+    "unconfiguredBody": "इस बिल्ड में Supabase प्रोजेक्ट URL और प्रकाशनीय कुंजी कॉन्फ़िगर नहीं है। कोई डेमो खाता या स्थानीय बाईपास उपलब्ध नहीं है।",
+    "reason": {
+      "scopeDenied": "सर्वर ने इस खाते को अनुरोधित कार्यक्षेत्र के लिए अधिकृत नहीं किया।",
+      "sessionExpired": "API ने यह ब्राउज़र सत्र स्वीकार नहीं किया। इसे नवीनीकृत करने के लिए फिर से साइन इन करें।",
+      "unavailable": "पहचान सेवा उपलब्ध नहीं है, इसलिए भूमिका और ज़िला दायरा सत्यापित नहीं हो सकता।",
+      "signIn": "सर्वर-सत्यापित कार्यक्षेत्र के लिए प्रशासक द्वारा दिए गए खाते से साइन इन करें।"
+    },
+    "requiredTitle": "कार्यक्षेत्र पहुँच आवश्यक",
+    "requiredHeading": "कोई परिचालन डेटा नहीं दिखाया गया",
+    "deniedTitle": "यह दृश्य इस भूमिका के लिए उपलब्ध नहीं है",
+    "deniedHeading": "पहुँच अस्वीकृत",
+    "deniedBody": "सर्वर-सत्यापित भूमिका अनुमतियाँ इस मार्ग की अनुमति नहीं देतीं। कोई डेटा या कार्रवाई लोड नहीं की गई।",
+    "returnToWorkspace": "कार्यक्षेत्र पर लौटें",
+    "offlineNotice": "ऑफ़लाइन। आपकी पहुँच की पिछली पुष्टि {when} को हुई थी। रिपोर्ट इस डिवाइस पर रखी जाती हैं और कनेक्शन लौटने पर भेजी जाती हैं।"
+  }
+}

@@ -1,0 +1,52 @@
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.keystore
+*.jks
+google-services.json
+
+# JavaScript
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+services/api/.venv/
+*.egg-info/
+
+# Local IDE files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Local state and generated output: demo accounts, backups, test reports
+# and screenshots written by the scripts in scripts/.
+artifacts/
+*.sqlite
+*.db
+
+# Generated site deployment/runtime outputs
+apps/client/.wrangler/
+apps/client/dist/
+
+# Expo local state (apps/mobile)
+.expo/
+apps/mobile/.expo/
+
+# Trained model files (scripts/ml/train_random_forest.py); nothing ships them.
+models/

@@ -1,0 +1,36 @@
+{
+  "name": "sih26002-rasta",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "npm run lint --workspace apps/client && npm run lint --workspace apps/mobile",
+    "typecheck": "npm run typecheck --workspace apps/client && npm run typecheck --workspace apps/mobile",
+    "test": "npm run test --workspace apps/client && npm run test --workspace apps/mobile",
+    "format": "oxfmt apps/client apps/mobile tests/e2e scripts/tools",
+    "format:check": "oxfmt --check apps/client apps/mobile tests/e2e scripts/tools",
+    "contracts:generate": "node scripts/tools/generate-api-contracts.mjs --write",
+    "contracts:check": "node scripts/tools/generate-api-contracts.mjs --check",
+    "mobile:start": "npm run start --workspace apps/mobile",
+    "mobile:web": "npm run web --workspace apps/mobile",
+    "test:e2e:install": "playwright install chromium",
+    "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
+    "test:e2e:auth": "python3 tests/e2e/run_auth.py",
+    "test:e2e:map": "python3 tests/e2e/run_command_map.py",
+    "test:e2e:deliveries": "python3 tests/e2e/run_deliveries.py",
+    "test:e2e:planner": "python3 tests/e2e/run_planner.py"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "1.55.0",
+    "openapi-typescript": "7.13.0",
+    "oxfmt": "0.61.0",
+    "typescript": "~6.0.3"
+  },
+  "engines": {
+    "node": ">=22.13.0 <26"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "accessed_at": "2026-09-07T08:53:46.762834+00:00",
+  "attribution": "© OpenStreetMap contributors",
+  "intended_use": "bounded pilot routing topology and facility candidates",
+  "license": "ODbL-1.0",
+  "license_or_terms_url": "https://www.openstreetmap.org/copyright",
+  "outputs": {
+    "data/pilot/scenario_endpoints.json": "sha256:83045734fa2bee6fd945a20c2409f569cf102cece6eaca6d2a1f23456e0b8edc",
+    "data/pilot/shillong_facilities.json": "sha256:f3865f00850d5576d3825c11bce9318e294c8c21e1cafd9216aa02059194802c",
+    "data/pilot/shillong_graph.json": "sha256:477b3f342da3bef58462e60b43c49f48ae303aae72a209f1c70e8c32d3b0fe4b"
+  },
+  "quality_notes": {
+    "component_sizes_before_pruning": [
+      1236,
+      6,
+      3,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "largest_weak_component_only": true,
+    "missing_coordinate_way_ids": [],
+    "not_live_status": true,
+    "road_passability_unknown": true,
+    "unsourced_speed_defaults_added": false
+  },
+  "query_bbox": {
+    "east": 91.9,
+    "north": 25.585,
+    "south": 25.56,
+    "west": 91.875
+  },
+  "query_checksum": "sha256:f9033a6b07e068a4ceaa0822efc3cec800a4ef29c14fd90674dbee8011b93b39",
+  "query_file": "data/sources/osm_shillong_pilot.overpassql",
+  "raw_checksum": "sha256:73264ad25d9d1ae2c9e3358569d2939e315c74d362b8344bf0d15c5d8c2dfa33",
+  "raw_file": "data/sources/osm_shillong_pilot.raw.json",
+  "redistribution_allowed": true,
+  "redistribution_conditions": "ODbL attribution and share-alike apply",
+  "schema_version": "source-manifest-v1",
+  "source": "OpenStreetMap Overpass API",
+  "source_endpoint": "https://overpass.kumi.systems/api/interpreter",
+  "transform_script": "scripts/pipeline/import_osm_pilot.py",
+  "transform_version": "osm-pilot-v1"
+}
