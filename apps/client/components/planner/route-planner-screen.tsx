@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { TriangleAlert } from 'lucide-react';
 
 import { useAuth } from '@/components/auth/auth-provider';
@@ -42,11 +43,6 @@ const OPEN_TRIP_STATUSES = new Set([
   'paused',
 ]);
 
-/** `?trip=<id>`: where an alert about a withdrawn route sends the dispatcher. */
-function tripFromUrl(): string {
-  return new URLSearchParams(window.location.search).get('trip') ?? '';
-}
-
 function errorMessage(error: unknown): string | null {
   return error instanceof Error ? error.message : null;
 }
@@ -71,12 +67,10 @@ export function RoutePlannerScreen() {
   const effectiveDistrict = districtId || districts[0]?.id || '';
 
   // The trip this route is for, if any. An approved plan is then given to it,
-  // which is what puts it in front of the driver.
-  const linkedTrip = useSyncExternalStore(
-    () => () => undefined,
-    tripFromUrl,
-    () => '',
-  );
+  // which is what puts it in front of the driver. Alerts link here as
+  // `?trip=<id>`; reading the search params follows that link across
+  // client-side navigations.
+  const linkedTrip = useSearchParams().get('trip') ?? '';
   const [tripChoice, setTripChoice] = useState<string | null>(null);
   const tripId = tripChoice ?? linkedTrip;
 

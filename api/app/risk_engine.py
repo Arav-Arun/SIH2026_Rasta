@@ -267,13 +267,18 @@ def _caveats(
 
 
 def snapshot_version(assessments: list[RiskAssessment]) -> str:
-    """A token that changes whenever any scored segment's answer changes."""
+    """A token that changes whenever any scored segment's answer changes.
+
+    Callers must pass assessments in stable segment order. The timestamp of the
+    run is not part of the token, so recomputing the same answers is a no-op,
+    and two segments exchanging scores still changes it.
+    """
 
     payload = json.dumps(
-        sorted(
-            f"{item.model_version}:{item.score}:{item.computed_at.isoformat()}"
+        [
+            f"{item.model_version}:{item.level}:{item.score}"
             for item in assessments
-        ),
+        ],
         separators=(",", ":"),
     )
     digest = hashlib.sha256(payload.encode()).hexdigest()[:16]

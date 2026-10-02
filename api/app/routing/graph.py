@@ -49,6 +49,7 @@ _GRAPH_SELECT = """
       rs.max_weight_t::float8 as segment_max_weight_t,
       rs.network_version,
       coalesce(scs.passability::text, 'unknown') as passability,
+      coalesce(scs.risk_level::text, 'unknown') as risk_level,
       scs.risk_score::float8 as risk_score,
       scs.as_of as state_as_of,
       scs.network_version as state_network_version,
@@ -92,10 +93,14 @@ def load_district_graph(
     network_versions: list[str] = []
     state_versions: list[str] = []
     state_stamps: list[datetime] = []
+    risk_tokens: list[str] = []
     unobserved = 0
 
     for row in rows:
         segment_id = row["segment_id"]
+        score = row["risk_score"]
+        score_text = "none" if score is None else f"{float(score):.4f}"
+        risk_tokens.append(f"{segment_id}:{row['risk_level']}:{score_text}")
         # The bridge's own limit wins where both exist: it is the narrower
         # statement about the same piece of road.
         max_weight = row["bridge_max_weight_t"]
@@ -135,13 +140,21 @@ def load_district_graph(
         )
 
     network_version = _version_of(network_versions) if network_versions else "empty"
-    # Risk has no snapshot table yet, so the snapshot token is derived from the state
-    # rows the plan actually read.
-    if state_versions or state_stamps:
-        latest = max(state_stamps).isoformat() if state_stamps else "none"
-        risk_version = f"state-{_version_of(state_versions or ['none'])}@{latest}"
-    else:
+    # No snapshot table: the token is whatever this load actually used. The risk
+    # digest is the scores themselves, so a recompute that rewrites the same
+    # numbers does not invalidate a plan, and a score that changes does.
+    risk_digest = hashlib.sha256("\n".join(risk_tokens).encode("utf-8")).hexdigest()[
+        :16
+    ]
+    if not rows:
         risk_version = "state-unobserved"
+    elif state_versions or state_stamps:
+        latest = max(state_stamps).isoformat() if state_stamps else "none"
+        risk_version = (
+            f"state-{_version_of(state_versions or ['none'])}@{latest}+{risk_digest}"
+        )
+    else:
+        risk_version = f"state-unobserved+{risk_digest}"
 
     return DistrictGraph(
         edges=edges,

@@ -50,14 +50,23 @@ def _stamp(reviewed_at: datetime) -> str:
     return reviewed_at.astimezone(UTC).strftime("%Y%m%dT%H%M%S%fZ")
 
 
-def _last_restrictive_capture(summary: dict[str, Any]) -> datetime | None:
+def _as_utc(value: datetime) -> datetime:
+    if value.tzinfo is None or value.tzinfo.utcoffset(value) is None:
+        return value.replace(tzinfo=UTC)
+    return value.astimezone(UTC)
+
+
+def _last_decision_capture(summary: dict[str, Any]) -> datetime | None:
+    """When the road was last observed, whatever the decision did to it."""
+
     last = summary.get("last_decision") or {}
-    if last.get("impact") in ("closure", "restriction") and last.get("captured_at"):
-        try:
-            return datetime.fromisoformat(str(last["captured_at"]))
-        except ValueError:
-            return None
-    return None
+    captured = last.get("captured_at")
+    if not captured:
+        return None
+    try:
+        return _as_utc(datetime.fromisoformat(str(captured)))
+    except ValueError:
+        return None
 
 
 def reduce_segment_state(
@@ -67,29 +76,27 @@ def reduce_segment_state(
 
     target = IMPACT_TO_PASSABILITY[decision.impact]
 
-    # Rule 2: an older "reopened" observation cannot clear a later closure.
-    if decision.impact == "monitor":
-        latest_restrictive = _last_restrictive_capture(current.source_summary)
-        if (
-            latest_restrictive is not None
-            and decision.captured_at <= latest_restrictive
-        ):
-            return ReducedState(
-                passability=current.passability,
-                network_version=current.network_version,
-                source_summary={
-                    **current.source_summary,
-                    "ignored_decision": {
-                        "incident_id": decision.incident_id,
-                        "impact": decision.impact,
-                        "captured_at": decision.captured_at.isoformat(),
-                        "reason": "captured before the latest approved restriction",
-                    },
+    # An older observation cannot overwrite a newer one. A late review of a
+    # Monday closure must not undo a Wednesday reopening, and a late "reopened"
+    # report must not clear a closure that was seen afterwards.
+    latest_capture = _last_decision_capture(current.source_summary)
+    if latest_capture is not None and _as_utc(decision.captured_at) <= latest_capture:
+        return ReducedState(
+            passability=current.passability,
+            network_version=current.network_version,
+            source_summary={
+                **current.source_summary,
+                "ignored_decision": {
+                    "incident_id": decision.incident_id,
+                    "impact": decision.impact,
+                    "captured_at": decision.captured_at.isoformat(),
+                    "reason": "captured at or before the latest approved observation",
                 },
-                as_of=current.as_of or decision.reviewed_at,
-                changed=False,
-                outcome="superseded_by_later_closure",
-            )
+            },
+            as_of=current.as_of or decision.reviewed_at,
+            changed=False,
+            outcome="superseded_by_later_closure",
+        )
 
     summary = {
         key: value
@@ -98,7 +105,7 @@ def reduce_segment_state(
     }
     summary["passability_basis"] = (
         f"{decision.impact} confirmed by dispatcher; "
-        f"field evidence captured {decision.captured_at.astimezone(UTC).isoformat()}"
+        f"field evidence captured {_as_utc(decision.captured_at).isoformat()}"
     )
     summary["last_decision"] = {
         "incident_id": decision.incident_id,
