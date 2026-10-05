@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   RefreshControl,
   ScrollView,
@@ -24,6 +25,7 @@ import {
   subscribeToOutbox,
 } from '../../services/offlineStorage';
 import { pendingWork } from '../../services/reportOutbox';
+import { newUuid } from '../../services/ids';
 
 /** A report's state in words, from what the API said. */
 function reportState(report: HazardReport): string {
@@ -161,17 +163,25 @@ export default function FieldHomeScreen() {
     setNow(Date.now());
   }, [isLocal]);
 
-  useEffect(() => {
-    void load();
-    return subscribeToOutbox(() => {
-      void getAllHazards().then(setMine);
-    });
-  }, [load]);
+  // Alerts are asked for again whenever the tab comes back into view.
+  useFocusEffect(
+    useCallback(() => {
+      void load();
+    }, [load]),
+  );
+
+  useEffect(
+    () =>
+      subscribeToOutbox(() => {
+        void getAllHazards().then(setMine);
+      }),
+    [],
+  );
 
   async function acknowledge(alert: AlertRecord) {
     setAcknowledging(alert.id);
-    const key = `${alert.id}:${Date.now()}`;
-    const result = await acknowledgeAlert(alert.id, key);
+    // The API takes only a UUID as an Idempotency-Key.
+    const result = await acknowledgeAlert(alert.id, newUuid());
     setAcknowledging(null);
     if (result.ok) await load();
   }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { ArrowRight, PackageCheck, Truck } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
 import { useCrew } from '../../contexts/SessionContext';
@@ -68,9 +68,12 @@ export default function TripsScreen() {
     }
   }, [isLocal]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  // Reload whenever the tab comes back into view, such as after a receipt.
+  useFocusEffect(
+    useCallback(() => {
+      void load();
+    }, [load]),
+  );
 
   async function move(trip: Trip, action: DriverTripAction) {
     setBusyId(trip.id);

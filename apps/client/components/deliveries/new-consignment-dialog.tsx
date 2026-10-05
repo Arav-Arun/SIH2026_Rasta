@@ -155,7 +155,7 @@ export function NewConsignmentDialog({
       onClose={onClose}
       aria-label={t('newConsignment.title')}
       data-new-consignment
-      className="w-[min(36rem,92vw)] rounded-lg border border-border bg-card p-0 text-foreground backdrop:bg-black/50"
+      className="m-auto w-[min(36rem,92vw)] rounded-lg border border-border bg-card p-0 text-foreground backdrop:bg-black/50"
     >
       <form
         className="flex max-h-[88vh] flex-col gap-4 overflow-y-auto p-4"

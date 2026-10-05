@@ -513,14 +513,33 @@ class PostgresLogisticsRepository:
     async def list_consignments(
         self, *, scope: WorkspaceScope, status: str | None, limit: int
     ) -> ConsignmentListResponse:
-        require_any(scope, CONSIGNMENT_READ)
-        with self._connect() as connection:
-            rows = connection.execute(
-                self._CONSIGNMENT_SELECT
-                + """
+        # A dispatcher or reviewer reads the district's consignments; a driver
+        # reads only what is loaded on their own trips, the manifest they
+        # deliver and sign a receipt against.
+        if any(scope.has(capability) for capability in CONSIGNMENT_READ):
+            where = """
                 where c.organization_id = %(org)s::uuid
                   and (%(districts)s::uuid[] is null
                        or c.district_id = any(%(districts)s::uuid[]))
+            """
+        elif scope.has("trip:read"):
+            where = """
+                where c.organization_id = %(org)s::uuid
+                  and exists (
+                    select 1
+                    from public.trips as t
+                    where t.organization_id = c.organization_id
+                      and t.consignment_id = c.id
+                      and t.driver_id = %(profile_id)s::uuid
+                  )
+            """
+        else:
+            raise ApiError(403, "forbidden", "You do not have access to this resource.")
+        with self._connect() as connection:
+            rows = connection.execute(
+                self._CONSIGNMENT_SELECT
+                + where
+                + """
                   and (%(status)s::text is null or c.status::text = %(status)s)
                 order by c.created_at desc
                 limit %(limit)s
@@ -530,6 +549,7 @@ class PostgresLogisticsRepository:
                     "districts": list(scope.district_ids)
                     if scope.district_ids is not None
                     else None,
+                    "profile_id": scope.profile_id,
                     "status": status,
                     "limit": limit,
                 },

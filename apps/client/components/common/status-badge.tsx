@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import {
+  AlertOctagon,
   AlertTriangle,
   Ban,
   CheckCircle2,
@@ -25,7 +26,13 @@ import { useT } from '@/components/i18n/locale-provider';
 import { cn } from '@/lib/utils';
 
 type Passability = 'open' | 'restricted' | 'closed' | 'unknown';
-type RiskLevel = 'low' | 'moderate' | 'high' | 'unavailable';
+type RiskLevel =
+  | 'low'
+  | 'moderate'
+  | 'high'
+  | 'critical'
+  | 'unknown'
+  | 'unavailable';
 /** The API's own lifecycles, not a parallel vocabulary. */
 type ConsignmentStatus =
   | 'draft'
@@ -184,12 +191,16 @@ function resolve(props: StatusBadgeProps): {
         low: 'success',
         moderate: 'caution',
         high: 'urgent',
+        critical: 'urgent',
+        unknown: 'neutral',
         unavailable: 'neutral',
       };
       const icon: Record<RiskLevel, ReactNode> = {
         low: <ShieldCheck className={cls} aria-hidden="true" />,
         moderate: <ShieldAlert className={cls} aria-hidden="true" />,
         high: <AlertTriangle className={cls} aria-hidden="true" />,
+        critical: <AlertOctagon className={cls} aria-hidden="true" />,
+        unknown: <ShieldQuestion className={cls} aria-hidden="true" />,
         unavailable: <ShieldQuestion className={cls} aria-hidden="true" />,
       };
       return {

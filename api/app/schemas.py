@@ -165,8 +165,19 @@ class SegmentRisk(BaseModel):
     horizon_hours: int | None = None
     reason: str | None = Field(
         default=None,
-        description="Why risk is unavailable, e.g. risk_engine_not_available.",
+        description="Why risk is unavailable, e.g. not_scored.",
     )
+    model_version: str | None = None
+    computed_at: datetime | None = None
+    explanations: list[str] = Field(
+        default_factory=list,
+        description="What raised the score, in words, each naming its source.",
+    )
+    caveats: list[str] = Field(
+        default_factory=list,
+        description="What the score does not say, such as inputs it lacked.",
+    )
+    missing_inputs: list[str] = Field(default_factory=list)
 
 
 class NetworkObservation(BaseModel):

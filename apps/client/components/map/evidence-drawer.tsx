@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ClipboardCheck, FilePlus2, Route, X } from 'lucide-react';
 
-import { useLocale } from '@/components/i18n/locale-provider';
+import { useFormatTime, useLocale } from '@/components/i18n/locale-provider';
 import { EmptyState } from '@/components/common/empty-state';
 import { ErrorPanel } from '@/components/common/error-panel';
 import { FreshnessLabel } from '@/components/common/freshness-label';
@@ -119,6 +119,63 @@ export function EvidenceDrawer({
         )}
       </div>
     </aside>
+  );
+}
+
+/** The risk engine's assessment of one road, with what raised it and what it lacks. */
+function RiskAssessment({
+  risk,
+  t,
+}: {
+  risk: SegmentDetailResponse['risk'];
+  t: (key: string, values?: Record<string, string | number>) => string;
+}) {
+  const formatTime = useFormatTime();
+  const explanations = risk.explanations ?? [];
+  const caveats = risk.caveats ?? [];
+  return (
+    <div className="space-y-3 text-sm" data-risk-assessment>
+      <p className="font-medium">
+        {t(`status.risk.${risk.level}`)}
+        {risk.score != null ? (
+          <span className="ms-2 font-mono text-xs text-muted-foreground tabular-nums">
+            {risk.score.toFixed(2)}
+          </span>
+        ) : null}
+      </p>
+      {explanations.length > 0 ? (
+        <section>
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {t('map.riskWhy')}
+          </h4>
+          <ul className="mt-1 list-disc space-y-1 ps-4 leading-relaxed">
+            {explanations.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      {caveats.length > 0 ? (
+        <section>
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {t('map.riskCaveats')}
+          </h4>
+          <ul className="mt-1 list-disc space-y-1 ps-4 text-xs leading-relaxed text-muted-foreground">
+            {caveats.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      {risk.model_version ? (
+        <p className="text-xs text-muted-foreground">
+          {t('map.riskModel', {
+            version: risk.model_version,
+            when: risk.computed_at ? formatTime.time(risk.computed_at) : '',
+          })}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
@@ -244,14 +301,18 @@ function DrawerBody({
 
         <TabsContent value="risk" className="pt-3">
           {detail.risk.available ? (
-            <p className="text-sm">
-              {t('status.risk.label')}: {props.risk_level} ({props.risk_score})
-            </p>
+            <RiskAssessment risk={detail.risk} t={t} />
           ) : (
             <div className="rounded-lg border border-dashed bg-slate-50 p-3 text-sm">
-              <p className="font-medium">{t('map.riskUnavailable')}</p>
+              <p className="font-medium">
+                {detail.risk.reason === 'not_scored'
+                  ? t('map.riskNotScored')
+                  : t('map.riskUnavailable')}
+              </p>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                {t('map.riskUnavailableBody')}
+                {detail.risk.reason === 'not_scored'
+                  ? t('map.riskNotScoredBody')
+                  : t('map.riskUnavailableBody')}
               </p>
               {detail.risk.reason ? (
                 <p className="mt-1 font-mono text-[11px] text-muted-foreground">

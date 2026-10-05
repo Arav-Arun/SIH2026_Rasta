@@ -25,6 +25,9 @@ import {
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 
+/** How far from a road, in pixels, a click still selects it. */
+const CLICK_TOLERANCE_PX = 6;
+
 /** Interactive OSM raster tiles are permitted with attribution; never bulk-fetched. */
 const OSM_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const OSM_ATTRIBUTION =
@@ -324,9 +327,16 @@ export function NetworkMap({
       });
     };
     const onClick = (event: MapLayerMouseEvent) => {
-      const features = map.queryRenderedFeatures(event.point, {
-        layers: SEGMENT_LAYER_IDS,
-      });
+      // Roads are drawn a few pixels wide, and unknown ones dotted: accept a
+      // click near a road, casing included, not only one exactly on a dot.
+      const { x, y } = event.point;
+      const features = map.queryRenderedFeatures(
+        [
+          [x - CLICK_TOLERANCE_PX, y - CLICK_TOLERANCE_PX],
+          [x + CLICK_TOLERANCE_PX, y + CLICK_TOLERANCE_PX],
+        ],
+        { layers: [...SEGMENT_LAYER_IDS, 'segments-casing'] },
+      );
       const id = features[0]?.properties?.segment_id as string | undefined;
       onSelectRef.current?.(id ?? null);
     };

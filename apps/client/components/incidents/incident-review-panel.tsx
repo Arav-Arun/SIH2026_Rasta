@@ -362,7 +362,7 @@ function EvidenceLightbox({
       ref={ref}
       aria-label={t('incidents.evidenceAlt')}
       onClose={onClose}
-      className="max-h-[90vh] max-w-[90vw] rounded-lg bg-transparent p-0 backdrop:bg-black/70"
+      className="m-auto max-h-[90vh] max-w-[90vw] rounded-lg bg-transparent p-0 backdrop:bg-black/70"
     >
       <div className="relative">
         <button

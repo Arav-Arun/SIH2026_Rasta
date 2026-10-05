@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -68,6 +69,19 @@ export default function RoutesScreen() {
       cancelled = true;
     };
   }, [isLocal]);
+
+  // Coming back to the tab asks the control room again, as pulling down does.
+  // The first focus is the mount, which the effect above already covers.
+  const seenFocus = useRef(false);
+  useFocusEffect(
+    useCallback(() => {
+      if (!seenFocus.current) {
+        seenFocus.current = true;
+        return;
+      }
+      void refresh();
+    }, [refresh]),
+  );
 
   if (!view) {
     return (

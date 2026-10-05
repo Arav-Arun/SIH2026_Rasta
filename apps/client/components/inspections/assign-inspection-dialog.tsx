@@ -62,7 +62,7 @@ export function AssignInspectionDialog({ onClose }: { onClose: () => void }) {
       ref={ref}
       onClose={onClose}
       aria-label={t('inspections.assign')}
-      className="w-[min(32rem,92vw)] rounded-lg border border-border bg-card p-0 text-foreground backdrop:bg-black/50"
+      className="m-auto w-[min(32rem,92vw)] rounded-lg border border-border bg-card p-0 text-foreground backdrop:bg-black/50"
     >
       <div className="flex flex-col gap-4 p-4">
         <header className="flex items-start justify-between gap-2">

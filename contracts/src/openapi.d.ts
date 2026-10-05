@@ -2394,6 +2394,18 @@ export interface components {
         SegmentRisk: {
             /** Available */
             available: boolean;
+            /**
+             * Caveats
+             * @description What the score does not say, such as inputs it lacked.
+             */
+            caveats?: string[];
+            /** Computed At */
+            computed_at?: string | null;
+            /**
+             * Explanations
+             * @description What raised the score, in words, each naming its source.
+             */
+            explanations?: string[];
             /** Horizon Hours */
             horizon_hours?: number | null;
             /**
@@ -2402,9 +2414,13 @@ export interface components {
              * @enum {string}
              */
             level: "unknown" | "low" | "moderate" | "high" | "critical";
+            /** Missing Inputs */
+            missing_inputs?: string[];
+            /** Model Version */
+            model_version?: string | null;
             /**
              * Reason
-             * @description Why risk is unavailable, e.g. risk_engine_not_available.
+             * @description Why risk is unavailable, e.g. not_scored.
              */
             reason?: string | null;
             /** Score */

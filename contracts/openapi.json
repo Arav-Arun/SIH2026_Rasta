@@ -4508,6 +4508,34 @@
             "title": "Available",
             "type": "boolean"
           },
+          "caveats": {
+            "description": "What the score does not say, such as inputs it lacked.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Caveats",
+            "type": "array"
+          },
+          "computed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Computed At"
+          },
+          "explanations": {
+            "description": "What raised the score, in words, each naming its source.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Explanations",
+            "type": "array"
+          },
           "horizon_hours": {
             "anyOf": [
               {
@@ -4531,6 +4559,24 @@
             "title": "Level",
             "type": "string"
           },
+          "missing_inputs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Inputs",
+            "type": "array"
+          },
+          "model_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Version"
+          },
           "reason": {
             "anyOf": [
               {
@@ -4540,7 +4586,7 @@
                 "type": "null"
               }
             ],
-            "description": "Why risk is unavailable, e.g. risk_engine_not_available.",
+            "description": "Why risk is unavailable, e.g. not_scored.",
             "title": "Reason"
           },
           "score": {

@@ -48,7 +48,9 @@
       "low": "Low risk",
       "moderate": "Moderate risk",
       "high": "High risk",
-      "unavailable": "Risk unavailable"
+      "unavailable": "Risk unavailable",
+      "critical": "Critical risk",
+      "unknown": "Risk unknown"
     },
     "sync": {
       "label": "Sync status",
@@ -293,7 +295,12 @@
     "select": "Select",
     "loading": "Loading network…",
     "emptyScope": "No road network in your scope",
-    "listCaption": "Road segments in the current view"
+    "listCaption": "Road segments in the current view",
+    "riskWhy": "What raised it",
+    "riskCaveats": "What it does not say",
+    "riskModel": "Model {version}, scored {when}",
+    "riskNotScored": "Not scored yet",
+    "riskNotScoredBody": "The risk engine has not scored this road. No score is shown rather than an unsourced one."
   },
   "overview2": {
     "reachableOf": "{reachable} of {monitored}",

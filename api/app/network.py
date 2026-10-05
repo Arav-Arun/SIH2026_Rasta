@@ -60,6 +60,7 @@ class DistrictNetwork:
     edges: list[tuple[str, str, str, str]]
     facilities: list[dict[str, Any]]
     passability_counts: dict[str, int] = field(default_factory=dict)
+    risk_scored: int = 0
 
 
 class NetworkRepository(Protocol):
@@ -353,17 +354,35 @@ class PostgresNetworkRepository:
                 """,
                 params,
             ).fetchall()
+            assessment = connection.execute(
+                """
+                select risk_model_version, risk_computed_at, risk_explanation
+                from public.segment_current_state
+                where organization_id = %(organization_id)s::uuid
+                  and segment_id = %(segment_id)s::uuid
+                """,
+                params,
+            ).fetchone()
 
         properties = _row_properties(row)
+        scored = assessment is not None and assessment["risk_computed_at"] is not None
+        explanation = (assessment["risk_explanation"] if scored else None) or {}
         return SegmentDetailResponse(
             segment=SegmentFeature(
                 id=row["id"], geometry=row["geometry"], properties=properties
             ),
+            # The risk engine's last assessment, with the reasons it gave; a
+            # road it has not scored says so rather than showing a guess.
             risk=SegmentRisk(
-                available=False,
+                available=scored,
                 level=properties.risk_level,
                 score=properties.risk_score,
-                reason="risk_engine_not_available",
+                reason=None if scored else "not_scored",
+                model_version=assessment["risk_model_version"] if scored else None,
+                computed_at=assessment["risk_computed_at"] if scored else None,
+                explanations=list(explanation.get("explanations") or []),
+                caveats=list(explanation.get("caveats") or []),
+                missing_inputs=list(explanation.get("missing_inputs") or []),
             ),
             observations=[
                 NetworkObservation(**observation) for observation in observation_rows
@@ -404,7 +423,8 @@ class PostgresNetworkRepository:
                   rs.to_node_id,
                   coalesce(scs.passability::text, 'unknown') as passability,
                   rs.network_version,
-                  scs.as_of
+                  scs.as_of,
+                  scs.risk_computed_at is not null as risk_scored
                 from public.road_segments as rs
                 left join public.segment_current_state as scs
                   on scs.segment_id = rs.id and scs.organization_id = rs.organization_id
@@ -435,7 +455,9 @@ class PostgresNetworkRepository:
         versions: set[str] = set()
         as_of: datetime | None = None
         edges: list[tuple[str, str, str, str]] = []
+        risk_scored = 0
         for row in edge_rows:
+            risk_scored += 1 if row["risk_scored"] else 0
             edges.append(
                 (row["id"], row["from_node_id"], row["to_node_id"], row["passability"])
             )
@@ -450,6 +472,7 @@ class PostgresNetworkRepository:
             edges=edges,
             facilities=[dict(row) for row in facility_rows],
             passability_counts=counts,
+            risk_scored=risk_scored,
         )
 
 
@@ -541,7 +564,8 @@ def compute_connectivity(network: DistrictNetwork) -> ConnectivitySummaryRespons
     unknown_segments = network.passability_counts.get("unknown", 0)
     if unknown_segments:
         warnings.append("passability_unknown_segments")
-    warnings.append("risk_engine_not_available")
+    if network.edges and not network.risk_scored:
+        warnings.append("risk_not_scored")
 
     return ConnectivitySummaryResponse(
         district_id=network.district_id,
