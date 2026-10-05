@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Map as MapIcon,
   Minus,
+  Play,
   Plus,
   RadioTower,
   Route,
@@ -21,6 +22,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 import { ControlRoomShowcase } from './control-room-showcase';
+import { DemoVideo } from './demo-video';
 import { PhoneFrame } from './device-frames';
 import { APK_URL, CONTROL_ROOM_PATH, SOURCE_URL, VIDEO_URL } from './links';
 
@@ -38,6 +40,7 @@ const focusRing =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#191314]';
 
 const NAV = [
+  { href: '#demo', label: 'Demo' },
   { href: '#how-it-works', label: 'How it works' },
   { href: '#features', label: 'Features' },
   { href: '#control-room', label: 'Control room' },
@@ -86,13 +89,13 @@ const FEATURES: ReadonlyArray<{
   {
     requirement: 'b',
     title: 'Disruption prediction',
-    text: 'AI scores each road from IMD rainfall, NDMA SACHET warnings, slope and past incidents, and shows why.',
+    text: 'AI scores each road from IMD rainfall, NDMA SACHET warnings and past incidents, and shows why.',
     icon: BrainCircuit,
   },
   {
     requirement: 'c',
     title: 'Alternate routes',
-    text: 'Up to three routes that avoid closures, high-risk roads and bridges the vehicle cannot cross, with ETA ranges.',
+    text: 'Up to three routes that avoid closures and bridges the vehicle cannot cross, and weigh road risk, with ETA ranges.',
     icon: Route,
   },
   {
@@ -122,7 +125,7 @@ const FEATURES: ReadonlyArray<{
   {
     requirement: 'h',
     title: 'Languages and offline',
-    text: 'English and all 22 scheduled languages. Reports and routes keep working without network.',
+    text: 'The control room and offline web app speak English and all 22 scheduled languages. Reports and routes keep working without network.',
     icon: Languages,
   },
 ];
@@ -130,7 +133,7 @@ const FEATURES: ReadonlyArray<{
 const STEPS = [
   {
     title: 'Predict',
-    text: 'High-risk roads are flagged 24 to 72 hours ahead from rainfall forecasts and disaster warnings.',
+    text: 'High-risk roads are flagged ahead of time from rainfall forecasts and disaster warnings.',
   },
   {
     title: 'Report',
@@ -173,7 +176,7 @@ const FAQS = [
   },
   {
     q: 'Which languages are supported?',
-    a: 'English and all 22 languages of the Eighth Schedule, including Assamese, Bengali, Bodo, Manipuri and Nepali.',
+    a: 'The control room and the offline web app are available in English and all 22 languages of the Eighth Schedule, including Assamese, Bengali, Bodo, Manipuri and Nepali.',
   },
   {
     q: 'How do officials get access?',
@@ -265,6 +268,21 @@ function ControlRoomButton({
   );
 }
 
+function WatchDemoButton() {
+  return (
+    <a
+      href="#demo"
+      className={cn(
+        'inline-flex items-center gap-2 rounded-lg bg-[#191314] px-4 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2c2527]',
+        focusRing,
+      )}
+    >
+      Watch the demo
+      <Play className="size-4 fill-current" aria-hidden />
+    </a>
+  );
+}
+
 function Logo() {
   return (
     <span className="flex items-center gap-2">
@@ -350,59 +368,95 @@ function ScrollBadge() {
 
 function Hero() {
   return (
-    <section className="relative grid gap-4 lg:grid-cols-[1fr_1.05fr]">
-      <div className="flex flex-col justify-between rounded-[2rem] bg-white p-7 sm:p-10 lg:min-h-[560px] lg:p-12">
-        <div>
-          <span className="inline-block rounded-lg bg-[#f4f4f4] px-3 py-1.5 text-[11px] text-[#191314]/70">
-            Team Side Quest, Team ID 127269
-          </span>
-          <h1 className="mt-7 font-(family-name:--font-landing-display) text-[clamp(2.7rem,6.2vw,4.9rem)] leading-[0.98] font-bold tracking-[-0.03em]">
-            Roads fail.
-            <br />
-            Supplies
-            <br />
-            shouldn’t.
-          </h1>
-          <p className="mt-7 max-w-sm text-[13px] leading-6 text-[#191314]/75">
-            Road accessibility and supply tracking for India’s North Eastern
-            Region. See which roads are open, reroute essential goods, and know
-            every delivery arrived.
-          </p>
+    <section>
+      <div className="relative grid gap-4 lg:grid-cols-[1fr_1.05fr]">
+        <div className="flex flex-col justify-between rounded-[2rem] bg-white p-7 sm:p-10 lg:min-h-[560px] lg:p-12">
+          <div>
+            <span className="inline-block rounded-lg bg-[#f4f4f4] px-3 py-1.5 text-[11px] text-[#191314]/70">
+              Team Side Quest, Team ID 127269
+            </span>
+            <h1 className="mt-7 font-(family-name:--font-landing-display) text-[clamp(2.7rem,6.2vw,4.9rem)] leading-[0.98] font-bold tracking-[-0.03em]">
+              Roads fail.
+              <br />
+              Supplies
+              <br />
+              shouldn’t.
+            </h1>
+            <p className="mt-7 max-w-sm text-[13px] leading-6 text-[#191314]/75">
+              Road accessibility and supply tracking for India’s North Eastern
+              Region. See which roads are open, reroute essential goods, and
+              know every delivery arrived.
+            </p>
+          </div>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <DownloadButton />
+            <ControlRoomButton />
+            <WatchDemoButton />
+          </div>
         </div>
-        <div className="mt-10 flex flex-wrap items-center gap-3">
-          <DownloadButton />
-          <ControlRoomButton />
+
+        <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] bg-[#7AA2F7] lg:min-h-[560px]">
+          <Contours className="absolute inset-0 size-full text-white/35" />
+          <div className="absolute top-6 left-5 z-10 w-[136px] rounded-2xl bg-white/80 p-4 shadow-[0_20px_40px_-24px_rgba(25,19,20,0.5)] backdrop-blur-md sm:top-8 sm:left-8 sm:w-[200px]">
+            <p className="text-[11px] text-[#191314]/60">Approved route</p>
+            <p className="mt-1.5 font-(family-name:--font-landing-display) text-2xl font-bold tracking-tight sm:text-3xl">
+              4.6 km
+            </p>
+            <p className="mt-1 text-[11px] text-[#191314]/70">
+              5 to 11 min, clear of closures
+            </p>
+          </div>
+          <div className="absolute top-[48%] left-8 z-10 hidden items-center gap-2.5 rounded-xl bg-[#191314] px-3.5 py-2.5 text-white shadow-lg sm:flex">
+            <span className="size-2 rounded-full bg-[#ff6b6b]" aria-hidden />
+            <span className="text-[11px] leading-4">
+              NH-6 closed
+              <span className="block text-white/60">
+                verified by dispatcher
+              </span>
+            </span>
+          </div>
+          <PhoneFrame
+            src="/landing/app-observer-capture.webp"
+            alt="RASTA field app: report a landslide, boulder fall or flash flood with a photo and GPS position"
+            eager
+            className="absolute top-24 right-[6%] w-[54%] max-w-[300px] sm:top-20 sm:right-[9%] sm:w-[47%]"
+          />
+        </div>
+
+        <div className="absolute bottom-4 left-[calc(48.8%-4rem)] hidden lg:block">
+          <ScrollBadge />
         </div>
       </div>
 
-      <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] bg-[#7AA2F7] lg:min-h-[560px]">
-        <Contours className="absolute inset-0 size-full text-white/35" />
-        <div className="absolute top-6 left-5 z-10 w-[136px] rounded-2xl bg-white/80 p-4 shadow-[0_20px_40px_-24px_rgba(25,19,20,0.5)] backdrop-blur-md sm:top-8 sm:left-8 sm:w-[200px]">
-          <p className="text-[11px] text-[#191314]/60">Approved route</p>
-          <p className="mt-1.5 font-(family-name:--font-landing-display) text-2xl font-bold tracking-tight sm:text-3xl">
-            4.6 km
-          </p>
-          <p className="mt-1 text-[11px] text-[#191314]/70">
-            5 to 11 min, clear of closures
-          </p>
+      <div
+        id="demo"
+        className="mt-4 scroll-mt-24 rounded-[2rem] bg-white p-4 sm:p-6 lg:p-8"
+      >
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <SectionLabel>3-minute walkthrough</SectionLabel>
+            <h2 className="mt-4 font-(family-name:--font-landing-display) text-[clamp(1.6rem,3.2vw,2.4rem)] leading-[1.08] font-bold tracking-[-0.02em] text-balance">
+              One landslide, three people, end to end.
+            </h2>
+            <p className="mt-3 max-w-xl text-[13px] leading-6 text-[#191314]/70">
+              A field officer reports a blocked road, a dispatcher verifies it
+              and approves a new route, and the driver delivers.
+            </p>
+          </div>
+          <a
+            href={VIDEO_URL}
+            target="_blank"
+            rel="noreferrer"
+            className={cn(
+              'inline-flex items-center gap-2 self-start rounded-lg border border-[#191314]/20 px-4 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors hover:border-[#191314] sm:self-auto',
+              focusRing,
+            )}
+          >
+            Watch on YouTube
+            <ArrowUpRight className="size-4" aria-hidden />
+          </a>
         </div>
-        <div className="absolute top-[48%] left-8 z-10 hidden items-center gap-2.5 rounded-xl bg-[#191314] px-3.5 py-2.5 text-white shadow-lg sm:flex">
-          <span className="size-2 rounded-full bg-[#ff6b6b]" aria-hidden />
-          <span className="text-[11px] leading-4">
-            NH-6 closed
-            <span className="block text-white/60">verified by dispatcher</span>
-          </span>
-        </div>
-        <PhoneFrame
-          src="/landing/app-observer-capture.webp"
-          alt="RASTA field app: report a landslide, boulder fall or flash flood with a photo and GPS position"
-          eager
-          className="absolute top-24 right-[6%] w-[54%] max-w-[300px] sm:top-20 sm:right-[9%] sm:w-[47%]"
-        />
-      </div>
-
-      <div className="absolute bottom-4 left-[calc(48.8%-4rem)] hidden lg:block">
-        <ScrollBadge />
+        <DemoVideo className="mt-6" />
       </div>
     </section>
   );
@@ -804,7 +858,7 @@ function Footer() {
             Source code
           </a>
           <a href={VIDEO_URL} className={cn('hover:underline', focusRing)}>
-            Pitch video
+            Demo video
           </a>
           <Link
             href={CONTROL_ROOM_PATH}

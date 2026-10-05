@@ -46,6 +46,8 @@ function contentSecurityPolicy(development: boolean): string {
     // MapLibre runs its tile workers from blob: URLs; the offline worker is same-origin.
     "worker-src 'self' blob:",
     "child-src 'self' blob:",
+    // The demo video player, loaded only after a visitor presses play.
+    'frame-src https://www.youtube-nocookie.com',
     "manifest-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",

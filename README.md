@@ -23,7 +23,7 @@ essential supplies before a disruption turns into a shortage.
 |---|---|
 | **Website and control room** | https://rasta-client.aravarun.workers.dev |
 | **Android app (APK)** | [Download rasta.apk](https://github.com/Arav-Arun/SIH2026_Rasta/releases/latest/download/rasta.apk) |
-| **Pitch video** | https://youtu.be/SZnwSxY7NMA |
+| **Demo video** | https://youtu.be/d7QWfgCOpME |
 
 On the sign-in page, **Try the demo** signs you in as a dispatcher, field officer
 or driver with one click. The server sleeps when idle, so the first request after
@@ -67,13 +67,13 @@ Mapped to the problem statement's requirements (a) to (h).
 | Requirement | What RASTA provides |
 |---|---|
 | **(a) Road and bridge accessibility** | GIS map of the road network with each road's status (open, restricted, closed, unknown), its source and how old it is. Bridge weight and height limits are checked against each vehicle. |
-| **(b) Disruption prediction** | An explainable risk engine that scores each road from IMD rainfall forecasts, NDMA SACHET (CAP) warnings, slope susceptibility and confirmed incidents. Every score lists the inputs behind it. |
+| **(b) Disruption prediction** | An explainable risk engine that scores each road from IMD rainfall forecasts, NDMA SACHET (CAP) warnings and confirmed incidents, and accepts terrain and vehicle-telemetry inputs. Every score lists the inputs behind it. |
 | **(c) Alternate routes and delays** | Constrained route planning that avoids closed roads and bridges the vehicle cannot use, and offers up to three genuinely different routes with ETA ranges. |
 | **(d) GPS tracking of essential goods** | Trip-based tracking of vehicles carrying medicines, food, produce and construction material. Positions are queued offline and uploaded in batches. |
 | **(e) Automated alerts** | Alerts for road closures and restrictions, withdrawn routes, isolated facilities, stale vehicle positions and delivery shortfalls, with acknowledgement and web push. |
 | **(f) Geo-tagged field reports** | Photo, location, accuracy and time captured on the phone or in the browser, stored privately and verified with a SHA-256 checksum. |
 | **(g) Central dashboards** | District connectivity overview, deliveries and supply gaps, fleet positions, incidents, inspections, alerts and data health. |
-| **(h) Multilingual and offline** | English and all 22 Eighth Schedule languages. Reports, GPS positions, approved routes and map data packs work offline and sync on reconnect. |
+| **(h) Multilingual and offline** | The control room and offline web app in English and all 22 Eighth Schedule languages. Reports, GPS positions, approved routes and map data packs work offline and sync on reconnect. |
 
 Across the platform:
 
@@ -186,7 +186,7 @@ Every part of the stack is open source or free to run.
   OpenStreetMap, with 30 health, pharmacy, market and warehouse facilities.
 - **Weather and alerts:** IMD rainfall and NDMA SACHET adapters. Until live feed
   access is granted they read recorded samples, labelled as recorded on screen.
-- **Languages:** the interface is available in English and all 22 Eighth
+- **Languages:** the web interface is available in English and all 22 Eighth
   Schedule languages, including Assamese, Bengali, Bodo, Manipuri and Nepali.
 
 ## Repository layout

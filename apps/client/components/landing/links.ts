@@ -7,4 +7,7 @@ export const CONTROL_ROOM_PATH = '/sign-in';
 
 export const SOURCE_URL = 'https://github.com/Arav-Arun/SIH2026_Rasta';
 
-export const VIDEO_URL = 'https://youtu.be/SZnwSxY7NMA';
+/** The 3-minute walkthrough on YouTube. Change the id here and everything follows. */
+export const VIDEO_ID = 'd7QWfgCOpME';
+
+export const VIDEO_URL = `https://youtu.be/${VIDEO_ID}`;
