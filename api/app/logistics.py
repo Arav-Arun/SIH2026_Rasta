@@ -3,15 +3,16 @@
 from __future__ import annotations
 
 import uuid
+from contextlib import AbstractContextManager
 from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any, Literal, Protocol
 
 import psycopg
-from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from pydantic import BaseModel, Field, field_validator
 
+from app import db
 from app.errors import ApiError
 from app.idempotency import canonical_hash, lookup_ledger, record_ledger
 from app.scope import WorkspaceScope
@@ -428,8 +429,8 @@ class PostgresLogisticsRepository:
     def __init__(self, database_url: str) -> None:
         self._database_url = database_url
 
-    def _connect(self) -> psycopg.Connection:
-        return psycopg.connect(self._database_url, row_factory=dict_row)
+    def _connect(self) -> AbstractContextManager[psycopg.Connection[Any]]:
+        return db.connect(self._database_url)
 
     # -- reads ---------------------------------------------------------------
 

@@ -1,6 +1,7 @@
 import { apiRequest } from './client';
 import type {
   Consignment,
+  ConsignmentCreateRequest,
   ConsignmentListResponse,
   DriverListResponse,
   SupplyRequestListResponse,
@@ -40,6 +41,24 @@ export async function getConsignments(
   });
   return payload as ConsignmentListResponse;
 }
+/**
+ * Records a new consignment as a draft: what is going where, by when. It is
+ * released for planning separately, once its manifest is right.
+ */
+export async function createConsignment(
+  auth: Auth,
+  body: ConsignmentCreateRequest,
+  idempotencyKey: string,
+): Promise<Consignment> {
+  const { payload } = await apiRequest('/v1/consignments', {
+    ...auth,
+    method: 'POST',
+    body,
+    idempotencyKey,
+  });
+  return payload as Consignment;
+}
+
 /**
  * Releases a draft consignment for planning. Until this happens the manifest
  * is still being corrected, and the server refuses to raise a trip against it.

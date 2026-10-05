@@ -68,12 +68,12 @@ export default function TabLayout() {
         }}
       />
 
+      {/* Everyone lands here after signing in, so it keeps its tab for both seats. */}
       <Tabs.Screen
         name="index"
         options={{
           title: 'Radar',
           headerTitle: () => <BrandMark />,
-          href: isObserver ? null : '/',
           tabBarIcon: ({ color, size }) => (
             <Compass size={size - 2} color={color} />
           ),

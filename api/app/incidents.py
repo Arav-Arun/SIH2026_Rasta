@@ -6,15 +6,16 @@ import hashlib
 import json
 import re
 import uuid
+from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any, Literal, Protocol
 
 import psycopg
-from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from pydantic import BaseModel, Field, field_validator
 
+from app import db
 from app.errors import ApiError
 from app.evidence import (
     ALLOWED_MIME_TYPES,
@@ -330,8 +331,8 @@ class PostgresIncidentRepository:
         # every alert, it just does not ring anybody's phone.
         self._push_sender = push_sender
 
-    def _connect(self) -> psycopg.Connection[Any]:
-        return psycopg.connect(self._database_url, row_factory=dict_row)
+    def _connect(self) -> AbstractContextManager[psycopg.Connection[Any]]:
+        return db.connect(self._database_url)
 
     # -- reads ---------------------------------------------------------------
 

@@ -209,16 +209,30 @@ Node 22 and Python 3.12 or newer.
 
 ```bash
 npm ci
-supabase start && supabase db reset          # database schema and seed data
+supabase start && supabase db reset          # database schema
+supabase status                              # prints the URLs and keys used below
 
 python3.12 -m venv api/.venv
 api/.venv/bin/pip install -e ./api
-cp api/.env.example api/.env                 # database and Supabase settings
+cp api/.env.example api/.env                 # fill in DATABASE_URL and the Supabase values
+
+# Weather and alert samples, re-dated to now (still labelled recorded).
+api/.venv/bin/python -m app.recorded_samples /tmp/rasta-sources
+echo "SOURCE_FIXTURE_ROOT=/tmp/rasta-sources" >> api/.env
+
+# Shillong road network, demo accounts and the demo story's starting point.
+api/.venv/bin/python -m app.demo_setup --password 'pick-a-demo-password' --story
+
 api/.venv/bin/uvicorn app.main:app --app-dir api --port 8000
 
 cp apps/client/.env.example apps/client/.env.local
+# set the Supabase values and NEXT_PUBLIC_DEMO_PASSWORD to the same password
 npm run dev --workspace apps/client          # http://localhost:3000
 ```
+
+`demo_setup` can be run again at any time: it keeps the accounts, cancels the
+previous story trip and starts a fresh one, and prints where to report the
+landslide. It refuses to run unless `APP_MODE` is `local_demo` or `hosted_demo`.
 
 For the Android app:
 

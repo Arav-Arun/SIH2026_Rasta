@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from collections import deque
+from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any, Literal, Protocol
 
 import psycopg
-from psycopg.rows import dict_row
 
+from app import db
 from app.errors import ApiError
 from app.schemas import (
     BBox,
@@ -207,8 +208,8 @@ class PostgresNetworkRepository:
     def __init__(self, database_url: str) -> None:
         self._database_url = database_url
 
-    def _connect(self) -> psycopg.Connection[Any]:
-        return psycopg.connect(self._database_url, row_factory=dict_row)
+    def _connect(self) -> AbstractContextManager[psycopg.Connection[Any]]:
+        return db.connect(self._database_url)
 
     async def list_segments(self, query: SegmentQuery) -> SegmentPage:
         params: dict[str, Any] = {

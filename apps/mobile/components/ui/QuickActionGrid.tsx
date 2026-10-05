@@ -2,10 +2,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FileText, Route, Shield, ChevronRight } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useCrew } from '../../contexts/SessionContext';
 import { MinimalCard } from './MinimalCard';
 
 export function QuickActionGrid() {
   const router = useRouter();
+  const crew = useCrew();
 
   const actions = [
     {
@@ -35,28 +37,31 @@ export function QuickActionGrid() {
     <View style={styles.container}>
       <Text style={styles.sectionHeader}>For the road</Text>
       <View style={styles.grid}>
-        {actions.map((act) => {
-          const Icon = act.icon;
+        {/* Only a driver follows a route; an observer's phone has none. */}
+        {actions
+          .filter((act) => act.id !== 'action-routes' || crew.role === 'driver')
+          .map((act) => {
+            const Icon = act.icon;
 
-          return (
-            <TouchableOpacity
-              key={act.id}
-              activeOpacity={0.7}
-              onPress={() => router.push(act.route)}
-            >
-              <MinimalCard style={styles.card}>
-                <Icon size={20} color={Theme.colors.brand} />
+            return (
+              <TouchableOpacity
+                key={act.id}
+                activeOpacity={0.7}
+                onPress={() => router.push(act.route)}
+              >
+                <MinimalCard style={styles.card}>
+                  <Icon size={20} color={Theme.colors.brand} />
 
-                <View style={styles.content}>
-                  <Text style={styles.title}>{act.title}</Text>
-                  <Text style={styles.subtitle}>{act.subtitle}</Text>
-                </View>
+                  <View style={styles.content}>
+                    <Text style={styles.title}>{act.title}</Text>
+                    <Text style={styles.subtitle}>{act.subtitle}</Text>
+                  </View>
 
-                <ChevronRight size={16} color={Theme.colors.textDim} />
-              </MinimalCard>
-            </TouchableOpacity>
-          );
-        })}
+                  <ChevronRight size={16} color={Theme.colors.textDim} />
+                </MinimalCard>
+              </TouchableOpacity>
+            );
+          })}
       </View>
     </View>
   );

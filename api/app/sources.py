@@ -7,14 +7,16 @@ import json
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ElementTree
+from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal, Protocol
 
 import psycopg
-from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
+
+from app import db
 
 RunStatus = Literal["success", "unchanged", "partial", "failed", "disabled"]
 
@@ -553,8 +555,10 @@ def build_adapters(
     return adapters
 
 
-def connect(database_url: str) -> psycopg.Connection:
-    return psycopg.connect(database_url, row_factory=dict_row)
+def connect(database_url: str) -> AbstractContextManager[psycopg.Connection[Any]]:
+    """A pooled connection, for use in a ``with`` block."""
+
+    return db.connect(database_url)
 
 
 __all__ = [

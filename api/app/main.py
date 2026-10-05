@@ -4,12 +4,16 @@ from __future__ import annotations
 
 import logging
 import secrets
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from typing import Annotated, Any, Literal
 
+import psycopg
 from fastapi import Depends, FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -22,6 +26,7 @@ from app.auth import (
 )
 from app.config import Settings
 from app.data_health import build_data_health_repository
+from app.db import close_pools
 from app.errors import ApiError, ErrorEnvelope, error_response
 from app.evidence import EvidenceStore, build_evidence_store
 from app.identity import (
@@ -115,6 +120,46 @@ def _http_error(status_code: int) -> ApiError:
     return ApiError(status_code, "http_error", "The request could not be processed.")
 
 
+#: Unique values a person can collide with by typing one that is already taken.
+_TAKEN_VALUES = {
+    "consignments_organization_id_reference_key": (
+        "reference_in_use",
+        "Another consignment already uses this reference.",
+    ),
+    "vehicles_organization_id_registration_ref_key": (
+        "registration_in_use",
+        "Another vehicle already has this registration.",
+    ),
+}
+
+
+def _integrity_error(exc: psycopg.IntegrityError) -> ApiError:
+    """Say which rule a write broke, without repeating the values involved."""
+
+    if isinstance(exc, psycopg.errors.UniqueViolation):
+        code, message = _TAKEN_VALUES.get(
+            exc.diag.constraint_name or "",
+            ("conflict", "This conflicts with a record that already exists."),
+        )
+        return ApiError(409, code, message)
+    if isinstance(exc, psycopg.errors.ForeignKeyViolation):
+        return ApiError(
+            422,
+            "unknown_reference",
+            "The request refers to a record that does not exist.",
+        )
+    return ApiError(
+        422, "invalid_value", "The request breaks a rule the data must follow."
+    )
+
+
+@asynccontextmanager
+async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    yield
+    # Pooled connections are closed, not dropped, when the process stops.
+    close_pools()
+
+
 def create_app(
     settings: Settings | None = None,
     *,
@@ -131,6 +176,7 @@ def create_app(
     install_access_log_redaction()
     install_request_logging()
     app = FastAPI(
+        lifespan=_lifespan,
         # Interactive docs describe every route; a production deployment does
         # not publish them. The demo and pilot keep them for reviewers.
         docs_url=None if runtime_settings.app_mode == "production" else "/docs",
@@ -206,6 +252,10 @@ def create_app(
         else build_inspection_repository(runtime_settings.database_url)
     )
 
+    # JSON compresses well: the map's road network for one district is several
+    # megabytes as sent and a tenth of that compressed, which is most of the
+    # difference between a map that loads and one that does not on a phone.
+    app.add_middleware(GZipMiddleware, minimum_size=1024)
     # Request IDs wrap CORS and exception responses. CORS is intentionally
     # bearer-token friendly without cookies and never permits wildcard origins.
     app.add_middleware(
@@ -262,6 +312,20 @@ def create_app(
         request: Request, exc: StarletteHTTPException
     ) -> JSONResponse:
         return error_response(request, _http_error(exc.status_code))
+
+    @app.exception_handler(psycopg.IntegrityError)
+    async def handle_integrity_error(
+        request: Request, exc: psycopg.IntegrityError
+    ) -> JSONResponse:
+        # A constraint caught what validation did not: the request's fault, so
+        # a 409 or 422 rather than a 500. The constraint name is logged; the
+        # database's detail line is not, because it quotes the values.
+        _LOGGER.warning(
+            "Constraint %s refused request_id=%s",
+            exc.diag.constraint_name or type(exc).__name__,
+            getattr(request.state, "request_id", "unknown"),
+        )
+        return error_response(request, _integrity_error(exc))
 
     @app.exception_handler(Exception)
     async def handle_unexpected_error(request: Request, exc: Exception) -> JSONResponse:

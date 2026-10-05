@@ -13,6 +13,7 @@ import {
 } from './inspections';
 import {
   bindTripRoutePlan,
+  createConsignment,
   createTrip,
   getConsignments,
   getDrivers,
@@ -38,7 +39,11 @@ import type {
   RoutePlanApproveRequest,
   RoutePlanCreateRequest,
 } from './contracts';
-import type { TripCreateRequest, TripTransition } from './contracts';
+import type {
+  ConsignmentCreateRequest,
+  TripCreateRequest,
+  TripTransition,
+} from './contracts';
 import {
   bboxParam,
   getConnectivitySummary,
@@ -351,6 +356,23 @@ export function useTripReceipt(tripId: string | null) {
     refetchInterval: COMMAND_POLL_MS,
   });
 }
+export function useCreateConsignment() {
+  const accessToken = useAccessToken();
+  const invalidate = useInvalidateLogistics();
+  return useMutation({
+    mutationFn: (variables: {
+      body: ConsignmentCreateRequest;
+      idempotencyKey: string;
+    }) =>
+      createConsignment(
+        { accessToken: accessToken as string },
+        variables.body,
+        variables.idempotencyKey,
+      ),
+    onSuccess: invalidate,
+  });
+}
+
 export function usePlanConsignment() {
   const accessToken = useAccessToken();
   const invalidate = useInvalidateLogistics();

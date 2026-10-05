@@ -8,10 +8,9 @@ import json
 from datetime import datetime
 from typing import Any, Protocol
 
-import psycopg
-from psycopg.rows import dict_row
 from pydantic import BaseModel
 
+from app import db
 from app.errors import ApiError
 from app.scope import WorkspaceScope
 
@@ -127,7 +126,7 @@ class PostgresAuditRepository:
         limit: int,
     ) -> AuditExportResponse:
         cursor_at, cursor_id = decode_cursor(after) if after else (None, None)
-        with psycopg.connect(self._database_url, row_factory=dict_row) as connection:
+        with db.connect(self._database_url) as connection:
             rows = connection.execute(
                 """
                 select

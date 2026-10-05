@@ -8,15 +8,16 @@ import re
 import time
 import urllib.error
 import urllib.request
+from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 from urllib.parse import urlsplit
 
 import psycopg
-from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from pydantic import BaseModel, Field
 
+from app import db
 from app.errors import ApiError
 from app.scope import WorkspaceScope
 
@@ -264,8 +265,8 @@ class PostgresPushRepository:
         self._sender = sender
         self._public_key = public_key.strip()
 
-    def _connect(self) -> psycopg.Connection:
-        return psycopg.connect(self._database_url, row_factory=dict_row)
+    def _connect(self) -> AbstractContextManager[psycopg.Connection[Any]]:
+        return db.connect(self._database_url)
 
     async def subscribe(
         self, *, scope: WorkspaceScope, request: PushSubscriptionRequest

@@ -36,6 +36,8 @@ export type SupplyRequest = components['schemas']['SupplyRequest'];
 export type SupplyRequestListResponse =
   components['schemas']['SupplyRequestListResponse'];
 export type Consignment = components['schemas']['Consignment'];
+export type ConsignmentCreateRequest =
+  components['schemas']['ConsignmentCreateRequest'];
 export type ConsignmentItem = components['schemas']['ConsignmentItem'];
 export type ConsignmentListResponse =
   components['schemas']['ConsignmentListResponse'];

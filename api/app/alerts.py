@@ -3,15 +3,16 @@
 from __future__ import annotations
 
 import uuid
+from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any, Literal, Protocol
 
 import psycopg
-from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from pydantic import BaseModel
 
+from app import db
 from app.capabilities import ROLE_CAPABILITIES
 from app.errors import ApiError
 from app.idempotency import canonical_hash
@@ -149,8 +150,8 @@ class PostgresAlertRepository:
     def __init__(self, database_url: str) -> None:
         self._database_url = database_url
 
-    def _connect(self) -> psycopg.Connection:
-        return psycopg.connect(self._database_url, row_factory=dict_row)
+    def _connect(self) -> AbstractContextManager[psycopg.Connection[Any]]:
+        return db.connect(self._database_url)
 
     _SELECT = """
         select

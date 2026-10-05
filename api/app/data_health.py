@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+from contextlib import AbstractContextManager
 from datetime import UTC, datetime
 from typing import Any, Literal, Protocol
 
 import psycopg
-from psycopg.rows import dict_row
 from pydantic import BaseModel
 
+from app import db
 from app.risk_engine import MODEL_VERSION, WEIGHTS
 from app.scope import WorkspaceScope
 from app.sources import DEFAULT_FRESHNESS
@@ -79,8 +80,8 @@ class PostgresDataHealthRepository:
     def __init__(self, database_url: str) -> None:
         self._database_url = database_url
 
-    def _connect(self) -> psycopg.Connection:
-        return psycopg.connect(self._database_url, row_factory=dict_row)
+    def _connect(self) -> AbstractContextManager[psycopg.Connection[Any]]:
+        return db.connect(self._database_url)
 
     async def report(
         self, *, scope: WorkspaceScope, app_mode: str, ephemeral_credentials: bool

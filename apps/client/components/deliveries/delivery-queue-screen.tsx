@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { Plus } from 'lucide-react';
+
+import { useAuth } from '@/components/auth/auth-provider';
 import { CommandShell } from '@/components/layout/command-shell';
 import { EmptyState } from '@/components/common/empty-state';
 import { ErrorPanel } from '@/components/common/error-panel';
@@ -12,6 +15,7 @@ import type { Consignment, SupplyRequest } from '@/lib/api/contracts';
 import { cn } from '@/lib/utils';
 
 import { ConsignmentDetailPanel } from './consignment-detail-panel';
+import { NewConsignmentDialog } from './new-consignment-dialog';
 import { formatDecimal, phaseOf } from './format';
 
 const PHASES = ['all', 'draft', 'planned', 'moving', 'arrived'] as const;
@@ -22,6 +26,11 @@ export function DeliveryQueueScreen() {
   const t = useT();
   const [filter, setFilter] = useState<Filter>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const { workspace } = useAuth();
+  const canCreate =
+    (workspace?.capabilities.includes('consignment:manage') ?? false) &&
+    (workspace?.districts.length ?? 0) > 0;
 
   const requests = useSupplyRequests();
   const consignments = useConsignments();
@@ -78,9 +87,22 @@ export function DeliveryQueueScreen() {
         <div className="grid gap-4 xl:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
           <section className="flex min-w-0 flex-col gap-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {t('deliveries.consignmentsHeading')}
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('deliveries.consignmentsHeading')}
+                </h2>
+                {canCreate && (
+                  <button
+                    type="button"
+                    onClick={() => setCreating(true)}
+                    data-new-consignment-open
+                    className="flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-xs font-semibold text-primary-foreground"
+                  >
+                    <Plus className="size-3.5" aria-hidden />
+                    {t('newConsignment.open')}
+                  </button>
+                )}
+              </div>
               <fieldset className="flex flex-wrap gap-1 border-0 p-0">
                 <legend className="sr-only">
                   {t('deliveries.consignmentsHeading')}
@@ -135,6 +157,16 @@ export function DeliveryQueueScreen() {
           </section>
         </div>
       </div>
+      {creating && workspace && (
+        <NewConsignmentDialog
+          districts={workspace.districts}
+          onClose={() => setCreating(false)}
+          onCreated={(consignmentId) => {
+            setFilter('all');
+            setSelectedId(consignmentId);
+          }}
+        />
+      )}
     </CommandShell>
   );
 }

@@ -6,9 +6,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Protocol
 
-import psycopg
-from psycopg.rows import dict_row
-
+from app import db
 from app.capabilities import capabilities_for_roles
 from app.errors import ApiError
 from app.schemas import (
@@ -100,7 +98,7 @@ class PostgresIdentityRepository:
         self._database_url = database_url
 
     async def load_identity(self, user_id: str) -> IdentityRecord | None:
-        with psycopg.connect(self._database_url, row_factory=dict_row) as connection:
+        with db.connect(self._database_url) as connection:
             profile_row = connection.execute(
                 self._PROFILE_QUERY,
                 (user_id,),

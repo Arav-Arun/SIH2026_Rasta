@@ -1,0 +1,24 @@
+name: Keep the demo API awake
+
+# Render's free plan stops the API after 15 minutes without a request, and the
+# next visitor then waits up to a minute for it to start again. A request every
+# 10 minutes keeps it running. That uses about 744 of the free plan's 750
+# instance hours a month, so it only fits while this is the workspace's one
+# free service; disable the workflow to stop it.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    if: vars.EXPO_PUBLIC_API_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Request the health check
+        env:
+          API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+        run: curl --fail --silent --show-error --max-time 90 --retry 2 "${API_URL%/}/health"
