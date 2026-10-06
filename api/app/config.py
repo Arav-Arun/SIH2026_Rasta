@@ -51,6 +51,8 @@ class Settings(BaseSettings):
     sachet_cap_base_url: str = ""
     # Recorded source documents used when no live URL is configured.
     source_fixture_root: str = "data/fixtures/sources"
+    # Per-segment terrain slope built from SRTM (data/sources/build_terrain.py).
+    terrain_file: str = "data/pilot/shillong_terrain.json"
     # Web Push (RFC 8292).
     vapid_private_key: str = ""
     vapid_public_key: str = ""
@@ -78,6 +80,17 @@ class Settings(BaseSettings):
             return candidate
         repository_root = Path(__file__).resolve().parents[2]
         return repository_root / candidate
+
+    @property
+    def resolved_terrain_file(self) -> Path | None:
+        """The terrain-slope file, found the same way from any cwd."""
+
+        if not self.terrain_file:
+            return None
+        candidate = Path(self.terrain_file)
+        if candidate.is_absolute():
+            return candidate
+        return Path(__file__).resolve().parents[2] / candidate
 
     @field_validator("api_prefix")
     @classmethod

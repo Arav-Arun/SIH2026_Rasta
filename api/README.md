@@ -28,7 +28,7 @@ explicit comma-separated list; wildcards are rejected.
 | `routing/` | Graph loading and constrained route search |
 | `route_plans.py`, `exposure.py` | Plan approval and rerouting after closures |
 | `logistics.py`, `telemetry.py` | Consignments, trips, receipts, GPS batches |
-| `risk_engine.py`, `risk_pipeline.py`, `sources.py` | Explainable risk baseline and IMD/SACHET adapters |
+| `risk_engine.py`, `risk_pipeline.py`, `sources.py`, `terrain.py` | Explainable risk baseline, IMD/SACHET adapters and terrain slope |
 | `alerts.py`, `push.py` | Alert inbox and optional web push |
 | `auth.py`, `supabase_jwt.py`, `scope.py`, `identity.py` | Authentication and access scope |
 | `audit.py`, `idempotency.py`, `ratelimit.py`, `middleware.py` | Audit trail, safe retries, limits, headers |

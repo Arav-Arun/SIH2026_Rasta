@@ -17,7 +17,7 @@ MODEL_VERSION = "baseline-v1"
 WEIGHTS: dict[str, float] = {
     "forecast_rainfall": 0.35,
     "official_warning": 0.25,
-    "slope_susceptibility": 0.15,
+    "terrain_slope": 0.15,
     "recent_incidents": 0.15,
     "telemetry_anomaly": 0.10,
 }
@@ -44,7 +44,7 @@ CAPPED_LEVEL: RiskLevel = "moderate"
 FRESHNESS: dict[str, timedelta] = {
     "forecast_rainfall": timedelta(hours=12),
     "official_warning": timedelta(hours=6),
-    "slope_susceptibility": timedelta(days=3650),  # terrain does not go stale
+    "terrain_slope": timedelta(days=3650),  # terrain does not go stale
     "recent_incidents": timedelta(days=7),
     "telemetry_anomaly": timedelta(hours=2),
 }
@@ -116,9 +116,9 @@ class RiskAssessment:
 READABLE: dict[str, str] = {
     "forecast_rainfall": "forecast rainfall",
     "official_warning": "an official warning in force",
-    "slope_susceptibility": "landslide susceptibility of the terrain",
-    "recent_incidents": "recent verified incidents on this road",
-    "telemetry_anomaly": "vehicles moving unusually slowly here",
+    "terrain_slope": "terrain slope around this road",
+    "recent_incidents": "the record of recent verified incidents on this road",
+    "telemetry_anomaly": "unusually slow vehicle traffic here",
 }
 
 

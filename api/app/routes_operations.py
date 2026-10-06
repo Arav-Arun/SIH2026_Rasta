@@ -177,6 +177,7 @@ def build_operations_router(prefix: str = "/v1") -> APIRouter:
                 imd_base_url=settings.imd_api_base_url,
                 cap_base_url=settings.sachet_cap_base_url,
                 fixture_root=fixture_root,
+                terrain_file=settings.resolved_terrain_file,
             )
         return RiskRecomputeResponse(**result.as_dict())
 

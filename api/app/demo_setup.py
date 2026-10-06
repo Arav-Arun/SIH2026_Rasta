@@ -542,6 +542,7 @@ def seed_story(settings: Settings, password: str) -> dict[str, Any]:
                     imd_base_url=None,
                     cap_base_url=None,
                     fixture_root=Path(sources),
+                    terrain_file=PILOT_DIR / "shillong_terrain.json",
                 ).as_dict()
 
         facilities = connection.execute(

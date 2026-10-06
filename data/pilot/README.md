@@ -6,6 +6,7 @@ This folder contains a **baseline topology**, not current road conditions.
 |---|---|
 | `shillong_graph.json` | Directed road graph clipped to the documented query bounds and pruned to its largest weakly connected component |
 | `shillong_facilities.json` | OSM-sourced health, pharmacy, marketplace, and warehouse candidates snapped to the retained graph |
+| `shillong_terrain.json` | Slope of the ground around each road edge, from SRTM elevation (`data/sources/build_terrain.py`): the 90th-percentile slope within 45 m, the mean, and the samples used. It describes the terrain, not whether it will fail |
 | `scenario_endpoints.json` | Deterministically selected graph references for S1–S6; it contains no incident, delivery, warning, or vehicle claim |
 
 Current validated graph version: `osm-shillong-4d449d18c4666431`.

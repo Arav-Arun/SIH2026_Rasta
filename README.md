@@ -67,7 +67,7 @@ Mapped to the problem statement's requirements (a) to (h).
 | Requirement | What RASTA provides |
 |---|---|
 | **(a) Road and bridge accessibility** | GIS map of the road network with each road's status (open, restricted, closed, unknown), its source and how old it is. Bridge weight and height limits are checked against each vehicle. |
-| **(b) Disruption prediction** | An explainable risk engine that scores each road from IMD rainfall forecasts, NDMA SACHET (CAP) warnings and confirmed incidents, and accepts terrain and vehicle-telemetry inputs. Every score lists the inputs behind it. |
+| **(b) Disruption prediction** | An explainable risk engine that scores each road from IMD rainfall forecasts, NDMA SACHET (CAP) warnings, confirmed incidents and terrain slope from SRTM elevation, and accepts vehicle-telemetry input. Every score lists the inputs behind it. |
 | **(c) Alternate routes and delays** | Constrained route planning that avoids closed roads and bridges the vehicle cannot use, and offers up to three genuinely different routes with ETA ranges. |
 | **(d) GPS tracking of essential goods** | Trip-based tracking of vehicles carrying medicines, food, produce and construction material. Positions are queued offline and uploaded in batches. |
 | **(e) Automated alerts** | Alerts for road closures and restrictions, withdrawn routes, isolated facilities, stale vehicle positions and delivery shortfalls, with acknowledgement and web push. |
@@ -184,6 +184,8 @@ Every part of the stack is open source or free to run.
 
 - **Road network:** 2,860 road segments in central Shillong, imported from
   OpenStreetMap, with 30 health, pharmacy, market and warehouse facilities.
+- **Terrain:** the slope of the ground around each of those road segments, computed
+  from SRTM elevation (`data/sources/build_terrain.py`).
 - **Weather and alerts:** IMD rainfall and NDMA SACHET adapters. Until live feed
   access is granted they read recorded samples, labelled as recorded on screen.
 - **Languages:** the web interface is available in English and all 22 Eighth
@@ -255,5 +257,8 @@ GitHub runs the same checks on every push (`.github/workflows/verify.yml`).
 
 - Road and facility data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),
   available under the Open Database License. See [data/OSM-NOTICE.md](data/OSM-NOTICE.md).
+- Terrain slope uses SRTM elevation data, packaged as Tilezen terrain tiles: United States
+  3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S.
+  Geological Survey. See `data/manifests/terrain_shillong_srtm.json`.
 - Weather and alert formats follow the [IMD API reference](https://api.imd.gov.in/public/api_reference.html)
   and [NDMA SACHET](https://sachet.ndma.gov.in/) (OASIS CAP 1.2).

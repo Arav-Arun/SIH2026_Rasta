@@ -22,3 +22,16 @@ matching ways.
 Do not combine this directory with data whose terms are unknown. GeoSadak is a
 candidate production source, but it is not imported here until the team confirms
 the exact redistribution terms for the selected extract.
+
+## SRTM elevation
+
+- Script: `build_terrain.py` downloads one 1 arc-second tile (`N25E091`), checks it against
+  the pinned SHA-256 and writes `data/pilot/shillong_terrain.json` and
+  `data/manifests/terrain_shillong_srtm.json`. Standard library only:
+  `python data/sources/build_terrain.py`.
+- Source: NASA/USGS Shuttle Radar Topography Mission, packaged as Tilezen terrain tiles on
+  AWS Open Data.
+- Attribution: United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data
+  courtesy of the U.S. Geological Survey.
+- Terms: https://github.com/tilezen/joerd/blob/master/docs/attribution.md
+- The 26 MB tile itself is not stored in the repository.

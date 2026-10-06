@@ -31,7 +31,7 @@ def test_weights_cover_the_whole_feature_set() -> None:
 def test_no_weather_evidence_produces_unknown_not_low() -> None:
     """The failure this rule prevents: an unmonitored road reading as safe."""
 
-    assessment = assess([feature("slope_susceptibility", 0.9)], now=NOW)
+    assessment = assess([feature("terrain_slope", 0.9)], now=NOW)
     assert assessment.level == "unknown"
     assert assessment.score is None
     assert "unknown, not low" in assessment.explanations[0]
@@ -53,7 +53,7 @@ def test_a_score_names_every_contribution_and_every_absence() -> None:
         "official_warning",
     }
     assert set(assessment.missing_inputs) == {
-        "slope_susceptibility",
+        "terrain_slope",
         "recent_incidents",
         "telemetry_anomaly",
     }
@@ -77,11 +77,11 @@ def test_terrain_does_not_go_stale() -> None:
     assessment = assess(
         [
             feature("forecast_rainfall", 0.5),
-            feature("slope_susceptibility", 0.8, age=timedelta(days=400)),
+            feature("terrain_slope", 0.8, age=timedelta(days=400)),
         ],
         now=NOW,
     )
-    assert "slope_susceptibility" not in assessment.stale_inputs
+    assert "terrain_slope" not in assessment.stale_inputs
 
 
 def test_thin_evidence_cannot_produce_a_severe_verdict() -> None:
@@ -98,7 +98,7 @@ def test_broad_evidence_can_produce_a_severe_verdict() -> None:
         [
             feature("forecast_rainfall", 0.9),
             feature("official_warning", 0.9),
-            feature("slope_susceptibility", 0.9),
+            feature("terrain_slope", 0.9),
             feature("recent_incidents", 0.9),
         ],
         now=NOW,

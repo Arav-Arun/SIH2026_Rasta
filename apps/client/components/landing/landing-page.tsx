@@ -89,7 +89,7 @@ const FEATURES: ReadonlyArray<{
   {
     requirement: 'b',
     title: 'Disruption prediction',
-    text: 'AI scores each road from IMD rainfall, NDMA SACHET warnings and past incidents, and shows why.',
+    text: 'AI scores each road from IMD rainfall, NDMA SACHET warnings, past incidents and terrain slope, and shows why.',
     icon: BrainCircuit,
   },
   {
@@ -133,7 +133,7 @@ const FEATURES: ReadonlyArray<{
 const STEPS = [
   {
     title: 'Predict',
-    text: 'High-risk roads are flagged ahead of time from rainfall forecasts and disaster warnings.',
+    text: 'High-risk roads are flagged ahead of time from rainfall forecasts, disaster warnings and terrain slope.',
   },
   {
     title: 'Report',
@@ -172,7 +172,7 @@ const FAQS = [
   },
   {
     q: 'Where does the data come from?',
-    a: 'IMD rainfall forecasts, NDMA SACHET disaster alerts, OpenStreetMap roads and verified field reports. Every value on screen shows its source and how old it is.',
+    a: 'IMD rainfall forecasts, NDMA SACHET disaster alerts, OpenStreetMap roads, SRTM terrain elevation and verified field reports. Every value on screen shows its source and how old it is.',
   },
   {
     q: 'Which languages are supported?',

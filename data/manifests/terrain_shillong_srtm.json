@@ -1,0 +1,37 @@
+{
+  "accessed_at": "2026-10-06T03:33:21Z",
+  "attribution": "United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S. Geological Survey.",
+  "inputs": {
+    "data/pilot/shillong_graph.json": "sha256:88c545d60c39ea889e0e43ba1dbebea65d2ed980ebc233f3905bdc42b6a6d74c",
+    "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N25/N25E091.hgt.gz": "sha256:ccb45d61537cb5c40b8ac3ef5e12f23ff9e5ff2ffc158ee50789229eb61406b8"
+  },
+  "intended_use": "per-segment terrain slope input to the baseline risk score",
+  "license": "SRTM is U.S. Government data. The tile provider asks for the attribution above and says each user must check the terms of every data provider.",
+  "license_or_terms_url": "https://github.com/tilezen/joerd/blob/master/docs/attribution.md",
+  "outputs": {
+    "data/pilot/shillong_terrain.json": "sha256:a13b83a5cad7f784ccca1d5e438542d7750ff106f0f36030802af89b8b3df4c7"
+  },
+  "quality_notes": {
+    "edges": 2860,
+    "edges_with_terrain": 2860,
+    "edges_without_terrain": [],
+    "not_a_susceptibility_model": true,
+    "slope_p90_deg_max": 25.0,
+    "slope_p90_deg_median": 8.3,
+    "slope_p90_deg_min": 1.9,
+    "voids_in_tile": 0
+  },
+  "query_bbox": {
+    "east": 91.9,
+    "north": 25.585,
+    "south": 25.56,
+    "west": 91.875
+  },
+  "redistribution_allowed": true,
+  "redistribution_conditions": "Keep the attribution; re-check the terms before reuse",
+  "schema_version": "source-manifest-v1",
+  "source": "SRTM via Tilezen terrain tiles (AWS Open Data)",
+  "source_endpoint": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N25/N25E091.hgt.gz",
+  "transform_script": "data/sources/build_terrain.py",
+  "transform_version": "terrain-slope-v1"
+}

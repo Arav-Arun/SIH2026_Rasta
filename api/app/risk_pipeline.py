@@ -27,6 +27,7 @@ from app.sources import (
     run_source,
     store_records,
 )
+from app.terrain import load_terrain
 
 #: A confirmed incident this recent counts as evidence about the road now.
 INCIDENT_WINDOW = timedelta(days=7)
@@ -160,6 +161,7 @@ def run_pipeline(
     imd_base_url: str | None,
     cap_base_url: str | None,
     fixture_root: Path | None,
+    terrain_file: Path | None = None,
     now: datetime | None = None,
 ) -> PipelineResult:
     moment = now or datetime.now(tz=UTC)
@@ -236,7 +238,8 @@ def run_pipeline(
     )
     segments = connection.execute(
         """
-        select s.id::text as id, scs.passability::text as passability
+        select s.id::text as id, s.metadata ->> 'edge_id' as edge_id,
+               scs.passability::text as passability
         from public.road_segments as s
         left join public.segment_current_state as scs
           on scs.segment_id = s.id and scs.organization_id = s.organization_id
@@ -246,11 +249,19 @@ def run_pipeline(
         {"org": organization_id, "district": district_id},
     ).fetchall()
 
+    # Terrain does not change with the weather, so it comes from a file rather than a
+    # source run; a district with no terrain file simply lacks the input.
+    terrain = load_terrain(terrain_file)
+
     assessments: list[RiskAssessment] = []
     levels: dict[str, int] = {}
     updates: list[dict[str, Any]] = []
     for segment in segments:
         features = list(district_features.values())
+        if terrain is not None:
+            terrain_feature = terrain.feature_for(segment["edge_id"])
+            if terrain_feature is not None:
+                features.append(terrain_feature)
         hits = incidents.get(segment["id"], 0)
         if hits:
             features.append(
