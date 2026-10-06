@@ -49,3 +49,6 @@ apps/mobile/.expo/
 
 # Trained model files; nothing ships them.
 models/
+
+# Model pipeline downloads, datasets and reports (ml/README.md)
+ml/work/

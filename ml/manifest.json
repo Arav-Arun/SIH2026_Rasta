@@ -1,0 +1,69 @@
+{
+  "schema_version": "rasta-ml-manifest-v1",
+  "name": "ner-landslide-cell-day",
+  "question": "Does a model trained on past landslides and rainfall rank the places and days of rainfall-triggered landslides in North East India better than baseline-v1, a rainfall threshold rule and climatology, on years it never saw?",
+  "unit": {
+    "cell_deg": 0.25,
+    "day": "UTC calendar day of the rainfall record; event dates are taken as reported"
+  },
+  "region": {
+    "name": "North East India",
+    "bbox": [87.75, 21.75, 97.5, 29.5],
+    "country": "India",
+    "states": [
+      "Arunachal Pradesh",
+      "Assam",
+      "Manipur",
+      "Meghalaya",
+      "Mizoram",
+      "Nagaland",
+      "Sikkim",
+      "Tripura"
+    ]
+  },
+  "period": ["2007-01-01", "2017-12-31"],
+  "split": {
+    "train_years": [2007, 2013],
+    "validate_years": [2014, 2015],
+    "test_years": [2016, 2017],
+    "spatial_block_deg": 1.0,
+    "spatial_folds": 5
+  },
+  "labels": {
+    "triggers": ["rain", "downpour", "monsoon", "continuous_rain", "tropical_cyclone"],
+    "max_location_error_km": 25,
+    "observed_area": "cells with at least one kept event in the training years",
+    "min_test_positives": 20
+  },
+  "sources": {
+    "rainfall": {
+      "title": "NOAA Climate Data Record PERSIANN-CDR daily precipitation, v01r01",
+      "url": "https://s3.amazonaws.com/noaa-cdr-precip-persiann-pds/data/",
+      "resolution": "0.25 degree, daily (UTC)",
+      "licence": "No constraints on data access or use (stated in every file's metadata)",
+      "licence_confirmed": true
+    },
+    "terrain": {
+      "title": "SRTM 1 arc-second elevation, as Tilezen skadi tiles",
+      "url": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/",
+      "resolution": "1 arc-second, read every 3rd sample (about 90 m)",
+      "licence": "Public domain (U.S. Geological Survey); attribution as in the README",
+      "licence_confirmed": true
+    },
+    "events": {
+      "title": "Landslide inventory: the NASA Global Landslide Catalog export, or any CSV with date, latitude and longitude",
+      "url": "https://data.nasa.gov/ (search for Global Landslide Catalog)",
+      "resolution": "points with a stated location accuracy",
+      "licence": "Not yet checked: read the terms on the download page and record them here",
+      "licence_confirmed": false
+    }
+  },
+  "seed": 20261006,
+  "gate": {
+    "metric": "pr_auc",
+    "interval": 0.95,
+    "bootstrap_resamples": 1000,
+    "bootstrap_unit": "day",
+    "rule": "A candidate passes only if its test PR-AUC interval lies wholly above every benchmark's interval and its test Brier score is below climatology's."
+  }
+}

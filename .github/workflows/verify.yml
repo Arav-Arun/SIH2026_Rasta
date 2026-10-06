@@ -41,6 +41,32 @@ jobs:
         working-directory: api
         run: python -m pytest
 
+  ml:
+    name: Model pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: ml/pyproject.toml
+
+      - name: Install
+        run: python -m pip install -e './ml[dev]'
+
+      - name: Lint
+        run: ruff check ml
+
+      - name: Format
+        run: ruff format --check ml
+
+      - name: Tests (synthetic data)
+        working-directory: ml
+        run: python -m pytest
+
   web:
     name: Web and Android app
     runs-on: ubuntu-latest

@@ -67,7 +67,7 @@ Mapped to the problem statement's requirements (a) to (h).
 | Requirement | What RASTA provides |
 |---|---|
 | **(a) Road and bridge accessibility** | GIS map of the road network with each road's status (open, restricted, closed, unknown), its source and how old it is. Bridge weight and height limits are checked against each vehicle. |
-| **(b) Disruption prediction** | An explainable risk engine that scores each road from IMD rainfall forecasts, NDMA SACHET (CAP) warnings, confirmed incidents and terrain slope from SRTM elevation, and accepts vehicle-telemetry input. Every score lists the inputs behind it. |
+| **(b) Disruption prediction** | An explainable risk engine that scores each road from IMD rainfall forecasts, NDMA SACHET (CAP) warnings, confirmed incidents and terrain slope from SRTM elevation. Every score lists the inputs behind it and the ones that are missing. A training and evaluation pipeline (`ml/`) tests whether a model trained on past landslides beats this baseline on years it never saw; no trained model is in use yet. |
 | **(c) Alternate routes and delays** | Constrained route planning that avoids closed roads and bridges the vehicle cannot use, and offers up to three genuinely different routes with ETA ranges. |
 | **(d) GPS tracking of essential goods** | Trip-based tracking of vehicles carrying medicines, food, produce and construction material. Positions are queued offline and uploaded in batches. |
 | **(e) Automated alerts** | Alerts for road closures and restrictions, withdrawn routes, isolated facilities, stale vehicle positions and delivery shortfalls, with acknowledgement and web push. |
@@ -201,6 +201,7 @@ api/            FastAPI backend: reports, road state, routing, risk, logistics
 supabase/       Database migrations and seed data
 contracts/      OpenAPI schema and generated TypeScript types
 data/           Pilot road network, facilities and recorded samples
+ml/             Landslide model pipeline: dataset, training, evaluation, model card
 Screenshots/    Screenshots used in this README
 ```
 
@@ -249,6 +250,7 @@ npm run mobile:start
 npm run lint && npm run typecheck && npm run format:check   # web and Android app
 npm test                                                    # web unit tests
 cd api && .venv/bin/python -m pytest                        # API unit tests (no database needed)
+cd ml && .venv/bin/python -m pytest                         # model pipeline tests (synthetic data)
 ```
 
 GitHub runs the same checks on every push (`.github/workflows/verify.yml`).
