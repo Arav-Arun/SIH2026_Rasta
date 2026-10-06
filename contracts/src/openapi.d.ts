@@ -605,6 +605,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/supply-gaps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Unmet supply requests, most urgent first, with deadline risk */
+        get: operations["list_supply_gaps_v1_supply_gaps_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/supply-requests": {
         parameters: {
             query?: never;
@@ -1507,6 +1524,67 @@ export interface components {
             vehicle_id: string;
             /** Vehicle Registration */
             vehicle_registration: string;
+        };
+        /** GapQuantity */
+        GapQuantity: {
+            /** Commodity */
+            commodity: string;
+            /** Quantity */
+            quantity: number;
+            /** Unit */
+            unit: string;
+        };
+        /** GapRequest */
+        GapRequest: {
+            /** Consignments Arrived */
+            consignments_arrived: number;
+            /** Consignments Failed */
+            consignments_failed: number;
+            /** Consignments On The Way */
+            consignments_on_the_way: number;
+            /** District Id */
+            district_id: string;
+            /** Expected Arrival */
+            expected_arrival: string | null;
+            /** Facility Id */
+            facility_id: string;
+            /** Facility Name */
+            facility_name: string | null;
+            /** Needed By */
+            needed_by: string | null;
+            /** On The Way */
+            on_the_way: components["schemas"]["GapQuantity"][];
+            /** Priority */
+            priority: string;
+            /**
+             * Reason
+             * @enum {string}
+             */
+            reason: "deadline_passed" | "arrives_after_deadline" | "arrives_before_deadline" | "no_route_eta" | "nothing_on_the_way" | "no_deadline";
+            /** Request Id */
+            request_id: string;
+            /** Shortfalls */
+            shortfalls: components["schemas"]["GapShortfall"][];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "overdue" | "at_risk" | "unknown" | "waiting" | "on_track" | "no_deadline";
+            /** Status */
+            status: string;
+        };
+        /** GapShortfall */
+        GapShortfall: {
+            /** Commodity */
+            commodity: string;
+            /** Dispatched */
+            dispatched: number;
+            /** Received */
+            received: number;
+            /** Short */
+            short: number;
+            /** Unit */
+            unit: string;
         };
         /** GeoPoint */
         GeoPoint: {
@@ -2602,6 +2680,26 @@ export interface components {
             road_class: string;
             /** Segment Id */
             segment_id: string;
+        };
+        /** SupplyGapsResponse */
+        SupplyGapsResponse: {
+            /**
+             * As Of
+             * Format: date-time
+             */
+            as_of: string;
+            /** At Risk Window Hours */
+            at_risk_window_hours: number;
+            /** Counts */
+            counts: {
+                [key: string]: number;
+            };
+            /** District Id */
+            district_id: string | null;
+            /** Notes */
+            notes: string[];
+            /** Requests */
+            requests: components["schemas"]["GapRequest"][];
         };
         /** SupplyHub */
         SupplyHub: {
@@ -6079,6 +6177,75 @@ export interface operations {
                 };
             };
             /** @description No such trip here. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Database not configured. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    list_supply_gaps_v1_supply_gaps_get: {
+        parameters: {
+            query?: {
+                district_id?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyGapsResponse"];
+                };
+            };
+            /** @description Missing or invalid session. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Capability or district scope denied. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or out of scope. */
             404: {
                 headers: {
                     [name: string]: unknown;

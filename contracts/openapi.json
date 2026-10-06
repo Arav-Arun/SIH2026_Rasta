@@ -1957,6 +1957,190 @@
         "title": "FleetTripLocation",
         "type": "object"
       },
+      "GapQuantity": {
+        "properties": {
+          "commodity": {
+            "title": "Commodity",
+            "type": "string"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "number"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "commodity",
+          "unit",
+          "quantity"
+        ],
+        "title": "GapQuantity",
+        "type": "object"
+      },
+      "GapRequest": {
+        "properties": {
+          "consignments_arrived": {
+            "title": "Consignments Arrived",
+            "type": "integer"
+          },
+          "consignments_failed": {
+            "title": "Consignments Failed",
+            "type": "integer"
+          },
+          "consignments_on_the_way": {
+            "title": "Consignments On The Way",
+            "type": "integer"
+          },
+          "district_id": {
+            "title": "District Id",
+            "type": "string"
+          },
+          "expected_arrival": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Arrival"
+          },
+          "facility_id": {
+            "title": "Facility Id",
+            "type": "string"
+          },
+          "facility_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facility Name"
+          },
+          "needed_by": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Needed By"
+          },
+          "on_the_way": {
+            "items": {
+              "$ref": "#/components/schemas/GapQuantity"
+            },
+            "title": "On The Way",
+            "type": "array"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "string"
+          },
+          "reason": {
+            "enum": [
+              "deadline_passed",
+              "arrives_after_deadline",
+              "arrives_before_deadline",
+              "no_route_eta",
+              "nothing_on_the_way",
+              "no_deadline"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "shortfalls": {
+            "items": {
+              "$ref": "#/components/schemas/GapShortfall"
+            },
+            "title": "Shortfalls",
+            "type": "array"
+          },
+          "state": {
+            "enum": [
+              "overdue",
+              "at_risk",
+              "unknown",
+              "waiting",
+              "on_track",
+              "no_deadline"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "facility_id",
+          "facility_name",
+          "district_id",
+          "priority",
+          "needed_by",
+          "status",
+          "state",
+          "reason",
+          "expected_arrival",
+          "consignments_on_the_way",
+          "consignments_arrived",
+          "consignments_failed",
+          "on_the_way",
+          "shortfalls"
+        ],
+        "title": "GapRequest",
+        "type": "object"
+      },
+      "GapShortfall": {
+        "properties": {
+          "commodity": {
+            "title": "Commodity",
+            "type": "string"
+          },
+          "dispatched": {
+            "title": "Dispatched",
+            "type": "number"
+          },
+          "received": {
+            "title": "Received",
+            "type": "number"
+          },
+          "short": {
+            "title": "Short",
+            "type": "number"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "commodity",
+          "unit",
+          "dispatched",
+          "received",
+          "short"
+        ],
+        "title": "GapShortfall",
+        "type": "object"
+      },
       "GeoPoint": {
         "properties": {
           "latitude": {
@@ -5038,6 +5222,61 @@
           "passability"
         ],
         "title": "SuggestedSegment",
+        "type": "object"
+      },
+      "SupplyGapsResponse": {
+        "properties": {
+          "as_of": {
+            "format": "date-time",
+            "title": "As Of",
+            "type": "string"
+          },
+          "at_risk_window_hours": {
+            "title": "At Risk Window Hours",
+            "type": "integer"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "district_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District Id"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "requests": {
+            "items": {
+              "$ref": "#/components/schemas/GapRequest"
+            },
+            "title": "Requests",
+            "type": "array"
+          }
+        },
+        "required": [
+          "as_of",
+          "district_id",
+          "at_risk_window_hours",
+          "counts",
+          "requests",
+          "notes"
+        ],
+        "title": "SupplyGapsResponse",
         "type": "object"
       },
       "SupplyHub": {
@@ -11259,6 +11498,116 @@
         "summary": "Tell the control room someone needs help (this does not call 112)",
         "tags": [
           "alerts"
+        ]
+      }
+    },
+    "/v1/supply-gaps": {
+      "get": {
+        "operationId": "list_supply_gaps_v1_supply_gaps_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "district_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "District Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplyGapsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Missing or invalid session."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Capability or district scope denied."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Missing or out of scope."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Database not configured."
+          }
+        },
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
+        "summary": "Unmet supply requests, most urgent first, with deadline risk",
+        "tags": [
+          "logistics"
         ]
       }
     },

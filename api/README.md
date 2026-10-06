@@ -29,6 +29,7 @@ explicit comma-separated list; wildcards are rejected.
 | `routing/replay.py` | The fixed synthetic scenarios run through the production planner and scored against their stated expectations (`PYTHONPATH=api python -m app.routing.replay`) |
 | `route_plans.py`, `exposure.py` | Plan approval and rerouting after closures |
 | `logistics.py`, `telemetry.py` | Consignments, trips, receipts, GPS batches |
+| `supply_gaps.py` | Unmet supply requests ranked by deadline risk, using the approved route's ETA, and receipts short of what was sent (`GET /v1/supply-gaps`). No stock data exists, so it predicts no stockout |
 | `risk_engine.py`, `risk_pipeline.py`, `sources.py`, `terrain.py` | Explainable risk baseline, IMD/SACHET adapters and terrain slope |
 | `probe_speed.py` | Slow vehicles on a road, per direction, from trips' own GPS: the `telemetry_anomaly` input (uncalibrated), and a suggestion to dispatchers to inspect a road where vehicles have nearly stopped. It never closes a road |
 | `risk_model.py` | A trained model exported by `ml/` (`RISK_MODEL_FILE`, `RISK_MODEL_SHA256`): loaded only from JSON whose SHA-256 matches and that passed its gate, then run in shadow beside the baseline and logged against outcomes. It never sets a road's score, route cost or alerts |

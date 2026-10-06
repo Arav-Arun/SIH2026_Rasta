@@ -495,6 +495,30 @@
     "high": "High",
     "critical": "Critical"
   },
+  "supplyGaps": {
+    "heading": "Supply gaps",
+    "empty": "No unmet requests.",
+    "error": "Could not load the supply gaps.",
+    "note": "Requests do not state quantities and there is no stock data, so this shows deadline risk, not a predicted stockout. Arrival times use configured route ETAs, not yet calibrated on recorded trips.",
+    "state": {
+      "overdue": "Overdue",
+      "at_risk": "At risk",
+      "unknown": "Arrival unknown",
+      "waiting": "Nothing sent yet",
+      "on_track": "On track",
+      "no_deadline": "No deadline"
+    },
+    "reason": {
+      "deadline_passed": "Needed by {deadline}; that has passed.",
+      "arrives_after_deadline": "Expected {arrival}, after the deadline of {deadline}.",
+      "arrives_before_deadline": "Expected {arrival}, before the deadline of {deadline}.",
+      "no_route_eta": "On the way, but its route has no ETA to set against the deadline of {deadline}.",
+      "nothing_on_the_way": "Nothing on the way yet; needed by {deadline}.",
+      "no_deadline": "No deadline given."
+    },
+    "onTheWay": "On the way: {quantity} {unit} {commodity}",
+    "short": "Short: {received} of {dispatched} {unit} {commodity} received"
+  },
   "deliveries": {
     "title": "Deliveries",
     "requestsHeading": "Requests",

@@ -4,6 +4,7 @@ import type {
   ConsignmentCreateRequest,
   ConsignmentListResponse,
   DriverListResponse,
+  SupplyGapsResponse,
   SupplyRequestListResponse,
   TripCreateRequest,
   TripListResponse,
@@ -28,6 +29,18 @@ export async function getSupplyRequests(
   });
   return payload as SupplyRequestListResponse;
 }
+/** Unmet requests, most urgent first, with why each deadline is or is not at risk. */
+export async function getSupplyGaps(
+  auth: Auth,
+  districtId: string | null = null,
+): Promise<SupplyGapsResponse> {
+  const { payload } = await apiRequest('/v1/supply-gaps', {
+    ...auth,
+    query: { district_id: districtId ?? undefined },
+  });
+  return payload as SupplyGapsResponse;
+}
+
 export async function getConsignments(
   auth: Auth,
   query: { status?: string | null; limit?: number } = {},

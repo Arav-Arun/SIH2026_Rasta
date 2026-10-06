@@ -68,6 +68,8 @@ DEMO_PEOPLE = (
 )
 DEMO_VEHICLE = "DEMO-ML-05"
 FINISHED_TRIPS = ("completed", "failed", "cancelled")
+#: Marks the story's own supply request, so a re-run can withdraw the last one.
+STORY_REQUEST_NOTE = "Demo story request (synthetic)"
 
 
 def deterministic_id(*parts: str) -> str:
@@ -581,6 +583,16 @@ def seed_story(settings: Settings, password: str) -> dict[str, Any]:
             """,
             (ORGANIZATION_ID, vehicle["id"], list(FINISHED_TRIPS)),
         ).fetchall()
+        # An earlier run's request is withdrawn with its trip, so the supply-gap
+        # view shows this run's need, not a pile of abandoned demo requests.
+        connection.execute(
+            """
+            update public.supply_requests set status = 'cancelled'
+            where organization_id = %s::uuid and note = %s
+              and status::text in ('open', 'planned', 'partially_fulfilled')
+            """,
+            (ORGANIZATION_ID, STORY_REQUEST_NOTE),
+        )
         connection.commit()
         origin, destination = _pick_route(connection, facilities)
 
@@ -610,6 +622,18 @@ def seed_story(settings: Settings, password: str) -> dict[str, Any]:
                 post(f"/trips/{trip['id']}/paused", dispatcher)
             post(f"/trips/{trip['id']}/cancelled", dispatcher)
 
+        # The need comes first: the destination asks, then a consignment meets it.
+        needed_by = (datetime.now(UTC) + timedelta(hours=6)).isoformat()
+        need = post(
+            "/supply-requests",
+            dispatcher,
+            {
+                "facility_id": destination["id"],
+                "priority": "critical",
+                "needed_by": needed_by,
+                "note": STORY_REQUEST_NOTE,
+            },
+        )
         consignment = post(
             "/consignments",
             dispatcher,
@@ -619,8 +643,8 @@ def seed_story(settings: Settings, password: str) -> dict[str, Any]:
                 "origin_facility_id": origin["id"],
                 "destination_facility_id": destination["id"],
                 "priority": "critical",
-                "deadline_at": (datetime.now(UTC) + timedelta(hours=6)).isoformat(),
-                "supply_request_id": None,
+                "deadline_at": needed_by,
+                "supply_request_id": need["id"],
                 "items": [
                     {
                         "commodity": "ORS sachets",

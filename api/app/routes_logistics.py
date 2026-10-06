@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Request
 
+from app.db import connect
 from app.errors import ApiError, ErrorEnvelope
 from app.idempotency import require_idempotency_key
 from app.logistics import (
+    CONSIGNMENT_READ,
     Consignment,
     ConsignmentCreateRequest,
     ConsignmentListResponse,
@@ -26,8 +29,10 @@ from app.logistics import (
     TripRoutePlanRequest,
     TripStatus,
     VehicleListResponse,
+    require_any,
 )
 from app.scope import WorkspaceScope, require_workspace_scope
+from app.supply_gaps import SupplyGapsResponse, supply_gaps
 
 WRITE_RESPONSES: dict[int | str, dict[str, Any]] = {
     400: {"model": ErrorEnvelope, "description": "Missing or invalid Idempotency-Key."},
@@ -95,6 +100,37 @@ def build_logistics_router(prefix: str = "/v1") -> APIRouter:
         return await _logistics(request).create_supply_request(
             scope=scope, request=body, idempotency_key=idempotency_key
         )
+
+    @router.get(
+        "/supply-gaps",
+        response_model=SupplyGapsResponse,
+        responses=READ_RESPONSES,
+        tags=["logistics"],
+        summary="Unmet supply requests, most urgent first, with deadline risk",
+    )
+    async def list_supply_gaps(
+        request: Request,
+        district_id: Annotated[str | None, Query()] = None,
+        scope: WorkspaceScope = Depends(require_workspace_scope),
+    ) -> SupplyGapsResponse:
+        require_any(scope, CONSIGNMENT_READ)
+        if district_id is not None:
+            scope.require_district(district_id)
+        settings = request.app.state.settings
+        if not settings.database_url:
+            raise ApiError(
+                503, "database_unavailable", "The database is not configured."
+            )
+        with connect(settings.database_url) as connection:
+            return supply_gaps(
+                connection,
+                organization_id=scope.organization_id,
+                district_ids=sorted(scope.district_ids)
+                if scope.district_ids is not None
+                else None,
+                district_id=district_id,
+                now=datetime.now(tz=UTC),
+            )
 
     @router.get(
         "/consignments",

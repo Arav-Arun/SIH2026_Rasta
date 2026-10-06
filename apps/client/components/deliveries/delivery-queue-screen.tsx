@@ -10,6 +10,7 @@ import { ErrorPanel } from '@/components/common/error-panel';
 import { FreshnessLabel } from '@/components/common/freshness-label';
 import { StatusBadge } from '@/components/common/status-badge';
 import { useFormatTime, useT } from '@/components/i18n/locale-provider';
+import { SupplyGapsPanel } from '@/components/deliveries/supply-gaps-panel';
 import { useConsignments, useSupplyRequests } from '@/lib/api/hooks';
 import type { Consignment, SupplyRequest } from '@/lib/api/contracts';
 import { cn } from '@/lib/utils';
@@ -78,6 +79,8 @@ export function DeliveryQueueScreen() {
             onRetry={() => void consignments.refetch()}
           />
         )}
+
+        <SupplyGapsPanel />
 
         <RequestStrip
           requests={requests.data?.requests ?? []}

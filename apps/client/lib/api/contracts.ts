@@ -35,6 +35,8 @@ export type AssignableOfficerListResponse =
 export type SupplyRequest = components['schemas']['SupplyRequest'];
 export type SupplyRequestListResponse =
   components['schemas']['SupplyRequestListResponse'];
+export type SupplyGapsResponse = components['schemas']['SupplyGapsResponse'];
+export type GapRequest = components['schemas']['GapRequest'];
 export type Consignment = components['schemas']['Consignment'];
 export type ConsignmentCreateRequest =
   components['schemas']['ConsignmentCreateRequest'];

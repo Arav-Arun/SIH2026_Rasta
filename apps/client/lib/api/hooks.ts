@@ -17,6 +17,7 @@ import {
   createTrip,
   getConsignments,
   getDrivers,
+  getSupplyGaps,
   getSupplyRequests,
   getTripReceipt,
   getTrips,
@@ -266,6 +267,7 @@ function useInvalidateLogistics() {
   return () => {
     for (const key of [
       'supply-requests',
+      'supply-gaps',
       'consignments',
       'trips',
       'trip-receipt',
@@ -285,6 +287,17 @@ export function useSupplyRequests(status: string | null = null, limit = 50) {
         { accessToken: accessToken as string, signal },
         { status, limit },
       ),
+    enabled: Boolean(accessToken),
+    refetchInterval: COMMAND_POLL_MS,
+  });
+}
+
+export function useSupplyGaps(districtId: string | null = null) {
+  const accessToken = useAccessToken();
+  return useQuery({
+    queryKey: ['supply-gaps', districtId],
+    queryFn: ({ signal }) =>
+      getSupplyGaps({ accessToken: accessToken as string, signal }, districtId),
     enabled: Boolean(accessToken),
     refetchInterval: COMMAND_POLL_MS,
   });
