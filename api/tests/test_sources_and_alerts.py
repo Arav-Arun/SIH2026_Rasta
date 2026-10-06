@@ -341,3 +341,20 @@ def test_the_store_returns_an_observation_at_its_own_age() -> None:
     query = query[: query.index("def build_adapters(")]
     assert "order by kind, subject_ref, observed_at desc" in query
     assert "observed_at" in query and "now()" not in query
+
+
+def test_the_sample_tool_refuses_an_empty_or_unsafe_target(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An empty path once meant the working directory, and a README overwritten."""
+
+    from app import recorded_samples
+
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "README.md").write_text("the project's own readme")
+    assert recorded_samples.main([""]) == 2
+    assert recorded_samples.main([]) == 2
+    assert recorded_samples.main(["."]) == 2
+    assert (tmp_path / "README.md").read_text() == "the project's own readme"
+    assert recorded_samples.main([str(tmp_path / "samples")]) == 0
+    assert (tmp_path / "samples" / "sachet_cap.xml").is_file()

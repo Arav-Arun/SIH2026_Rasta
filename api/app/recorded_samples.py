@@ -102,7 +102,27 @@ def redate_recorded_sources(
     }
 
 
+def main(argv: list[str]) -> int:
+    """Write the re-dated copies into the directory named by the one argument."""
+
+    if len(argv) != 1 or not argv[0].strip():
+        print("usage: python -m app.recorded_samples <empty or new directory>")
+        return 2
+    target = Path(argv[0]).expanduser().resolve()
+    # The copies include a README.md, so writing them into a working tree would
+    # overwrite that tree's own README. Only a directory of their own will do.
+    if (
+        target == Path.cwd().resolve()
+        or (target / ".git").exists()
+        or target == RECORDED
+    ):
+        print(f"refusing to write recorded samples into {target}")
+        return 2
+    print(redate_recorded_sources(target)["redated_at"])
+    return 0
+
+
 if __name__ == "__main__":
     import sys
 
-    print(redate_recorded_sources(Path(sys.argv[1]))["redated_at"])
+    raise SystemExit(main(sys.argv[1:]))
