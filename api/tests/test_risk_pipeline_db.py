@@ -308,3 +308,26 @@ def test_a_warning_the_feed_has_not_confirmed_for_hours_is_set_aside(
     # Every read since then failed: the warning may have been withdrawn unseen.
     assert run(db, district, tmp_path, now=now) == {}
     assert "official_warning" in stale_inputs(db, district)
+
+
+def test_a_current_warning_is_used_over_a_more_severe_one_gone_stale(
+    db, district, tmp_path
+) -> None:
+    now = datetime.now(UTC)
+    area = f"<area><areaDesc>{district['name']}</areaDesc></area>"
+    until = now + timedelta(days=1)
+    severe = cap(tag(), sent=now - timedelta(hours=9), expires=until, area=area)
+    run(db, district, tmp_path, severe, now=now)
+    age_cap_reads(db, district, hours=8)
+    # The feed now carries only a milder warning; the severe one was never
+    # cancelled, but nothing has confirmed it for eight hours.
+    milder = cap(
+        tag(),
+        sent=now - timedelta(hours=1),
+        expires=until,
+        area=area,
+        severity="Moderate",
+    )
+    warned = run(db, district, tmp_path, milder, now=now)
+    assert len(warned) == district["segments"]
+    assert set(warned.values()) == {0.5}

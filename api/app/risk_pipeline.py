@@ -11,6 +11,7 @@ import psycopg
 from psycopg.types.json import Jsonb
 
 from app.risk_engine import (
+    FRESHNESS,
     MODEL_NAME,
     MODEL_VERSION,
     Feature,
@@ -299,6 +300,17 @@ def run_pipeline(
     #    A warning is as fresh as the source's last confirmation of it, not as old as
     #    the message: one issued yesterday and valid until tomorrow is current while
     #    the feed still carries it, and doubtful once the feed stops being read.
+    def outranks(candidate: Feature, current: Feature | None) -> bool:
+        # A warning the engine can use beats one it would set aside as out of date,
+        # however severe; only then does severity decide.
+        if current is None:
+            return True
+        window = FRESHNESS["official_warning"]
+        return (moment - candidate.observed_at <= window, candidate.value) > (
+            moment - current.observed_at <= window,
+            current.value,
+        )
+
     district_warning: Feature | None = None
     drawn_warnings: list[tuple[Feature, frozenset[str]]] = []
     for record, source, mode, confirmed_at in warnings_in_force(
@@ -312,7 +324,7 @@ def run_pipeline(
             detail={**record.value, "sent_at": record.observed_at.isoformat()},
         )
         if _matches_area(record, district_name, district_code):
-            if district_warning is None or warning.value > district_warning.value:
+            if outranks(warning, district_warning):
                 district_warning = warning
             continue
         covered = _segments_covered(
@@ -355,9 +367,7 @@ def run_pipeline(
         features = [rainfall] if rainfall is not None else []
         warning = district_warning
         for drawn, covered in drawn_warnings:
-            if segment["id"] in covered and (
-                warning is None or drawn.value > warning.value
-            ):
+            if segment["id"] in covered and outranks(drawn, warning):
                 warning = drawn
         if warning is not None:
             features.append(warning)
