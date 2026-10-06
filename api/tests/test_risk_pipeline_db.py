@@ -13,6 +13,7 @@ from pathlib import Path
 import psycopg
 import pytest
 from app.config import Settings
+from app.probe_speed import expected_speed, slowness
 from app.recorded_samples import redate_recorded_sources
 from app.risk_pipeline import run_pipeline
 from psycopg.rows import dict_row
@@ -331,3 +332,125 @@ def test_a_current_warning_is_used_over_a_more_severe_one_gone_stale(
     warned = run(db, district, tmp_path, milder, now=now)
     assert len(warned) == district["segments"]
     assert set(warned.values()) == {0.5}
+
+
+def test_slow_vehicles_from_two_trips_give_a_road_the_probe_input(
+    db, district, tmp_path
+) -> None:
+    trips = db.execute(
+        "select id::text as id, vehicle_id::text as vehicle from public.trips "
+        "where organization_id = %s::uuid "
+        "and district_id = %s::uuid order by created_at limit 2",
+        (district["org"], district["district"]),
+    ).fetchall()
+    if len(trips) < 2:
+        pytest.skip("needs two trips in the district")
+    # A road well away from every facility, where nobody stops on purpose.
+    road = db.execute(
+        """
+        select s.id::text as id, s.from_node_id, s.to_node_id, s.road_class,
+               s.base_speed_kph::float8 as base_speed_kph,
+               extensions.st_x(extensions.st_lineinterpolatepoint(s.geometry, 0.5)) as lon,
+               extensions.st_y(extensions.st_lineinterpolatepoint(s.geometry, 0.5)) as lat
+        from public.road_segments as s
+        where s.organization_id = %s::uuid and s.district_id = %s::uuid
+          and s.length_m > 80
+          and not exists (
+            select 1 from public.facilities as f
+            where f.location is not null and extensions.st_dwithin(
+              f.location::extensions.geography,
+              extensions.st_lineinterpolatepoint(s.geometry, 0.5)::extensions.geography,
+              400)
+          )
+        order by s.id
+        limit 1
+        """,
+        (district["org"], district["district"]),
+    ).fetchone()
+    # One device per trip, bound to that trip's vehicle, as the tracker registers.
+    devices = {
+        item["id"]: db.execute(
+            """
+            insert into public.device_registrations (
+              organization_id, vehicle_id, platform, device_public_id
+            )
+            values (%s::uuid, %s::uuid, 'android', %s)
+            returning id::text as id
+            """,
+            (district["org"], item["vehicle"], f"probe-test-{uuid.uuid4().hex}"),
+        ).fetchone()["id"]
+        for item in trips
+    }
+    now = datetime.now(UTC)
+    # SYNTHETIC fixes: two trips crawling along the road, and one blurred fix that
+    # must not count.
+    fixes = [(trips[0]["id"], 3, 10), (trips[0]["id"], 4, 10), (trips[1]["id"], 2, 10)]
+    fixes += [(trips[1]["id"], 5, 10), (trips[1]["id"], 0, 80)]
+    for index, (trip_id, speed, accuracy) in enumerate(fixes):
+        db.execute(
+            """
+            insert into public.telemetry_points (
+              organization_id, trip_id, device_id, captured_at, location,
+              accuracy_m, speed_kph, idempotency_key
+            )
+            values (%s::uuid, %s::uuid, %s::uuid, %s,
+                    extensions.st_setsrid(extensions.st_makepoint(%s, %s), 4326),
+                    %s, %s, %s::uuid)
+            """,
+            (
+                district["org"],
+                trip_id,
+                devices[trip_id],
+                now - timedelta(minutes=20 - index),
+                road["lon"],
+                road["lat"],
+                accuracy,
+                speed,
+                str(uuid.uuid4()),
+            ),
+        )
+
+    redate_recorded_sources(tmp_path, now=now)
+    run_pipeline(
+        db,
+        organization_id=district["org"],
+        district_id=district["district"],
+        imd_base_url=None,
+        cap_base_url=None,
+        fixture_root=tmp_path,
+        now=now,
+    )
+    rows = db.execute(
+        """
+        select s.id::text as id, scs.risk_explanation as explanation
+        from public.road_segments as s
+        join public.segment_current_state as scs
+          on scs.segment_id = s.id and scs.organization_id = s.organization_id
+        where s.organization_id = %s::uuid
+          and ((s.from_node_id = %s and s.to_node_id = %s)
+               or (s.from_node_id = %s and s.to_node_id = %s))
+        """,
+        (
+            district["org"],
+            road["from_node_id"],
+            road["to_node_id"],
+            road["to_node_id"],
+            road["from_node_id"],
+        ),
+    ).fetchall()
+    probes = {
+        row["id"]: item
+        for row in rows
+        for item in row["explanation"]["contributions"]
+        if item["name"] == "telemetry_anomaly"
+    }
+    assert road["id"] in probes
+    # Both directions of the road share the fixes.
+    assert len(probes) == len(rows) >= 1
+    # The median of the four sharp fixes is 3.5 km/h; counting the blurred one at
+    # 0 km/h would have made it 3.
+    expected = slowness(3.5, expected_speed(road["base_speed_kph"], road["road_class"]))
+    assert expected > 0
+    for item in probes.values():
+        assert item["value"] == pytest.approx(expected, abs=1e-4)
+        assert "2 trips" in item["source"] and "uncalibrated" in item["source"]

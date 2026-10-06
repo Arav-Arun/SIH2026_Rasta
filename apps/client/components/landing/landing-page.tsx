@@ -89,7 +89,7 @@ const FEATURES: ReadonlyArray<{
   {
     requirement: 'b',
     title: 'Disruption prediction',
-    text: 'AI scores each road from IMD rainfall, NDMA SACHET warnings, past incidents and terrain slope, and shows why.',
+    text: 'Each road is scored from IMD rainfall, NDMA SACHET warnings, past incidents, terrain slope and tracked vehicle speeds, and the score shows why.',
     icon: BrainCircuit,
   },
   {

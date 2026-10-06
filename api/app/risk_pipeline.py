@@ -11,6 +11,7 @@ from typing import Any
 import psycopg
 from psycopg.types.json import Jsonb
 
+from app.probe_speed import probe_features
 from app.risk_engine import (
     FRESHNESS,
     MODEL_NAME,
@@ -362,6 +363,11 @@ def run_pipeline(
     # Terrain does not change with the weather, so it comes from a file rather than a
     # source run; a district with no terrain file simply lacks the input.
     terrain = load_terrain(terrain_file)
+    # Slow vehicles on a road, from trips' own GPS; only roads with enough
+    # independent, recent probes get the input at all.
+    probes = probe_features(
+        connection, organization_id=organization_id, district_id=district_id, now=moment
+    )
 
     assessments: list[RiskAssessment] = []
     levels: dict[str, int] = {}
@@ -378,6 +384,9 @@ def run_pipeline(
             terrain_feature = terrain.feature_for(segment["edge_id"])
             if terrain_feature is not None:
                 features.append(terrain_feature)
+        probe = probes.get(segment["id"])
+        if probe is not None:
+            features.append(probe)
         hits = incidents.get(segment["id"], 0)
         if hits:
             features.append(
