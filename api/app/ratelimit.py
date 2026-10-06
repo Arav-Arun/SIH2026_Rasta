@@ -28,6 +28,8 @@ LIMITS: dict[str, tuple[int, float]] = {
     "push.test": (3, 60.0),
     "route_plan.create": (60, 60.0),
     "risk.recompute": (6, 60.0),
+    # Generous: someone in trouble may press it more than once.
+    "sos.raise": (10, 60.0),
 }
 
 

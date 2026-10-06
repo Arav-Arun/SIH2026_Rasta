@@ -649,7 +649,7 @@ function MobileApp() {
     },
     {
       title: 'SOS in one tap',
-      text: 'Call 112, 108 or the state disaster helpline 1070, or text 112 your exact position.',
+      text: 'Call 112, 108 or the state disaster helpline 1070, or text 112 your exact position. The control room is alerted at the same time.',
     },
   ];
 

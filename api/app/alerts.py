@@ -30,6 +30,7 @@ ALERT_TYPES = (
     "trip_position_stale",
     "delivery_shortfall",
     "source_unavailable",
+    "sos",
 )
 AlertType = Literal[
     "road_closed",
@@ -39,6 +40,7 @@ AlertType = Literal[
     "trip_position_stale",
     "delivery_shortfall",
     "source_unavailable",
+    "sos",
 ]
 
 DEFAULT_VALIDITY = timedelta(hours=12)

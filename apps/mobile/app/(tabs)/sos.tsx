@@ -25,8 +25,30 @@ import {
   getConnectivitySummary,
   getMe,
 } from '../../services/rastaApi';
+import { flushSos, queueSos, type SosDelivery } from '../../services/sosQueue';
 
 type SosState = 'standby' | 'counting_down' | 'dispatched';
+
+type ControlRoomState = SosDelivery | 'sending';
+
+/** How often a saved SOS is retried while this screen is open. */
+const RETRY_MS = 20_000;
+
+function controlRoomText(state: ControlRoomState): string {
+  if (state === 'sending') return 'Alerting the control room…';
+  if (state.state === 'sent') {
+    if (state.recipients === 0) {
+      return 'The control room has the alert, but nobody is assigned to this district to receive it.';
+    }
+    return state.recipients === 1
+      ? 'Control room alerted: 1 person notified.'
+      : `Control room alerted: ${state.recipients} people notified.`;
+  }
+  if (state.state === 'waiting') {
+    return `Saved on this phone. The control room is alerted as soon as it can be reached. ${state.reason}`;
+  }
+  return `The control room could not take the alert: ${state.reason} The message to 112 is unaffected.`;
+}
 
 /** Time to cancel an accidental tap before the message opens. */
 const COUNTDOWN_SECONDS = 5;
@@ -74,6 +96,35 @@ export default function EmergencySosScreen() {
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [message, setMessage] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  const [controlRoom, setControlRoom] = useState<ControlRoomState | null>(null);
+
+  // An SOS saved while offline is retried on opening this screen and every
+  // RETRY_MS while it is open and still waiting.
+  useEffect(() => {
+    let cancelled = false;
+    void flushSos().then((result) => {
+      if (!cancelled && result) setControlRoom(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      !controlRoom ||
+      controlRoom === 'sending' ||
+      controlRoom.state !== 'waiting'
+    ) {
+      return;
+    }
+    const timer = setInterval(() => {
+      void flushSos().then((result) => {
+        if (result) setControlRoom(result);
+      });
+    }, RETRY_MS);
+    return () => clearInterval(timer);
+  }, [controlRoom]);
 
   // The district's real facilities.
   useEffect(() => {
@@ -143,11 +194,12 @@ export default function EmergencySosScreen() {
   }
 
   /** Compose the message a responder will read, from what is actually known. */
-  async function openMessage() {
+  async function openMessage(alertControlRoom = true) {
     haptic('warning');
     setSosState('dispatched');
     setMessage('Getting this phone’s position…');
 
+    const pressedAt = new Date().toISOString();
     const gps = await captureGpsFix();
     const lines = ['RASTA SOS', `TIME: ${new Date().toISOString()}`];
     if (gps.ok) {
@@ -174,6 +226,17 @@ export default function EmergencySosScreen() {
     Linking.openURL(`sms:112?body=${encodeURIComponent(body)}`).catch(() => {
       Alert.alert('Message ready to send', body);
     });
+
+    // The control room hears at the same time, from the same fix. Opening the
+    // message again does not raise a second alert.
+    if (!alertControlRoom) return;
+    setControlRoom('sending');
+    void queueSos({
+      captured_at: pressedAt,
+      latitude: gps.ok ? gps.fix.latitude : null,
+      longitude: gps.ok ? gps.fix.longitude : null,
+      accuracy_m: gps.ok ? (gps.fix.accuracyMeters ?? null) : null,
+    }).then(setControlRoom);
   }
 
   const counting = sosState === 'counting_down';
@@ -184,7 +247,7 @@ export default function EmergencySosScreen() {
         <Text style={styles.cardTitle}>Send an SOS message</Text>
         <Text style={styles.cardBody}>
           Opens a text message to 112 with this phone&apos;s position. You check
-          it and send it.
+          it and send it. The control room is alerted at the same time.
         </Text>
 
         <View style={styles.buttonArea}>
@@ -239,10 +302,15 @@ export default function EmergencySosScreen() {
               This phone opened the message for you to send. It cannot confirm
               that anyone received it.
             </Text>
+            {controlRoom ? (
+              <Text style={styles.caveat} accessibilityLiveRegion="polite">
+                {controlRoomText(controlRoom)}
+              </Text>
+            ) : null}
             <View style={styles.messageActions}>
               <TouchableOpacity
                 style={styles.secondaryButton}
-                onPress={() => void openMessage()}
+                onPress={() => void openMessage(false)}
                 accessibilityRole="button"
               >
                 <RotateCcw size={14} color={Theme.colors.brand} />

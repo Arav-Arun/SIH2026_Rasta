@@ -80,6 +80,7 @@ const ALERT_TITLES: Record<string, string> = {
   road_restricted: 'Road restricted',
   trip_route_invalidated: 'Your route was withdrawn',
   facility_isolated: 'Facility cut off',
+  sos: 'SOS from the field',
 };
 
 function titleFor(alert: AlertRecord): string {

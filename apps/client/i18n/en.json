@@ -720,6 +720,16 @@
     "routeNone": "none",
     "bound": "Route given to trip {reference}. The driver sees it under My trips."
   },
+  "alert": {
+    "road_closed": "Road closed",
+    "road_restricted": "Road restricted",
+    "facility_isolated": "Facility cut off",
+    "trip_route_invalidated": "Route withdrawn",
+    "trip_position_stale": "No recent position from a trip",
+    "delivery_shortfall": "Delivery short",
+    "source_unavailable": "A data source is unavailable",
+    "sos": "SOS from the field"
+  },
   "alerts": {
     "title": "Alerts",
     "summary": "{unacknowledged} not yet acknowledged of {total}",
@@ -739,7 +749,15 @@
       "consignment": "Consignment {reference}",
       "blocked": "{count, plural, one {# section of the approved route is blocked} other {# sections of the approved route are blocked}}",
       "facility": "Facility: {facility}",
-      "reasons": "Reasons: {reasons}"
+      "reasons": "Reasons: {reasons}",
+      "reporter": "From {name}",
+      "position": "Position {latitude}, {longitude}, within {accuracy} m",
+      "positionNoAccuracy": "Position {latitude}, {longitude}, accuracy not reported",
+      "noPosition": "The phone could not tell its position",
+      "pressedAt": "Pressed at {time}",
+      "note": "Note: {note}",
+      "openMap": "Open this position on a map",
+      "notDispatch": "This alerts the control room only. It does not call emergency services; the person's phone opens a message to 112 for that."
     },
     "empty": {
       "title": "Nothing in your inbox"

@@ -589,6 +589,34 @@ export function listAlerts(
   return request<AlertListResponse>(`/v1/alerts?${query.toString()}`);
 }
 
+/** What the SOS screen tells the control room. */
+export interface SosRequestBody {
+  captured_at: string;
+  latitude: number | null;
+  longitude: number | null;
+  accuracy_m: number | null;
+}
+
+export interface SosResponse {
+  alert_id: string;
+  /** How many people in the control room the alert reached. */
+  recipients: number;
+  received_at: string;
+  calls_emergency_services: boolean;
+}
+
+/** Alerts the control room. It does not call 112; the phone's message does. */
+export function sendSos(
+  body: SosRequestBody,
+  idempotencyKey: string,
+): Promise<ApiResult<SosResponse>> {
+  return request<SosResponse>('/v1/sos', {
+    method: 'POST',
+    body,
+    idempotencyKey,
+  });
+}
+
 export function acknowledgeAlert(
   alertId: string,
   idempotencyKey: string,

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { BellRing, CheckCheck, Route } from 'lucide-react';
+import { BellRing, CheckCheck, MapPin, Route } from 'lucide-react';
 
 import { useAuth } from '@/components/auth/auth-provider';
 import { CommandShell } from '@/components/layout/command-shell';
@@ -202,9 +202,54 @@ function AlertRow({
  * Every alert names the records behind it, so a recipient can go and look
  * rather than take the alert's word for it.
  */
-function AlertEvidence({ payload }: { payload: Record<string, unknown> }) {
+export function AlertEvidence({
+  payload,
+}: {
+  payload: Record<string, unknown>;
+}) {
   const t = useT();
+  const formatTime = useFormatTime();
   const entries: string[] = [];
+
+  // An SOS: who, when, and where the phone last knew it was.
+  const reporter = payload.reporter_name;
+  if (typeof reporter === 'string' && reporter) {
+    entries.push(t('alerts.evidence.reporter', { name: reporter }));
+  }
+  const pressedAt = payload.captured_at;
+  if (typeof pressedAt === 'string' && pressedAt) {
+    entries.push(
+      t('alerts.evidence.pressedAt', { time: formatTime.time(pressedAt) }),
+    );
+  }
+  const latitude = payload.latitude;
+  const longitude = payload.longitude;
+  const position =
+    typeof latitude === 'number' && typeof longitude === 'number'
+      ? { latitude, longitude }
+      : null;
+  if (position) {
+    const accuracy = payload.accuracy_m;
+    const values = {
+      latitude: position.latitude.toFixed(5),
+      longitude: position.longitude.toFixed(5),
+    };
+    entries.push(
+      typeof accuracy === 'number'
+        ? t('alerts.evidence.position', {
+            ...values,
+            accuracy: Math.round(accuracy),
+          })
+        : t('alerts.evidence.positionNoAccuracy', values),
+    );
+  } else if (payload.position_known === false) {
+    entries.push(t('alerts.evidence.noPosition'));
+  }
+  const note = payload.note;
+  if (typeof note === 'string' && note) {
+    entries.push(t('alerts.evidence.note', { note }));
+  }
+  const helpRequest = payload.calls_emergency_services === false;
 
   const segmentCount = payload.segment_count;
   if (typeof segmentCount === 'number') {
@@ -229,7 +274,7 @@ function AlertEvidence({ payload }: { payload: Record<string, unknown> }) {
 
   const notReplaced = payload.route_replaced_automatically === false;
 
-  if (entries.length === 0 && !notReplaced) return null;
+  if (entries.length === 0 && !notReplaced && !helpRequest) return null;
 
   return (
     <div className="mt-3 border-t border-border/60 pt-2">
@@ -244,6 +289,25 @@ function AlertEvidence({ payload }: { payload: Record<string, unknown> }) {
           appeared by itself. */}
       {notReplaced && (
         <p className="mt-1.5 text-xs font-medium">{t('alerts.notReplaced')}</p>
+      )}
+      {position && (
+        <a
+          href={`https://www.openstreetmap.org/?mlat=${position.latitude}&mlon=${position.longitude}#map=17/${position.latitude}/${position.longitude}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-sos-position
+          className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium underline underline-offset-2"
+        >
+          <MapPin className="size-4" aria-hidden />
+          {t('alerts.evidence.openMap')}
+        </a>
+      )}
+      {/* Said on every SOS, so nobody reads the control room's copy as a call
+          for an ambulance having been made. */}
+      {helpRequest && (
+        <p className="mt-1.5 text-xs font-medium">
+          {t('alerts.evidence.notDispatch')}
+        </p>
       )}
     </div>
   );
