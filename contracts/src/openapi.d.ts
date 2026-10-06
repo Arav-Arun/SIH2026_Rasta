@@ -2147,6 +2147,8 @@ export interface components {
             computed_at: string;
             /** District Id */
             district_id: string;
+            /** Inspection Suggestions */
+            inspection_suggestions?: string[];
             /** Levels */
             levels: {
                 [key: string]: number;

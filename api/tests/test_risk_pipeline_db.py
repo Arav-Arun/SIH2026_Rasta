@@ -334,9 +334,13 @@ def test_a_current_warning_is_used_over_a_more_severe_one_gone_stale(
     assert set(warned.values()) == {0.5}
 
 
-def test_slow_vehicles_from_two_trips_give_a_road_the_probe_input(
-    db, district, tmp_path
-) -> None:
+def slow_road(db, district) -> dict:
+    """Two trips crawling one way along a two-way road, with SYNTHETIC fixes.
+
+    Each trip first passes at 15 km/h heading along the road, then crawls with no
+    usable heading; a blurred fix must not count. Returns the road and its twin.
+    """
+
     trips = db.execute(
         "select id::text as id, vehicle_id::text as vehicle from public.trips "
         "where organization_id = %s::uuid "
@@ -345,14 +349,21 @@ def test_slow_vehicles_from_two_trips_give_a_road_the_probe_input(
     ).fetchall()
     if len(trips) < 2:
         pytest.skip("needs two trips in the district")
-    # A road well away from every facility, where nobody stops on purpose.
+    # A two-way road well away from every facility, where nobody stops on purpose.
     road = db.execute(
         """
-        select s.id::text as id, s.from_node_id, s.to_node_id, s.road_class,
+        select s.id::text as id, twin.id::text as twin_id, s.road_class,
                s.base_speed_kph::float8 as base_speed_kph,
                extensions.st_x(extensions.st_lineinterpolatepoint(s.geometry, 0.5)) as lon,
-               extensions.st_y(extensions.st_lineinterpolatepoint(s.geometry, 0.5)) as lat
+               extensions.st_y(extensions.st_lineinterpolatepoint(s.geometry, 0.5)) as lat,
+               degrees(extensions.st_azimuth(
+                 extensions.st_lineinterpolatepoint(s.geometry, 0.45)::extensions.geography,
+                 extensions.st_lineinterpolatepoint(s.geometry, 0.55)::extensions.geography
+               )) as bearing
         from public.road_segments as s
+        join public.road_segments as twin
+          on twin.organization_id = s.organization_id
+         and twin.from_node_id = s.to_node_id and twin.to_node_id = s.from_node_id
         where s.organization_id = %s::uuid and s.district_id = %s::uuid
           and s.length_m > 80
           and not exists (
@@ -382,20 +393,27 @@ def test_slow_vehicles_from_two_trips_give_a_road_the_probe_input(
         for item in trips
     }
     now = datetime.now(UTC)
-    # SYNTHETIC fixes: two trips crawling along the road, and one blurred fix that
-    # must not count.
-    fixes = [(trips[0]["id"], 3, 10), (trips[0]["id"], 4, 10), (trips[1]["id"], 2, 10)]
-    fixes += [(trips[1]["id"], 5, 10), (trips[1]["id"], 0, 80)]
-    for index, (trip_id, speed, accuracy) in enumerate(fixes):
+    first, second = trips[0]["id"], trips[1]["id"]
+    # (trip, speed, heading, accuracy)
+    fixes = [
+        (first, 15, road["bearing"], 10),
+        (first, 1, None, 10),
+        (first, 2.5, None, 10),
+        (second, 15, road["bearing"], 10),
+        (second, 1.5, None, 10),
+        (second, 3, None, 10),
+        (second, 0, None, 80),
+    ]
+    for index, (trip_id, speed, heading, accuracy) in enumerate(fixes):
         db.execute(
             """
             insert into public.telemetry_points (
               organization_id, trip_id, device_id, captured_at, location,
-              accuracy_m, speed_kph, idempotency_key
+              accuracy_m, speed_kph, heading, idempotency_key
             )
             values (%s::uuid, %s::uuid, %s::uuid, %s,
                     extensions.st_setsrid(extensions.st_makepoint(%s, %s), 4326),
-                    %s, %s, %s::uuid)
+                    %s, %s, %s, %s::uuid)
             """,
             (
                 district["org"],
@@ -406,12 +424,33 @@ def test_slow_vehicles_from_two_trips_give_a_road_the_probe_input(
                 road["lat"],
                 accuracy,
                 speed,
+                None if heading is None else round(heading, 2) % 360,
                 str(uuid.uuid4()),
             ),
         )
+    return {**road, "now": now}
 
+
+def probe_inputs(db, district, segment_ids: list[str]) -> dict[str, dict]:
+    rows = db.execute(
+        """
+        select scs.segment_id::text as id, scs.risk_explanation as explanation
+        from public.segment_current_state as scs
+        where scs.organization_id = %s::uuid and scs.segment_id = any(%s::uuid[])
+        """,
+        (district["org"], segment_ids),
+    ).fetchall()
+    return {
+        row["id"]: item
+        for row in rows
+        for item in row["explanation"]["contributions"]
+        if item["name"] == "telemetry_anomaly"
+    }
+
+
+def score(db, district, tmp_path, now):
     redate_recorded_sources(tmp_path, now=now)
-    run_pipeline(
+    return run_pipeline(
         db,
         organization_id=district["org"],
         district_id=district["district"],
@@ -420,37 +459,113 @@ def test_slow_vehicles_from_two_trips_give_a_road_the_probe_input(
         fixture_root=tmp_path,
         now=now,
     )
-    rows = db.execute(
-        """
-        select s.id::text as id, scs.risk_explanation as explanation
-        from public.road_segments as s
-        join public.segment_current_state as scs
-          on scs.segment_id = s.id and scs.organization_id = s.organization_id
-        where s.organization_id = %s::uuid
-          and ((s.from_node_id = %s and s.to_node_id = %s)
-               or (s.from_node_id = %s and s.to_node_id = %s))
-        """,
-        (
-            district["org"],
-            road["from_node_id"],
-            road["to_node_id"],
-            road["to_node_id"],
-            road["from_node_id"],
-        ),
-    ).fetchall()
-    probes = {
-        row["id"]: item
-        for row in rows
-        for item in row["explanation"]["contributions"]
-        if item["name"] == "telemetry_anomaly"
-    }
-    assert road["id"] in probes
-    # Both directions of the road share the fixes.
-    assert len(probes) == len(rows) >= 1
-    # The median of the four sharp fixes is 3.5 km/h; counting the blurred one at
-    # 0 km/h would have made it 3.
-    expected = slowness(3.5, expected_speed(road["base_speed_kph"], road["road_class"]))
+
+
+def test_slow_vehicles_mark_the_direction_they_crawl_and_not_the_other(
+    db, district, tmp_path
+) -> None:
+    road = slow_road(db, district)
+    score(db, district, tmp_path, road["now"])
+    probes = probe_inputs(db, district, [road["id"], road["twin_id"]])
+    # The crawl was one way: the road the other way gets nothing from it.
+    assert set(probes) == {road["id"]}
+    # Six sharp fixes (15, 1, 2.5, 15, 1.5, 3): the median is 2.75 km/h. Counting
+    # the blurred one at 0 km/h would have made it 2.5.
+    expected = slowness(
+        2.75, expected_speed(road["base_speed_kph"], road["road_class"])
+    )
     assert expected > 0
-    for item in probes.values():
-        assert item["value"] == pytest.approx(expected, abs=1e-4)
-        assert "2 trips" in item["source"] and "uncalibrated" in item["source"]
+    item = probes[road["id"]]
+    assert item["value"] == pytest.approx(expected, abs=1e-4)
+    assert "2 trips" in item["source"] and "uncalibrated" in item["source"]
+
+
+def test_a_nearly_stopped_road_is_put_to_a_dispatcher_and_not_closed(
+    db, district, tmp_path
+) -> None:
+    road = slow_road(db, district)
+    before = db.execute(
+        "select passability::text as p from public.segment_current_state "
+        "where segment_id = %s::uuid",
+        (road["id"],),
+    ).fetchone()["p"]
+    result = score(db, district, tmp_path, road["now"])
+    assert road["id"] in result.inspection_suggestions
+    assert road["twin_id"] not in result.inspection_suggestions
+
+    alerts = db.execute(
+        """
+        select a.id::text as id, a.severity, a.payload
+        from public.alerts as a
+        where a.organization_id = %s::uuid and a.type = 'road_slow_traffic'
+          and a.subject_type = 'segment' and a.subject_id = %s
+        """,
+        (district["org"], road["id"]),
+    ).fetchall()
+    assert len(alerts) == 1
+    (alert,) = alerts
+    assert alert["severity"] == "warning"
+    assert alert["payload"]["changes_passability"] is False
+    assert alert["payload"]["suggested_action"] == "assign_inspection"
+    assert alert["payload"]["calibrated"] is False
+    # Told: the people who may assign an inspection, and nobody else.
+    recipients = db.execute(
+        """
+        select r.profile_id::text as id,
+               array_agg(ra.role::text) as roles
+        from public.alert_recipients as r
+        join public.role_assignments as ra
+          on ra.profile_id = r.profile_id and ra.organization_id = r.organization_id
+         and ra.revoked_at is null
+        where r.alert_id = %s::uuid
+        group by r.profile_id
+        """,
+        (alert["id"],),
+    ).fetchall()
+    assert recipients
+    assert all("district_dispatcher" in row["roles"] for row in recipients)
+    # A suggestion changes nothing about the road.
+    after = db.execute(
+        "select passability::text as p from public.segment_current_state "
+        "where segment_id = %s::uuid",
+        (road["id"],),
+    ).fetchone()["p"]
+    assert after == before
+
+    # Scored again while it is still slow: still one suggestion.
+    score(db, district, tmp_path, road["now"] + timedelta(minutes=5))
+    count = db.execute(
+        "select count(*)::int as n from public.alerts where organization_id = %s::uuid "
+        "and type = 'road_slow_traffic' and subject_id = %s",
+        (district["org"], road["id"]),
+    ).fetchone()["n"]
+    assert count == 1
+
+    # Somebody already on the way: no new suggestion.
+    db.execute(
+        "delete from public.alert_recipients where alert_id = %s::uuid", (alert["id"],)
+    )
+    db.execute("delete from public.alerts where id = %s::uuid", (alert["id"],))
+    officer = db.execute(
+        """
+        select p.id::text as id
+        from public.profiles as p
+        join public.role_assignments as ra
+          on ra.profile_id = p.id and ra.organization_id = p.organization_id
+        where p.organization_id = %s::uuid and ra.revoked_at is null
+        order by p.id
+        limit 1
+        """,
+        (district["org"],),
+    ).fetchone()
+    db.execute(
+        """
+        insert into public.inspections (
+          organization_id, district_id, target_type, target_id, assignee_id, status
+        )
+        values (%s::uuid, %s::uuid, 'segment', %s::uuid, %s::uuid, 'assigned')
+        """,
+        (district["org"], district["district"], road["id"], officer["id"]),
+    )
+    again = score(db, district, tmp_path, road["now"] + timedelta(minutes=10))
+    assert road["id"] not in again.inspection_suggestions

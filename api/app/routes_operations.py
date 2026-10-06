@@ -7,7 +7,7 @@ from typing import Annotated, Any, Literal
 
 import psycopg
 from fastapi import APIRouter, Depends, Query, Request, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.audit import MAX_PAGE, AuditExportResponse, AuditRepository, to_csv
 from app.data_health import DataHealthRepository, DataHealthResponse
@@ -44,6 +44,9 @@ class RiskRecomputeResponse(BaseModel):
     segments_unscored: int
     levels: dict[str, int]
     runs: list[dict[str, Any]]
+    #: Roads where vehicles have nearly stopped, put to dispatchers as worth an
+    #: inspection. A suggestion only; none of them was closed.
+    inspection_suggestions: list[str] = Field(default_factory=list)
     #: Stated on every response so no caller has to infer it.
     changes_passability: bool = False
 

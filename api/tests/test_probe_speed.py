@@ -11,9 +11,13 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from app.probe_speed import (
     SLOW_SHARE,
+    Candidate,
+    Fix,
     MatchedFix,
+    angle_between,
     expected_speed,
     feature_for,
+    match,
     slowness,
     summarise,
 )
@@ -92,3 +96,129 @@ def test_expected_speed_is_the_one_route_planning_uses() -> None:
 )
 def test_slowness_runs_from_normal_to_standstill(median, expected) -> None:
     assert slowness(median, 40) == pytest.approx(expected, abs=1e-4)
+
+
+# --- which road, and which way ------------------------------------------------
+# A SYNTHETIC two-way road running due east, stored as two segments: "up" runs
+# east (bearing 90) and "down" runs west (bearing 270) over the same 400 m.
+
+
+def near(*, along: float = 100.0, metres: float = 3.0) -> tuple[Candidate, ...]:
+    return (
+        Candidate("up", metres, along, 90.0, 40.0),
+        Candidate("down", metres, 400.0 - along, 270.0, 40.0),
+    )
+
+
+def fix(
+    name: str,
+    trip_id: str,
+    *,
+    speed: float,
+    heading: float | None = None,
+    minute: int = 0,
+    candidates: tuple[Candidate, ...] | None = None,
+) -> Fix:
+    return Fix(
+        fix_id=name,
+        trip_id=trip_id,
+        speed_kph=speed,
+        heading=heading,
+        captured_at=NOW - timedelta(minutes=60 - minute),
+        candidates=candidates if candidates is not None else near(),
+    )
+
+
+def roads(matched: list[MatchedFix]) -> dict[str, set[str]]:
+    found: dict[str, set[str]] = {}
+    for item in matched:
+        found.setdefault(item.trip_id, set()).add(item.segment_id)
+    return found
+
+
+def test_a_moving_vehicle_is_on_the_direction_it_is_heading() -> None:
+    matched = match(
+        [
+            fix("a", "east", speed=30, heading=85),
+            fix("b", "west", speed=30, heading=268),
+        ]
+    )
+    assert roads(matched) == {"east": {"up"}, "west": {"down"}}
+
+
+def test_a_jam_one_way_does_not_mark_the_other() -> None:
+    # Two trips crawl east; one trip runs freely west on the same road.
+    fixes = [
+        fix("e1", "trip-1", speed=30, heading=90, minute=0),
+        fix("e2", "trip-1", speed=2, minute=5),
+        fix("e3", "trip-1", speed=1, minute=10),
+        fix("f1", "trip-2", speed=25, heading=95, minute=1),
+        fix("f2", "trip-2", speed=3, minute=6),
+        fix("f3", "trip-2", speed=2, minute=11),
+        fix("w1", "trip-3", speed=38, heading=270, minute=2),
+        fix("w2", "trip-3", speed=36, heading=271, minute=3),
+    ]
+    values = {s.segment_id: feature_for(s).value for s in summarise(match(fixes))}
+    assert values["up"] > 0.5
+    # The free-flowing westbound trip is one trip: not enough to judge "down", and
+    # nothing of the eastbound jam reaches it.
+    assert "down" not in values
+
+
+def test_a_crawling_vehicle_takes_its_trips_nearest_moving_direction() -> None:
+    fixes = [
+        fix("moving-east", "trip-1", speed=20, heading=92, minute=0),
+        fix("stopped", "trip-1", speed=0, minute=30),
+        fix("moving-west", "trip-1", speed=20, heading=272, minute=55),
+    ]
+    by_fix = {
+        (item.captured_at, item.segment_id)
+        for item in match(fixes)
+        if item.speed_kph == 0
+    }
+    # Thirty minutes after heading east and twenty-five before heading west: the
+    # westward fix is nearer in time.
+    assert {segment for _, segment in by_fix} == {"down"}
+
+
+def test_a_crawling_vehicle_without_a_heading_goes_by_its_progress() -> None:
+    fixes = [
+        fix("c1", "trip-1", speed=3, minute=0, candidates=near(along=100)),
+        fix("c2", "trip-1", speed=2, minute=10, candidates=near(along=130)),
+        fix("c3", "trip-1", speed=4, minute=20, candidates=near(along=160)),
+    ]
+    assert roads(match(fixes)) == {"trip-1": {"up"}}
+
+
+def test_a_stopped_vehicle_with_no_direction_is_left_out_not_counted_twice() -> None:
+    fixes = [fix(f"s{i}", "trip-1", speed=0, minute=i) for i in range(5)]
+    assert match(fixes) == []
+
+
+def test_a_heading_across_every_nearby_road_matches_none() -> None:
+    assert match([fix("turning", "trip-1", speed=20, heading=0)]) == []
+
+
+def test_a_heading_prefers_the_road_it_runs_along_over_a_nearer_crossing() -> None:
+    crossing = (
+        Candidate("cross-north", 2.0, 50.0, 0.0, 30.0),
+        Candidate("cross-south", 2.0, 50.0, 180.0, 30.0),
+        Candidate("up", 9.0, 100.0, 90.0, 40.0),
+        Candidate("down", 9.0, 300.0, 270.0, 40.0),
+    )
+    matched = match([fix("a", "trip-1", speed=30, heading=88, candidates=crossing)])
+    assert roads(matched) == {"trip-1": {"up"}}
+
+
+def test_a_one_way_road_needs_no_direction() -> None:
+    one_way = (Candidate("only", 4.0, 50.0, 90.0, 40.0),)
+    matched = match([fix("a", "trip-1", speed=0, candidates=one_way)])
+    assert roads(matched) == {"trip-1": {"only"}}
+
+
+@pytest.mark.parametrize(
+    ("first", "second", "expected"),
+    [(10, 350, 20), (90, 270, 180), (0, 0, 0), (359, 1, 2), (45, 100, 55)],
+)
+def test_angles_wrap_round_north(first, second, expected) -> None:
+    assert angle_between(first, second) == pytest.approx(expected)

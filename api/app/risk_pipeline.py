@@ -11,7 +11,7 @@ from typing import Any
 import psycopg
 from psycopg.types.json import Jsonb
 
-from app.probe_speed import probe_features
+from app.probe_speed import probe_features, suggest_inspections
 from app.risk_engine import (
     FRESHNESS,
     MODEL_NAME,
@@ -52,6 +52,8 @@ class PipelineResult:
     risk_snapshot_version: str = ""
     model_version: str = MODEL_VERSION
     computed_at: str = ""
+    #: Roads put to a dispatcher as worth an inspection; none of them was closed.
+    inspection_suggestions: list[str] = field(default_factory=list)
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -63,6 +65,7 @@ class PipelineResult:
             "segments_unscored": self.segments_unscored,
             "levels": self.levels,
             "runs": [run.as_dict() for run in self.runs],
+            "inspection_suggestions": self.inspection_suggestions,
         }
 
 
@@ -453,6 +456,17 @@ def run_pipeline(
             "risk scores updated, but the outcome log is missing: apply migration "
             "20261006000000_risk_outcome_log.sql"
         )
+
+    # Roads where vehicles have nearly stopped: a dispatcher is asked to send
+    # someone to look. The road's state is not touched.
+    result.inspection_suggestions = suggest_inspections(
+        connection,
+        organization_id=organization_id,
+        district_id=district_id,
+        probes=probes,
+        closed={item["id"] for item in segments if item["passability"] == "closed"},
+        now=moment,
+    )
 
     result.levels = levels
     result.risk_snapshot_version = snapshot_version(assessments)

@@ -81,6 +81,7 @@ const ALERT_TITLES: Record<string, string> = {
   trip_route_invalidated: 'Your route was withdrawn',
   facility_isolated: 'Facility cut off',
   sos: 'SOS from the field',
+  road_slow_traffic: 'Vehicles nearly stopped: inspection suggested',
 };
 
 function titleFor(alert: AlertRecord): string {

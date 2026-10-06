@@ -2,7 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { BellRing, CheckCheck, MapPin, Route } from 'lucide-react';
+import {
+  BellRing,
+  CheckCheck,
+  ClipboardCheck,
+  MapPin,
+  Route,
+} from 'lucide-react';
 
 import { useAuth } from '@/components/auth/auth-provider';
 import { CommandShell } from '@/components/layout/command-shell';
@@ -108,7 +114,7 @@ const SEVERITY_STYLES: Record<AlertSeverity, string> = {
   info: 'border-l-[#1D4ED8] bg-[#EFF6FF]',
 };
 
-function AlertRow({
+export function AlertRow({
   alert,
   busy,
   onAcknowledge,
@@ -128,6 +134,12 @@ function AlertRow({
     alert.subject_type === 'trip' &&
     Boolean(alert.subject_id) &&
     (workspace?.capabilities ?? []).includes('route:plan');
+  // A road worth a look: whoever assigns inspections goes to it on the map.
+  const canInspect =
+    alert.type === 'road_slow_traffic' &&
+    alert.subject_type === 'segment' &&
+    Boolean(alert.subject_id) &&
+    (workspace?.capabilities ?? []).includes('inspection:manage');
 
   return (
     <li
@@ -192,6 +204,16 @@ function AlertRow({
         >
           <Route className="size-4" aria-hidden />
           {t('alerts.replan')}
+        </Link>
+      )}
+      {canInspect && (
+        <Link
+          href={`/map?segment=${encodeURIComponent(alert.subject_id as string)}`}
+          data-inspect-segment={alert.subject_id}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium"
+        >
+          <ClipboardCheck className="size-4" aria-hidden />
+          {t('alerts.inspect')}
         </Link>
       )}
     </li>
@@ -272,9 +294,31 @@ export function AlertEvidence({
     entries.push(t('alerts.evidence.reasons', { reasons: reasons.join(', ') }));
   }
 
+  // Slow vehicles on a road: what the probes saw, and that nothing was closed.
+  const median = payload.median_kph;
+  const expected = payload.expected_kph;
+  const trips = payload.trips;
+  if (
+    typeof median === 'number' &&
+    typeof expected === 'number' &&
+    typeof trips === 'number'
+  ) {
+    entries.push(
+      t('alerts.evidence.slowTraffic', {
+        trips,
+        median: Math.round(median),
+        expected: Math.round(expected),
+      }),
+    );
+  }
+  const notClosed =
+    payload.suggested_action === 'assign_inspection' &&
+    payload.changes_passability === false;
+
   const notReplaced = payload.route_replaced_automatically === false;
 
-  if (entries.length === 0 && !notReplaced && !helpRequest) return null;
+  if (entries.length === 0 && !notReplaced && !helpRequest && !notClosed)
+    return null;
 
   return (
     <div className="mt-3 border-t border-border/60 pt-2">
@@ -301,6 +345,11 @@ export function AlertEvidence({
           <MapPin className="size-4" aria-hidden />
           {t('alerts.evidence.openMap')}
         </a>
+      )}
+      {notClosed && (
+        <p className="mt-1.5 text-xs font-medium">
+          {t('alerts.evidence.notClosed')}
+        </p>
       )}
       {/* Said on every SOS, so nobody reads the control room's copy as a call
           for an ambulance having been made. */}

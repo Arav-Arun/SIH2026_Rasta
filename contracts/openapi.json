@@ -3771,6 +3771,13 @@
             "title": "District Id",
             "type": "string"
           },
+          "inspection_suggestions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Inspection Suggestions",
+            "type": "array"
+          },
           "levels": {
             "additionalProperties": {
               "type": "integer"

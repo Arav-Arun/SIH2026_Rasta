@@ -119,6 +119,12 @@ export function DataHealthScreen() {
                     unscored: recompute.data.segments_unscored,
                     model: recompute.data.model_version,
                   })}
+                  {(recompute.data.inspection_suggestions ?? []).length > 0
+                    ? ` ${t('health.suggested', {
+                        count: (recompute.data.inspection_suggestions ?? [])
+                          .length,
+                      })}`
+                    : ''}
                 </p>
               )}
             </section>

@@ -31,6 +31,7 @@ ALERT_TYPES = (
     "delivery_shortfall",
     "source_unavailable",
     "sos",
+    "road_slow_traffic",
 )
 AlertType = Literal[
     "road_closed",
@@ -41,6 +42,7 @@ AlertType = Literal[
     "delivery_shortfall",
     "source_unavailable",
     "sos",
+    "road_slow_traffic",
 ]
 
 DEFAULT_VALIDITY = timedelta(hours=12)
@@ -123,6 +125,8 @@ class AlertCandidate:
     #: driver of the affected trip.
     explicit_profile_ids: tuple[str, ...] = ()
     valid_for: timedelta = DEFAULT_VALIDITY
+    #: Raised again within the same stretch of this length, it updates one alert.
+    dedupe_bucket: timedelta = DEDUPE_BUCKET
 
 
 def roles_with_capability(capabilities: tuple[str, ...]) -> list[str]:
@@ -330,6 +334,7 @@ def raise_alert(
         subject_type=candidate.subject_type,
         subject_id=candidate.subject_id,
         valid_from=valid_from,
+        bucket=candidate.dedupe_bucket,
     )
 
     row = connection.execute(

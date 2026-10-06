@@ -91,6 +91,13 @@ function LegendSwatch({ status }: { status: Passability }) {
   );
 }
 
+/** The road a link asked for, as in /map?segment=<id> from an alert. */
+function readSegmentParam(): string | null {
+  if (typeof window === 'undefined') return null;
+  const value = new URLSearchParams(window.location.search).get('segment');
+  return value && /^[0-9a-f-]{36}$/i.test(value) ? value : null;
+}
+
 /** Accessibility map with evidence drawer and list alternative. */
 export function AccessibilityMapScreen() {
   const { locale, t } = useLocale();
@@ -103,8 +110,8 @@ export function AccessibilityMapScreen() {
   );
   const [layers, setLayers] = useState<MapLayerVisibility>(DEFAULT_LAYERS);
   const [view, setView] = useState<'map' | 'list'>('map');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [fitId, setFitId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(readSegmentParam);
+  const [fitId, setFitId] = useState<string | null>(readSegmentParam);
   const [viewport, setViewport] = useState<BBox | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

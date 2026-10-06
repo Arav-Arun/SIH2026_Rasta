@@ -729,7 +729,8 @@
     "trip_position_stale": "No recent position from a trip",
     "delivery_shortfall": "Delivery short",
     "source_unavailable": "A data source is unavailable",
-    "sos": "SOS from the field"
+    "sos": "SOS from the field",
+    "road_slow_traffic": "Vehicles nearly stopped: inspection suggested"
   },
   "alerts": {
     "title": "Alerts",
@@ -758,7 +759,9 @@
       "pressedAt": "Pressed at {time}",
       "note": "Note: {note}",
       "openMap": "Open this position on a map",
-      "notDispatch": "This alerts the control room only. It does not call emergency services; the person's phone opens a message to 112 for that."
+      "notDispatch": "This alerts the control room only. It does not call emergency services; the person's phone opens a message to 112 for that.",
+      "slowTraffic": "{trips} vehicles, median {median} km/h where {expected} km/h is expected (thresholds not yet calibrated)",
+      "notClosed": "Nothing was closed. Send someone to look; the road's state changes only on a reviewed report."
     },
     "empty": {
       "title": "Nothing in your inbox"
@@ -784,7 +787,8 @@
       "notificationTitle": "RASTA: new alert",
       "notificationBody": "Open the alert inbox to read it."
     },
-    "replan": "Plan a new route for this trip"
+    "replan": "Plan a new route for this trip",
+    "inspect": "Open the road to assign an inspection"
   },
   "health": {
     "title": "Data health",
@@ -817,6 +821,7 @@
     "noGraphVersion": "No graph version recorded",
     "recompute": "Re-run sources",
     "recomputed": "Scored {scored}, left {unscored} unscored with {model}.",
+    "suggested": "{count, plural, one {# road where vehicles nearly stopped was put to dispatchers for an inspection; nothing was closed.} other {# roads where vehicles nearly stopped were put to dispatchers for an inspection; nothing was closed.}}",
     "outbox": "Unprocessed events",
     "ledger": "Idempotency ledger",
     "reporting": "Trips reporting",
