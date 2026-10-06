@@ -26,6 +26,7 @@ explicit comma-separated list; wildcards are rejected.
 | `routes_*.py` | HTTP endpoints |
 | `incidents.py`, `reducer.py`, `evidence.py` | Field reports, evidence checks, road state decisions |
 | `routing/` | Graph loading and constrained route search |
+| `routing/replay.py` | The fixed synthetic scenarios run through the production planner and scored against their stated expectations (`PYTHONPATH=api python -m app.routing.replay`) |
 | `route_plans.py`, `exposure.py` | Plan approval and rerouting after closures |
 | `logistics.py`, `telemetry.py` | Consignments, trips, receipts, GPS batches |
 | `risk_engine.py`, `risk_pipeline.py`, `sources.py`, `terrain.py` | Explainable risk baseline, IMD/SACHET adapters and terrain slope |
