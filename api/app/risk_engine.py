@@ -275,10 +275,7 @@ def snapshot_version(assessments: list[RiskAssessment]) -> str:
     """
 
     payload = json.dumps(
-        [
-            f"{item.model_version}:{item.level}:{item.score}"
-            for item in assessments
-        ],
+        [f"{item.model_version}:{item.level}:{item.score}" for item in assessments],
         separators=(",", ":"),
     )
     digest = hashlib.sha256(payload.encode()).hexdigest()[:16]

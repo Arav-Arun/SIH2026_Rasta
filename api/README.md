@@ -32,3 +32,16 @@ explicit comma-separated list; wildcards are rejected.
 | `alerts.py`, `push.py` | Alert inbox and optional web push |
 | `auth.py`, `supabase_jwt.py`, `scope.py`, `identity.py` | Authentication and access scope |
 | `audit.py`, `idempotency.py`, `ratelimit.py`, `middleware.py` | Audit trail, safe retries, limits, headers |
+
+## Tests
+
+```bash
+api/.venv/bin/python -m pip install -e './api[dev]'
+cd api && .venv/bin/python -m pytest
+```
+
+The unit tests need no database. They cover the risk score, routing, source
+parsing, alert de-duplication, receipts, telemetry rules and the API's
+request and error handling, and they check that `contracts/openapi.json`
+matches what the API serves. GitHub runs them with lint and type checks on
+every push (`.github/workflows/verify.yml`).

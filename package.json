@@ -9,6 +9,7 @@
   "scripts": {
     "lint": "npm run lint --workspace apps/client && npm run lint --workspace apps/mobile",
     "typecheck": "npm run typecheck --workspace apps/client && npm run typecheck --workspace apps/mobile",
+    "test": "npm run test --workspace apps/client",
     "format": "oxfmt apps/client apps/mobile",
     "format:check": "oxfmt --check apps/client apps/mobile",
     "mobile:start": "npm run start --workspace apps/mobile",

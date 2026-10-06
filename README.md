@@ -241,6 +241,16 @@ cp apps/mobile/.env.example apps/mobile/.env   # API and Supabase addresses
 npm run mobile:start
 ```
 
+## Checks
+
+```bash
+npm run lint && npm run typecheck && npm run format:check   # web and Android app
+npm test                                                    # web unit tests
+cd api && .venv/bin/python -m pytest                        # API unit tests (no database needed)
+```
+
+GitHub runs the same checks on every push (`.github/workflows/verify.yml`).
+
 ## Data sources and attribution
 
 - Road and facility data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),
