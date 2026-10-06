@@ -1,0 +1,109 @@
+name: Deploy web
+
+# Builds the web client and deploys it to Cloudflare Workers, then checks the live
+# site. Runs after a push to main that changes the web client, or by hand from the
+# Actions tab (Deploy web, Run workflow).
+#
+# Repository secrets: CLOUDFLARE_API_TOKEN (a token from the "Edit Cloudflare
+# Workers" template) and CLOUDFLARE_ACCOUNT_ID. Without both, the run stops before
+# building and says so. DEMO_PASSWORD is optional: it is the demo accounts'
+# password, compiled into the site for the "Try the demo" sign-in, and left out the
+# buttons are hidden.
+#
+# Repository variables: the same API and Supabase values the Android build uses
+# (EXPO_PUBLIC_API_URL, EXPO_PUBLIC_SUPABASE_URL,
+# EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY). NEXT_PUBLIC_ variables of the same names
+# override them for the web build, and WEB_URL overrides the address checked.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/client/**'
+      - 'contracts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: false
+
+jobs:
+  settings:
+    name: Check deploy settings
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - id: check
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$TOKEN" ] && [ -n "$ACCOUNT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Not deployed: set the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets."
+          fi
+
+  deploy:
+    name: Build, deploy and check
+    needs: settings
+    if: needs.settings.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_API_BASE_URL: ${{ vars.NEXT_PUBLIC_API_BASE_URL || vars.EXPO_PUBLIC_API_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || vars.EXPO_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_ENABLE_SERVICE_WORKER: ${{ vars.NEXT_PUBLIC_ENABLE_SERVICE_WORKER || '1' }}
+      NEXT_PUBLIC_DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
+      WEB_URL: ${{ vars.WEB_URL || 'https://rasta-client.aravarun.workers.dev' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check build settings
+        run: |
+          missing=""
+          for name in NEXT_PUBLIC_API_BASE_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY; do
+            if [ -z "${!name}" ]; then missing="$missing $name"; fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository variables:$missing (or their EXPO_PUBLIC_ equivalents)."
+            exit 1
+          fi
+          echo "NEXT_PUBLIC_APP_VERSION=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build --workspace apps/client
+
+      - name: Deploy
+        working-directory: apps/client
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler deploy --config dist/server/wrangler.json
+
+      - name: Check the live site
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            if curl -fsS -o /dev/null -D headers.txt "$WEB_URL/"; then break; fi
+            if [ "$attempt" = 6 ]; then echo "::error::$WEB_URL/ did not answer."; exit 1; fi
+            sleep 10
+          done
+          grep -qi '^content-security-policy:' headers.txt || { echo "::error::No Content-Security-Policy on $WEB_URL/"; exit 1; }
+          grep -qi '^x-content-type-options: *nosniff' headers.txt || { echo "::error::No X-Content-Type-Options on $WEB_URL/"; exit 1; }
+          echo "$WEB_URL/ is up and sends its security headers (version $NEXT_PUBLIC_APP_VERSION)."

@@ -253,6 +253,17 @@ cd api && .venv/bin/python -m pytest                        # API unit tests (no
 
 GitHub runs the same checks on every push (`.github/workflows/verify.yml`).
 
+## Deploy
+
+- **Web:** `.github/workflows/deploy-web.yml` builds the client, deploys it to Cloudflare
+  Workers and checks that the live site answers with its security headers. It runs after a
+  push to `main` that changes the web client, or from the Actions tab. It needs the
+  repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (and optionally
+  `DEMO_PASSWORD`), and reads the API and Supabase addresses from the same repository
+  variables as the Android build.
+- **API:** Render deploys `render.yaml` from `main`.
+- **Android:** `.github/workflows/android-apk.yml` publishes `rasta.apk` on the latest release.
+
 ## Data sources and attribution
 
 - Road and facility data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),
