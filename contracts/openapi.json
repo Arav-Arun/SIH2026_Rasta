@@ -3808,6 +3808,18 @@
           "segments_unscored": {
             "title": "Segments Unscored",
             "type": "integer"
+          },
+          "shadow_model": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shadow Model"
           }
         },
         "required": [
@@ -4692,6 +4704,17 @@
               }
             ],
             "title": "Score"
+          },
+          "shadow": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShadowOpinion"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A trained model's opinion, run in shadow: logged for comparison, never used for this road's score, route cost or alerts."
           }
         },
         "required": [
@@ -4736,6 +4759,36 @@
           "outcome"
         ],
         "title": "SegmentStateChange",
+        "type": "object"
+      },
+      "ShadowOpinion": {
+        "properties": {
+          "level": {
+            "enum": [
+              "unknown",
+              "low",
+              "moderate",
+              "high",
+              "critical"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "model_version",
+          "score",
+          "level"
+        ],
+        "title": "ShadowOpinion",
         "type": "object"
       },
       "SosRequest": {

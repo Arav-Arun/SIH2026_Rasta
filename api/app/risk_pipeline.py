@@ -11,6 +11,7 @@ from typing import Any
 import psycopg
 from psycopg.types.json import Jsonb
 
+from app import risk_model
 from app.probe_speed import probe_features, suggest_inspections
 from app.risk_engine import (
     FRESHNESS,
@@ -54,6 +55,8 @@ class PipelineResult:
     computed_at: str = ""
     #: Roads put to a dispatcher as worth an inspection; none of them was closed.
     inspection_suggestions: list[str] = field(default_factory=list)
+    #: The trained model run in shadow, if one is configured and accepted.
+    shadow_model: dict[str, Any] | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -66,6 +69,7 @@ class PipelineResult:
             "levels": self.levels,
             "runs": [run.as_dict() for run in self.runs],
             "inspection_suggestions": self.inspection_suggestions,
+            "shadow_model": self.shadow_model,
         }
 
 
@@ -248,10 +252,20 @@ def run_pipeline(
     fixture_root: Path | None,
     terrain_file: Path | None = None,
     now: datetime | None = None,
+    shadow: risk_model.TrainedModel | None = None,
 ) -> PipelineResult:
     moment = now or datetime.now(tz=UTC)
     result = PipelineResult(district_id=district_id, computed_at=moment.isoformat())
     register_model(connection, organization_id=organization_id)
+    # A trained model runs beside the baseline, never instead of it.
+    if shadow is not None:
+        try:
+            risk_model.register(
+                connection, organization_id=organization_id, model=shadow
+            )
+        except risk_model.ModelRejected as rejection:
+            logger.warning("trained risk model not run: %s", rejection)
+            shadow = None
     district_name, district_code = _district_identity(
         connection, organization_id=organization_id, district_id=district_id
     )
@@ -372,6 +386,20 @@ def run_pipeline(
         connection, organization_id=organization_id, district_id=district_id, now=moment
     )
 
+    model_inputs = (
+        risk_model.supplied_inputs(
+            connection,
+            organization_id=organization_id,
+            district_id=district_id,
+            segment_ids=[segment["id"] for segment in segments],
+            now=moment,
+        )
+        if shadow is not None
+        else {}
+    )
+    opinions: list[dict[str, Any]] = []
+    unusable_inputs: set[str] = set()
+
     assessments: list[RiskAssessment] = []
     levels: dict[str, int] = {}
     updates: list[dict[str, Any]] = []
@@ -410,6 +438,27 @@ def run_pipeline(
         else:
             result.segments_scored += 1
 
+        explanation = assessment.as_json()
+        if shadow is not None:
+            opinion, unusable = shadow.opinion(
+                model_inputs.get(segment["id"], {}), now=moment
+            )
+            unusable_inputs.update(unusable)
+            if opinion is not None:
+                explanation["shadow"] = opinion.as_json()
+                opinions.append(
+                    {
+                        "org": organization_id,
+                        "district": district_id,
+                        "segment": segment["id"],
+                        "day": moment.astimezone(UTC).date(),
+                        "model": opinion.model_version,
+                        "score": opinion.score,
+                        "level": opinion.level,
+                        "at": moment,
+                    }
+                )
+
         updates.append(
             {
                 "org": organization_id,
@@ -420,7 +469,7 @@ def run_pipeline(
                 # could not answer" is different from "nothing has looked".
                 "model": MODEL_VERSION,
                 "at": assessment.computed_at,
-                "explanation": Jsonb(assessment.as_json()),
+                "explanation": Jsonb(explanation),
             }
         )
 
@@ -451,6 +500,10 @@ def run_pipeline(
             district_id=district_id,
             computed_at=moment,
         )
+        # The shadow model's opinions go in the same log under its own version, so
+        # the outcome report sets the two side by side.
+        if opinions:
+            _log_opinions(connection, opinions)
     else:
         logger.warning(
             "risk scores updated, but the outcome log is missing: apply migration "
@@ -467,6 +520,15 @@ def run_pipeline(
         closed={item["id"] for item in segments if item["passability"] == "closed"},
         now=moment,
     )
+
+    if shadow is not None:
+        result.shadow_model = {
+            "version": shadow.version,
+            "mode": "shadow",
+            "roads_with_an_opinion": len(opinions),
+            "roads_without": len(segments) - len(opinions),
+            "inputs_missing": sorted(unusable_inputs),
+        }
 
     result.levels = levels
     result.risk_snapshot_version = snapshot_version(assessments)
@@ -520,6 +582,33 @@ def _log_predictions(
             "model": MODEL_VERSION,
         },
     )
+
+
+def _log_opinions(
+    connection: psycopg.Connection, opinions: list[dict[str, Any]]
+) -> None:
+    """Fold the shadow model's opinions into each road's record for the day."""
+
+    with connection.cursor() as cursor:
+        cursor.executemany(
+            """
+            insert into public.risk_daily_predictions as p (
+              organization_id, district_id, segment_id, day, model_version,
+              max_score, max_level, runs, first_computed_at, last_computed_at
+            )
+            values (
+              %(org)s::uuid, %(district)s::uuid, %(segment)s::uuid, %(day)s,
+              %(model)s, %(score)s, %(level)s::public.risk_level, 1, %(at)s, %(at)s
+            )
+            on conflict (organization_id, segment_id, day, model_version) do update set
+              max_score = greatest(p.max_score, excluded.max_score),
+              max_level = greatest(p.max_level, excluded.max_level),
+              runs = p.runs + 1,
+              first_computed_at = least(p.first_computed_at, excluded.first_computed_at),
+              last_computed_at = greatest(p.last_computed_at, excluded.last_computed_at)
+            """,
+            opinions,
+        )
 
 
 __all__ = ["INCIDENT_WINDOW", "PipelineResult", "register_model", "run_pipeline"]

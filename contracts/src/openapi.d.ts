@@ -2165,6 +2165,10 @@ export interface components {
             segments_scored: number;
             /** Segments Unscored */
             segments_unscored: number;
+            /** Shadow Model */
+            shadow_model?: {
+                [key: string]: unknown;
+            } | null;
         };
         /**
          * RoleGrantIdentity
@@ -2495,6 +2499,8 @@ export interface components {
             reason?: string | null;
             /** Score */
             score?: number | null;
+            /** @description A trained model's opinion, run in shadow: logged for comparison, never used for this road's score, route cost or alerts. */
+            shadow?: components["schemas"]["ShadowOpinion"] | null;
         };
         /** SegmentStateChange */
         SegmentStateChange: {
@@ -2510,6 +2516,18 @@ export interface components {
             previous_passability: string;
             /** Segment Id */
             segment_id: string;
+        };
+        /** ShadowOpinion */
+        ShadowOpinion: {
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "unknown" | "low" | "moderate" | "high" | "critical";
+            /** Model Version */
+            model_version: string;
+            /** Score */
+            score: number;
         };
         /** SosRequest */
         SosRequest: {

@@ -270,6 +270,7 @@ def test_segment_detail_scopes_and_lists_role_actions(
         "explanations": [],
         "missing_inputs": [],
         "caveats": [],
+        "shadow": None,
     }
     assert body["affected_trips_available"] is False
     # dispatcher: inspection:manage, incident:create, route:plan

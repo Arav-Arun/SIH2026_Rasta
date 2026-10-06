@@ -24,6 +24,7 @@ from app.schemas import (
     SegmentFeature,
     SegmentProperties,
     SegmentRisk,
+    ShadowOpinion,
     SupplyHub,
 )
 
@@ -111,6 +112,21 @@ def parse_bbox(raw: str) -> BBox:
 
 def bbox_area_deg2(bbox: BBox) -> float:
     return (bbox.max_lon - bbox.min_lon) * (bbox.max_lat - bbox.min_lat)
+
+
+def _shadow(stored: Any) -> ShadowOpinion | None:
+    """A trained model's shadow opinion as stored with the score, if any."""
+
+    if not isinstance(stored, dict):
+        return None
+    try:
+        return ShadowOpinion(
+            model_version=stored["model_version"],
+            score=stored["score"],
+            level=stored["level"],
+        )
+    except (KeyError, ValueError):
+        return None
 
 
 def _row_properties(row: dict[str, Any]) -> SegmentProperties:
@@ -383,6 +399,7 @@ class PostgresNetworkRepository:
                 explanations=list(explanation.get("explanations") or []),
                 caveats=list(explanation.get("caveats") or []),
                 missing_inputs=list(explanation.get("missing_inputs") or []),
+                shadow=_shadow(explanation.get("shadow")),
             ),
             observations=[
                 NetworkObservation(**observation) for observation in observation_rows

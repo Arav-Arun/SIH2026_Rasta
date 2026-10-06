@@ -22,6 +22,7 @@ from app.push import (
     PushTestResponse,
 )
 from app.ratelimit import rate_limit
+from app.risk_model import configured_model, shadow_model
 from app.risk_outcomes import RiskOutcomesResponse, outcome_report
 from app.risk_pipeline import run_pipeline
 from app.scope import WorkspaceScope, require_workspace_scope
@@ -47,6 +48,9 @@ class RiskRecomputeResponse(BaseModel):
     #: Roads where vehicles have nearly stopped, put to dispatchers as worth an
     #: inspection. A suggestion only; none of them was closed.
     inspection_suggestions: list[str] = Field(default_factory=list)
+    #: A trained model run in shadow beside the baseline, if one is configured and
+    #: accepted: how many roads it had the inputs to judge. It changes no score.
+    shadow_model: dict[str, Any] | None = None
     #: Stated on every response so no caller has to infer it.
     changes_passability: bool = False
 
@@ -152,6 +156,27 @@ def build_operations_router(prefix: str = "/v1") -> APIRouter:
             report.notes.append(
                 "Risk is re-scored only when someone asks for it: no schedule is set."
             )
+        status, _ = configured_model(
+            settings.resolved_risk_model_file, settings.risk_model_sha256
+        )
+        report.risk_model["trained_model"] = status.as_dict()
+        if status.state == "rejected":
+            report.notes.append(
+                f"The configured trained model was refused: {status.reason}. Roads "
+                "are scored by the baseline alone."
+            )
+        elif status.state == "shadow":
+            report.notes.append(
+                f"Trained model {status.version} runs in shadow: logged beside the "
+                "baseline, never used for routing or alerts."
+                + (
+                    " The API does not yet supply its inputs ("
+                    + ", ".join(status.inputs_missing)
+                    + "), so it judges no road."
+                    if status.inputs_missing
+                    else ""
+                )
+            )
         return report
 
     @router.post(
@@ -192,6 +217,7 @@ def build_operations_router(prefix: str = "/v1") -> APIRouter:
                 cap_base_url=settings.sachet_cap_base_url,
                 fixture_root=fixture_root,
                 terrain_file=settings.resolved_terrain_file,
+                shadow=shadow_model(settings),
             )
         return RiskRecomputeResponse(**result.as_dict())
 

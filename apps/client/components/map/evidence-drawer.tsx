@@ -123,7 +123,7 @@ export function EvidenceDrawer({
 }
 
 /** The risk engine's assessment of one road, with what raised it and what it lacks. */
-function RiskAssessment({
+export function RiskAssessment({
   risk,
   t,
 }: {
@@ -172,6 +172,16 @@ function RiskAssessment({
           {t('map.riskModel', {
             version: risk.model_version,
             when: risk.computed_at ? formatTime.time(risk.computed_at) : '',
+          })}
+        </p>
+      ) : null}
+      {/* A trained model's view, shown as what it is: not the score above. */}
+      {risk.shadow ? (
+        <p className="text-xs text-muted-foreground" data-risk-shadow>
+          {t('map.riskShadow', {
+            version: risk.shadow.model_version,
+            level: t(`status.risk.${risk.shadow.level}`),
+            percent: (risk.shadow.score * 100).toFixed(1),
           })}
         </p>
       ) : null}

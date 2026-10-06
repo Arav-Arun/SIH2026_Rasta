@@ -18,6 +18,7 @@ from typing import Any
 from app.config import Settings
 from app.db import connect
 from app.recorded_samples import RECORDED, redate_recorded_sources
+from app.risk_model import shadow_model
 from app.risk_pipeline import run_pipeline
 
 # Under rasta.api, so round summaries reach the service log with its own lines.
@@ -89,6 +90,7 @@ def run_round(
             """
         ).fetchall()
 
+        shadow = shadow_model(settings)
         results: list[dict[str, Any]] = []
         for row in districts:
             if row["last_scored"] is not None and moment - row["last_scored"] < min_gap:
@@ -104,6 +106,7 @@ def run_round(
                         fixture_root=samples or settings.resolved_source_fixture_root,
                         terrain_file=settings.resolved_terrain_file,
                         now=now,
+                        shadow=shadow,
                     )
             except Exception:
                 # One district's failure must not stop the others being scored.

@@ -71,6 +71,10 @@ class Settings(BaseSettings):
     # Re-score every district's roads this often, in minutes (app/risk_schedule.py).
     # 0 leaves it to POST /v1/risk/recompute.
     risk_recompute_minutes: int = 0
+    # A trained model exported by ml/ (model_logistic.json) and its SHA-256, both or
+    # neither. It runs in shadow beside baseline-v1 (app/risk_model.py).
+    risk_model_file: str = ""
+    risk_model_sha256: str = ""
 
     @property
     def resolved_source_fixture_root(self) -> Path | None:
@@ -91,6 +95,17 @@ class Settings(BaseSettings):
         if not self.terrain_file:
             return None
         candidate = Path(self.terrain_file)
+        if candidate.is_absolute():
+            return candidate
+        return Path(__file__).resolve().parents[2] / candidate
+
+    @property
+    def resolved_risk_model_file(self) -> Path | None:
+        """The trained-model file, found the same way from any cwd."""
+
+        if not self.risk_model_file:
+            return None
+        candidate = Path(self.risk_model_file)
         if candidate.is_absolute():
             return candidate
         return Path(__file__).resolve().parents[2] / candidate

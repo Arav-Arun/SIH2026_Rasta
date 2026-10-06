@@ -201,6 +201,7 @@ export function DataHealthScreen() {
                         })
                       : t('health.schedule.manual')}
                   </p>
+                  <TrainedModelStatus status={data.risk_model.trained_model} />
                 </div>
               </div>
             </section>
@@ -209,6 +210,38 @@ export function DataHealthScreen() {
       </div>
     </CommandShell>
   );
+}
+
+/** A trained model configured beside the baseline: running in shadow, or why not. */
+export function TrainedModelStatus({ status }: { status: unknown }) {
+  const t = useT();
+  if (!status || typeof status !== 'object') return null;
+  const { state, version, reason, inputs_missing } = status as {
+    state?: string;
+    version?: string | null;
+    reason?: string | null;
+    inputs_missing?: string[];
+  };
+  if (state === 'shadow') {
+    return (
+      <p className="mt-1 text-xs text-muted-foreground" data-trained-model>
+        {t('health.trainedModel.shadow', { version: version ?? '-' })}
+        {inputs_missing && inputs_missing.length > 0
+          ? ` ${t('health.trainedModel.noInputs', {
+              inputs: inputs_missing.join(', '),
+            })}`
+          : ''}
+      </p>
+    );
+  }
+  if (state === 'rejected') {
+    return (
+      <p className="mt-1 text-xs text-[#92400E]" data-trained-model>
+        {t('health.trainedModel.rejected', { reason: reason ?? '' })}
+      </p>
+    );
+  }
+  return null;
 }
 
 /** The badge says what the sources are, not how the app is deployed. */

@@ -158,6 +158,12 @@ class NetworkSegmentsResponse(BaseModel):
     attribution: str
 
 
+class ShadowOpinion(BaseModel):
+    model_version: str
+    score: float
+    level: RiskLevel
+
+
 class SegmentRisk(BaseModel):
     available: bool
     level: RiskLevel = "unknown"
@@ -178,6 +184,13 @@ class SegmentRisk(BaseModel):
         description="What the score does not say, such as inputs it lacked.",
     )
     missing_inputs: list[str] = Field(default_factory=list)
+    shadow: ShadowOpinion | None = Field(
+        default=None,
+        description=(
+            "A trained model's opinion, run in shadow: logged for comparison, never "
+            "used for this road's score, route cost or alerts."
+        ),
+    )
 
 
 class NetworkObservation(BaseModel):

@@ -299,6 +299,7 @@
     "riskWhy": "What raised it",
     "riskCaveats": "What it does not say",
     "riskModel": "Model {version}, scored {when}",
+    "riskShadow": "Trained model {version}, run in shadow and not used for this score: {level}, a {percent}% chance of a recorded landslide around here that day.",
     "riskNotScored": "Not scored yet",
     "riskNotScoredBody": "The risk engine has not scored this road. No score is shown rather than an unsourced one."
   },
@@ -801,6 +802,11 @@
     "riskModelHeading": "Risk model",
     "riskModel": "Active model: {version}",
     "riskModelNotTrained": "Rule-based weighting, not a trained model.",
+    "trainedModel": {
+      "shadow": "Trained model {version} runs in shadow: logged beside this score for comparison, never used for routing or alerts.",
+      "noInputs": "It has none of its inputs yet ({inputs}), so it judges no road.",
+      "rejected": "The configured trained model was refused: {reason}"
+    },
     "pushConfigured": "Push is configured ({sender}).",
     "pushNotConfigured": "Push is not configured in this deployment. Every alert is in the inbox.",
     "sourceState": {
