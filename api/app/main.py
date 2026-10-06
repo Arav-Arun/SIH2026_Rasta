@@ -57,6 +57,7 @@ from app.push import build_push_repository, build_sender, parse_extra_hosts
 from app.ratelimit import RateLimiter
 from app.risk_schedule import schedule_for
 from app.route_plans import build_route_plan_repository
+from app.routes_admin import build_admin_router
 from app.routes_alerts import build_alert_router
 from app.routes_incidents import build_router as build_incident_router
 from app.routes_logistics import build_logistics_router
@@ -612,6 +613,7 @@ def create_app(
         vapid_public_key=runtime_settings.vapid_public_key,
     )
     app.include_router(build_operations_router(runtime_settings.api_prefix))
+    app.include_router(build_admin_router(runtime_settings.api_prefix))
 
     return app
 

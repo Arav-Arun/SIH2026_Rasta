@@ -21,6 +21,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/grants/{grant_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** End a grant now */
+        post: operations["revoke_v1_admin_grants__grant_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/people": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the organisation's people with every grant they hold or held */
+        get: operations["people_v1_admin_people_get"];
+        put?: never;
+        /** Invite a person by email with their first role */
+        post: operations["invite_v1_admin_people_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/people/{profile_id}/grants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Grant a person a role, in a district where the role needs one */
+        post: operations["grant_v1_admin_people__profile_id__grants_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/alerts": {
         parameters: {
             query?: never;
@@ -1399,6 +1451,13 @@ export interface components {
             /** State Code */
             state_code: string;
         };
+        /** DistrictOption */
+        DistrictOption: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+        };
         /** DriverListResponse */
         DriverListResponse: {
             /**
@@ -1592,6 +1651,65 @@ export interface components {
             latitude: number;
             /** Longitude */
             longitude: number;
+        };
+        /** Grant */
+        Grant: {
+            /** District Id */
+            district_id: string | null;
+            /** District Name */
+            district_name: string | null;
+            /** Granted By Name */
+            granted_by_name: string | null;
+            /** Granted By Profile Id */
+            granted_by_profile_id: string | null;
+            /** Id */
+            id: string;
+            /** Revoked At */
+            revoked_at: string | null;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "state_coordinator" | "district_dispatcher" | "field_officer" | "driver" | "admin" | "reviewer";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "active" | "scheduled" | "expired" | "revoked";
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+            /** Valid To */
+            valid_to: string | null;
+        };
+        /** GrantRequest */
+        GrantRequest: {
+            /** District Id */
+            district_id?: string | null;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "state_coordinator" | "district_dispatcher" | "field_officer" | "driver" | "admin" | "reviewer";
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid To */
+            valid_to?: string | null;
+        };
+        /** GrantResponse */
+        GrantResponse: {
+            /** Audit Event Id */
+            audit_event_id: string;
+            grant: components["schemas"]["Grant"];
+            /** Profile Id */
+            profile_id: string;
+            /**
+             * Replayed
+             * @default false
+             */
+            replayed: boolean;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1897,6 +2015,25 @@ export interface components {
             /** Version */
             version: number;
         };
+        /** InviteRequest */
+        InviteRequest: {
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            grant: components["schemas"]["GrantRequest"];
+        };
+        /** InviteResponse */
+        InviteResponse: {
+            /** Audit Event Id */
+            audit_event_id: string;
+            person: components["schemas"]["Person"];
+            /**
+             * Replayed
+             * @default false
+             */
+            replayed: boolean;
+        };
         /**
          * MeResponse
          * @description A server-verified identity and current scoped grants.
@@ -2020,6 +2157,37 @@ export interface components {
             road_days: number;
             /** Road Days With Confirmed Incident */
             road_days_with_confirmed_incident: number;
+        };
+        /** PeopleResponse */
+        PeopleResponse: {
+            /**
+             * As Of
+             * Format: date-time
+             */
+            as_of: string;
+            /** Districts */
+            districts: components["schemas"]["DistrictOption"][];
+            /** Invitations Available */
+            invitations_available: boolean;
+            /** People */
+            people: components["schemas"]["Person"][];
+            /** Roles */
+            roles: components["schemas"]["RoleOption"][];
+        };
+        /** Person */
+        Person: {
+            /** Active */
+            active: boolean;
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string | null;
+            /** Grants */
+            grants: components["schemas"]["Grant"][];
+            /** Is You */
+            is_you: boolean;
+            /** Profile Id */
+            profile_id: string;
         };
         /** PointResult */
         PointResult: {
@@ -2269,6 +2437,18 @@ export interface components {
             valid_from: string;
             /** Valid To */
             valid_to: string | null;
+        };
+        /** RoleOption */
+        RoleOption: {
+            /** Capabilities */
+            capabilities: string[];
+            /** Organisation Wide */
+            organisation_wide: boolean;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "state_coordinator" | "district_dispatcher" | "field_officer" | "driver" | "admin" | "reviewer";
         };
         /** RouteAlternativeModel */
         RouteAlternativeModel: {
@@ -3187,6 +3367,361 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    revoke_v1_admin_grants__grant_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                grant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrantResponse"];
+                };
+            };
+            /** @description Missing or invalid Idempotency-Key. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or invalid session. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Not an admin, or a change to the caller's own roles. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or in another organisation. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description The grant or person already exists. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description A district or validity not allowed. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Database or invitations unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    people_v1_admin_people_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PeopleResponse"];
+                };
+            };
+            /** @description Missing or invalid Idempotency-Key. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or invalid session. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Not an admin, or a change to the caller's own roles. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or in another organisation. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description The grant or person already exists. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description A district or validity not allowed. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Database or invitations unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    invite_v1_admin_people_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InviteRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InviteResponse"];
+                };
+            };
+            /** @description Missing or invalid Idempotency-Key. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or invalid session. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Not an admin, or a change to the caller's own roles. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or in another organisation. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description The grant or person already exists. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description A district or validity not allowed. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Database or invitations unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    grant_v1_admin_people__profile_id__grants_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+                authorization?: string | null;
+            };
+            path: {
+                profile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GrantRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrantResponse"];
+                };
+            };
+            /** @description Missing or invalid Idempotency-Key. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or invalid session. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Not an admin, or a change to the caller's own roles. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or in another organisation. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description The grant or person already exists. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description A district or validity not allowed. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Database or invitations unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };

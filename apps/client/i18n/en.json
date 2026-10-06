@@ -877,6 +877,50 @@
       "manual": "Roads are re-scored only when someone asks for it."
     }
   },
+  "admin": {
+    "heading": "People and roles",
+    "lede": "Grant and end roles. Nobody can change their own roles; another admin has to. Every change is recorded in the audit trail.",
+    "you": "(you)",
+    "ownRoles": "Your own roles are changed by another admin.",
+    "noGrants": "No roles.",
+    "wholeOrganisation": "Whole organisation",
+    "until": "until {when}",
+    "noEnd": "no end date",
+    "revoke": "End",
+    "revokeLabel": "End {name}'s {role} role",
+    "state": {
+      "active": "active",
+      "scheduled": "starts later",
+      "expired": "ended",
+      "revoked": "revoked"
+    },
+    "role": {
+      "state_coordinator": "State coordinator",
+      "district_dispatcher": "District dispatcher",
+      "field_officer": "Field officer",
+      "driver": "Driver",
+      "admin": "Administrator",
+      "reviewer": "Reviewer"
+    },
+    "grant": {
+      "role": "Role",
+      "district": "District",
+      "ends": "Ends on (optional)",
+      "submit": "Grant"
+    },
+    "invite": {
+      "heading": "Invite a person",
+      "email": "Email",
+      "name": "Name",
+      "submit": "Send invitation",
+      "sent": "Invitation sent to {email}.",
+      "unavailable": "Invitations need the sign-in service's server key on the API."
+    },
+    "error": {
+      "load": "Could not load people and roles.",
+      "change": "Not changed: {reason}"
+    }
+  },
   "settings": {
     "title": "Settings",
     "build": {

@@ -36,6 +36,13 @@ export type SupplyRequest = components['schemas']['SupplyRequest'];
 export type SupplyRequestListResponse =
   components['schemas']['SupplyRequestListResponse'];
 export type SupplyGapsResponse = components['schemas']['SupplyGapsResponse'];
+export type PeopleResponse = components['schemas']['PeopleResponse'];
+export type Person = components['schemas']['Person'];
+export type RoleGrant = components['schemas']['Grant'];
+export type RoleGrantRequest = components['schemas']['GrantRequest'];
+export type InviteRequest = components['schemas']['InviteRequest'];
+export type GrantResponse = components['schemas']['GrantResponse'];
+export type InviteResponse = components['schemas']['InviteResponse'];
 export type GapRequest = components['schemas']['GapRequest'];
 export type Consignment = components['schemas']['Consignment'];
 export type ConsignmentCreateRequest =

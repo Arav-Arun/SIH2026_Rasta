@@ -93,10 +93,12 @@ Across the platform:
 | District dispatcher | Review reports, assign inspections, plan and approve routes, manage deliveries | Web control room |
 | Field officer | Inspect roads and file geo-tagged reports | Android app or web |
 | Driver | Follow approved routes, share location, confirm delivery | Android app or web |
-| Administrator | Data sources and system health | Web control room |
+| Administrator | People and roles, data sources and system health | Web control room |
 
-Accounts are issued by the administration with one role and one district; there
-is no public sign-up.
+Accounts are issued by an administrator, who invites a person by email under
+Settings and grants each role with its district and, optionally, an end date.
+Nobody can change their own roles, and every change is audited. There is no
+public sign-up.
 
 ## Screenshots
 

@@ -25,9 +25,14 @@ import {
   planConsignment,
   transitionTrip,
 } from './logistics';
-import type { InspectionCreateRequest } from './contracts';
+import type {
+  InspectionCreateRequest,
+  InviteRequest,
+  RoleGrantRequest,
+} from './contracts';
 import type { IncidentReviewRequest } from './contracts';
 import { getFleetLocations } from './telemetry';
+import { getPeople, grantRole, invitePerson, revokeGrant } from './admin';
 import {
   acknowledgeAlert,
   getAlerts,
@@ -528,6 +533,53 @@ export function useRiskOutcomes(districtId: string | null, days = 30) {
         days,
       ),
   });
+}
+
+export function usePeople(enabled = true) {
+  const accessToken = useAccessToken();
+  return useQuery({
+    queryKey: ['admin-people'],
+    queryFn: ({ signal }) =>
+      getPeople({ accessToken: accessToken as string, signal }),
+    enabled: Boolean(accessToken) && enabled,
+  });
+}
+
+/** Grant, revoke and invite: each refreshes the people list when it lands. */
+export function useAdministerRoles() {
+  const accessToken = useAccessToken();
+  const queryClient = useQueryClient();
+  const auth = () => ({ accessToken: accessToken as string });
+  const refresh = () =>
+    void queryClient.invalidateQueries({ queryKey: ['admin-people'] });
+  return {
+    grant: useMutation({
+      mutationFn: (variables: {
+        profileId: string;
+        body: RoleGrantRequest;
+        idempotencyKey: string;
+      }) =>
+        grantRole(
+          auth(),
+          variables.profileId,
+          variables.body,
+          variables.idempotencyKey,
+        ),
+      onSuccess: refresh,
+    }),
+    revoke: useMutation({
+      mutationFn: (variables: { grantId: string; idempotencyKey: string }) =>
+        revokeGrant(auth(), variables.grantId, variables.idempotencyKey),
+      onSuccess: refresh,
+    }),
+    invite: useMutation({
+      mutationFn: (variables: {
+        body: InviteRequest;
+        idempotencyKey: string;
+      }) => invitePerson(auth(), variables.body, variables.idempotencyKey),
+      onSuccess: refresh,
+    }),
+  };
 }
 
 export function usePushStatus() {

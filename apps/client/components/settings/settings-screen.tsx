@@ -9,6 +9,7 @@ import { useT } from '@/components/i18n/locale-provider';
 import { useServiceWorkerUpdate } from '@/components/providers/service-worker-provider';
 import { CommandShell } from '@/components/layout/command-shell';
 import { ErrorPanel } from '@/components/common/error-panel';
+import { PeopleAndRoles } from '@/components/settings/people-and-roles';
 import { APP_VERSION } from '@/lib/pwa/app-version';
 import {
   downloadPack,
@@ -74,6 +75,9 @@ export function SettingsScreen() {
   return (
     <CommandShell activeHref="/settings" title={t('settings.title')}>
       <div className="flex max-w-3xl flex-col gap-6">
+        {workspace?.capabilities.includes('admin:settings') ? (
+          <PeopleAndRoles />
+        ) : null}
         <section className="rounded-lg border border-border bg-card p-4">
           <h2 className="text-sm font-semibold">{t('settings.build.title')}</h2>
           <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">

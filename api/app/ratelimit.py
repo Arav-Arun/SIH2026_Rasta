@@ -30,6 +30,8 @@ LIMITS: dict[str, tuple[int, float]] = {
     "risk.recompute": (6, 60.0),
     # Generous: someone in trouble may press it more than once.
     "sos.raise": (10, 60.0),
+    # Each one sends an email through the sign-in service.
+    "admin.invite": (10, 3600.0),
 }
 
 

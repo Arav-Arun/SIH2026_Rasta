@@ -36,6 +36,7 @@ explicit comma-separated list; wildcards are rejected.
 | `risk_schedule.py`, `risk_outcomes.py` | Re-scoring on a timer (`RISK_RECOMPUTE_MINUTES`), and each day's scores set against the next day's confirmed incidents (`GET /v1/risk/outcomes`, shown per district on the data-health screen; the log keeps two years) |
 | `alerts.py`, `push.py` | Alert inbox and optional web push |
 | `auth.py`, `supabase_jwt.py`, `scope.py`, `identity.py` | Authentication and access scope |
+| `admin.py`, `routes_admin.py` | People and roles for an organisation's admins (`/v1/admin/...`): invite by email through Supabase auth, grant and end roles. Nobody changes their own roles, every change is audited |
 | `audit.py`, `idempotency.py`, `ratelimit.py`, `middleware.py` | Audit trail, safe retries, limits, headers |
 
 ## Tests
