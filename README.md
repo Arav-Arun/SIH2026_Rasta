@@ -249,6 +249,7 @@ npm run mobile:start
 ```bash
 npm run lint && npm run typecheck && npm run format:check   # web and Android app
 npm test                                                    # web unit tests
+npm run contracts:check                                     # TypeScript types match contracts/openapi.json
 cd api && .venv/bin/python -m pytest                        # API unit tests (no database needed)
 cd ml && .venv/bin/python -m pytest                         # model pipeline tests (synthetic data)
 ```

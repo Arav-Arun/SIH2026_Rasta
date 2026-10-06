@@ -28,6 +28,7 @@ def test_the_committed_openapi_snapshot_is_current() -> None:
     )
     served = json.dumps(app.openapi(), indent=2, sort_keys=True) + "\n"
     assert SNAPSHOT.read_text(encoding="utf-8") == served, (
-        "contracts/openapi.json is out of date. Regenerate it, and "
-        "contracts/src/openapi.d.ts with it, after changing an endpoint or schema."
+        "contracts/openapi.json is out of date. Regenerate it after changing an "
+        "endpoint or schema, then the TypeScript types with "
+        "`npm run generate --workspace contracts`."
     )

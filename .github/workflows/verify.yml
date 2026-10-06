@@ -93,3 +93,6 @@ jobs:
 
       - name: Unit tests
         run: npm test
+
+      - name: Contract types match the API schema
+        run: npm run contracts:check

@@ -12,5 +12,13 @@
   "files": [
     "openapi.json",
     "src/openapi.d.ts"
-  ]
+  ],
+  "scripts": {
+    "generate": "openapi-typescript openapi.json -o src/openapi.d.ts",
+    "check": "openapi-typescript openapi.json -o src/openapi.d.ts --check"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3"
+  }
 }
