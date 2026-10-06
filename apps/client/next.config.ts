@@ -68,7 +68,9 @@ export default function config(phase: string): NextConfig {
           headers: [{ key: 'Cache-Control', value: 'no-cache' }],
         },
         {
-          source: '/:path*',
+          // `/(.*)` rather than `/:path*`: Vinext does not match `/:path*` against
+          // the root path, which left the landing page without any of these.
+          source: '/(.*)',
           headers: [
             {
               key: 'Content-Security-Policy',
