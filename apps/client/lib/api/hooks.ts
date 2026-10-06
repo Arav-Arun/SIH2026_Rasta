@@ -32,6 +32,7 @@ import {
   getAlerts,
   getDataHealth,
   getPushStatus,
+  getRiskOutcomes,
   recomputeRisk,
 } from './operations';
 import { approveRoutePlan, createRoutePlan, getRoutePlan } from './routing';
@@ -497,6 +498,22 @@ export function useDataHealth() {
     refetchInterval: 120_000,
     queryFn: ({ signal }) =>
       getDataHealth({ accessToken: accessToken as string, signal }),
+  });
+}
+
+export function useRiskOutcomes(districtId: string | null, days = 30) {
+  const accessToken = useAccessToken();
+  return useQuery({
+    queryKey: ['risk-outcomes', districtId, days],
+    enabled: Boolean(accessToken && districtId),
+    // A day's record only changes with the next scoring round.
+    staleTime: 10 * 60_000,
+    queryFn: ({ signal }) =>
+      getRiskOutcomes(
+        { accessToken: accessToken as string, signal },
+        districtId as string,
+        days,
+      ),
   });
 }
 

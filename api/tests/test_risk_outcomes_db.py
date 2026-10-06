@@ -215,3 +215,31 @@ def test_a_round_scores_each_district_unless_it_was_scored_just_now(
     scored.clear()
     assert run_round(config, min_gap=timedelta(days=36500)) == []
     assert scored == []
+
+
+def test_the_log_keeps_two_years_and_refuses_a_window_shorter_than_a_month(
+    db, district
+) -> None:
+    segment = district["ids"][0]
+    today = datetime.now(UTC).date()
+    old, recent = today - timedelta(days=800), today - timedelta(days=10)
+    db.execute(
+        "delete from public.risk_daily_predictions where organization_id = %s::uuid "
+        "and segment_id = %s::uuid and day in (%s, %s)",
+        (district["org"], segment, old, recent),
+    )
+    predict(db, district, segment, old, "low")
+    predict(db, district, segment, recent, "low")
+
+    assert db.execute("select public.trim_outcome_log(730) as n").fetchone()["n"] >= 1
+    kept = {
+        row["day"]
+        for row in db.execute(
+            "select day from public.risk_daily_predictions where organization_id = "
+            "%s::uuid and segment_id = %s::uuid and day in (%s, %s)",
+            (district["org"], segment, old, recent),
+        )
+    }
+    assert kept == {recent}
+    with pytest.raises(psycopg.errors.RaiseException):
+        db.execute("select public.trim_outcome_log(7)")

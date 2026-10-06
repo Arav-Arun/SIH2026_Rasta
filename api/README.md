@@ -31,7 +31,7 @@ explicit comma-separated list; wildcards are rejected.
 | `logistics.py`, `telemetry.py` | Consignments, trips, receipts, GPS batches |
 | `risk_engine.py`, `risk_pipeline.py`, `sources.py`, `terrain.py` | Explainable risk baseline, IMD/SACHET adapters and terrain slope |
 | `probe_speed.py` | Slow vehicles on a road from trips' own GPS: the `telemetry_anomaly` input, uncalibrated |
-| `risk_schedule.py`, `risk_outcomes.py` | Re-scoring on a timer (`RISK_RECOMPUTE_MINUTES`), and each day's scores set against the next day's confirmed incidents (`GET /v1/risk/outcomes`) |
+| `risk_schedule.py`, `risk_outcomes.py` | Re-scoring on a timer (`RISK_RECOMPUTE_MINUTES`), and each day's scores set against the next day's confirmed incidents (`GET /v1/risk/outcomes`, shown per district on the data-health screen; the log keeps two years) |
 | `alerts.py`, `push.py` | Alert inbox and optional web push |
 | `auth.py`, `supabase_jwt.py`, `scope.py`, `identity.py` | Authentication and access scope |
 | `audit.py`, `idempotency.py`, `ratelimit.py`, `middleware.py` | Audit trail, safe retries, limits, headers |

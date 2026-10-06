@@ -86,6 +86,8 @@ export type PushSubscriptionRequest =
 export type PushSubscriptionResponse =
   components['schemas']['PushSubscriptionResponse'];
 export type PushTestResponse = components['schemas']['PushTestResponse'];
+export type RiskOutcomesResponse =
+  components['schemas']['RiskOutcomesResponse'];
 export type RiskRecomputeResponse =
   components['schemas']['RiskRecomputeResponse'];
 export type Passability = SegmentProperties['passability'];

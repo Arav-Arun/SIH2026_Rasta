@@ -825,6 +825,21 @@
     "error": {
       "load": "Could not load data health.",
       "recompute": "Could not re-run the sources."
+    },
+    "outcomes": {
+      "heading": "Scores against next-day incidents, last {days} days",
+      "model": "Model",
+      "level": "Highest level that day",
+      "roadDays": "Road-days",
+      "withIncident": "With a confirmed incident the next day",
+      "notScored": "Not scored the day before",
+      "none": "Nothing logged yet. Each scoring round adds to this record.",
+      "note": "A confirmed incident is a reviewed field report. A road nobody reported on counts as having none, which is not proof that nothing happened.",
+      "error": "This record could not be loaded: {reason}"
+    },
+    "schedule": {
+      "every": "Roads are re-scored every {minutes} minutes.",
+      "manual": "Roads are re-scored only when someone asks for it."
     }
   },
   "settings": {

@@ -7,6 +7,7 @@ import type {
   PushSubscriptionRequest,
   PushSubscriptionResponse,
   PushTestResponse,
+  RiskOutcomesResponse,
   RiskRecomputeResponse,
 } from './contracts';
 
@@ -57,6 +58,19 @@ export async function recomputeRisk(
     idempotencyKey,
   });
   return payload as RiskRecomputeResponse;
+}
+
+/** What the risk score said about each road, against next-day confirmed incidents. */
+export async function getRiskOutcomes(
+  auth: Auth,
+  districtId: string,
+  days = 30,
+): Promise<RiskOutcomesResponse> {
+  const { payload } = await apiRequest('/v1/risk/outcomes', {
+    ...auth,
+    query: { district_id: districtId, days: String(days) },
+  });
+  return payload as RiskOutcomesResponse;
 }
 
 export async function getPushStatus(auth: Auth): Promise<PushStatusResponse> {

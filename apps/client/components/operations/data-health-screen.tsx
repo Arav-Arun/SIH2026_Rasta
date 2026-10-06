@@ -11,8 +11,13 @@ import {
   useDataHealth,
   usePushStatus,
   useRecomputeRisk,
+  useRiskOutcomes,
 } from '@/lib/api/hooks';
-import type { CoverageReport, SourceHealth } from '@/lib/api/contracts';
+import type {
+  CoverageReport,
+  RiskOutcomesResponse,
+  SourceHealth,
+} from '@/lib/api/contracts';
 import { cn } from '@/lib/utils';
 
 /** Where an operator finds out what the system actually knows. */
@@ -182,6 +187,14 @@ export function DataHealthScreen() {
                   <p className="mt-1 text-xs text-muted-foreground">
                     {t('health.riskModelNotTrained')}
                   </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {typeof data.risk_model.scheduled_recompute_minutes ===
+                    'number'
+                      ? t('health.schedule.every', {
+                          minutes: data.risk_model.scheduled_recompute_minutes,
+                        })
+                      : t('health.schedule.manual')}
+                  </p>
                 </div>
               </div>
             </section>
@@ -325,6 +338,105 @@ function CoverageCard({
         {coverage.graph_version ?? t('health.noGraphVersion')}
         {coverage.risk_model_version ? `, ${coverage.risk_model_version}` : ''}
       </p>
+      <DistrictOutcomes districtId={coverage.district_id} />
     </li>
+  );
+}
+
+const OUTCOME_DAYS = 30;
+
+function DistrictOutcomes({ districtId }: { districtId: string }) {
+  const t = useT();
+  const outcomes = useRiskOutcomes(districtId, OUTCOME_DAYS);
+  if (outcomes.isPending) return null;
+  if (outcomes.isError) {
+    return (
+      <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
+        {t('health.outcomes.error', {
+          reason: outcomes.error instanceof Error ? outcomes.error.message : '',
+        })}
+      </p>
+    );
+  }
+  return <OutcomeTable report={outcomes.data} days={OUTCOME_DAYS} />;
+}
+
+/** Each level the score reached, and how often a confirmed incident followed. */
+export function OutcomeTable({
+  report,
+  days,
+}: {
+  report: RiskOutcomesResponse;
+  days: number;
+}) {
+  const t = useT();
+  // A second version appears once a trained model scores alongside the baseline;
+  // then each row says which one it belongs to.
+  const versions = new Set(
+    report.rows.flatMap((row) =>
+      row.model_version ? [row.model_version] : [],
+    ),
+  );
+  const byVersion = versions.size > 1;
+  return (
+    <div className="mt-3 border-t border-border pt-3" data-risk-outcomes>
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {t('health.outcomes.heading', { days })}
+      </h3>
+      {report.rows.length === 0 ? (
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          {t('health.outcomes.none')}
+        </p>
+      ) : (
+        <table className="mt-2 w-full text-left text-xs">
+          <thead className="text-muted-foreground">
+            <tr>
+              {byVersion ? (
+                <th className="py-1 pe-2 font-medium">
+                  {t('health.outcomes.model')}
+                </th>
+              ) : null}
+              <th className="py-1 pe-2 font-medium">
+                {t('health.outcomes.level')}
+              </th>
+              <th className="py-1 pe-2 text-end font-medium">
+                {t('health.outcomes.roadDays')}
+              </th>
+              <th className="py-1 text-end font-medium">
+                {t('health.outcomes.withIncident')}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.rows.map((row) => (
+              <tr
+                key={`${row.model_version ?? ''}:${row.level}`}
+                className="border-t border-border/60"
+              >
+                {byVersion ? (
+                  <td className="py-1 pe-2 font-mono">
+                    {row.model_version ?? ''}
+                  </td>
+                ) : null}
+                <td className="py-1 pe-2">
+                  {row.level === 'not_scored'
+                    ? t('health.outcomes.notScored')
+                    : t(`status.risk.${row.level}`)}
+                </td>
+                <td className="py-1 pe-2 text-end tabular-nums">
+                  {row.road_days}
+                </td>
+                <td className="py-1 text-end tabular-nums">
+                  {row.road_days_with_confirmed_incident}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      <p className="mt-1.5 text-xs text-muted-foreground">
+        {t('health.outcomes.note')}
+      </p>
+    </div>
   );
 }
