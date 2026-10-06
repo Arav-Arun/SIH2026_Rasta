@@ -55,6 +55,7 @@ from app.network import (
 )
 from app.push import build_push_repository, build_sender, parse_extra_hosts
 from app.ratelimit import RateLimiter
+from app.risk_schedule import schedule_for
 from app.route_plans import build_route_plan_repository
 from app.routes_alerts import build_alert_router
 from app.routes_incidents import build_router as build_incident_router
@@ -154,10 +155,18 @@ def _integrity_error(exc: psycopg.IntegrityError) -> ApiError:
 
 
 @asynccontextmanager
-async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    yield
-    # Pooled connections are closed, not dropped, when the process stops.
-    close_pools()
+async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
+    # Each worker runs the re-scoring timer; a lock lets one of them score a round.
+    schedule = schedule_for(app.state.settings)
+    if schedule is not None:
+        schedule.start()
+    try:
+        yield
+    finally:
+        if schedule is not None:
+            await schedule.stop()
+        # Pooled connections are closed, not dropped, when the process stops.
+        close_pools()
 
 
 def create_app(

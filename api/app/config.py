@@ -68,6 +68,9 @@ class Settings(BaseSettings):
     rate_limits_enabled: bool = True
     # Telemetry kept for completed trips; older positions are removed nightly by pg_cron.
     telemetry_retention_days: int = 30
+    # Re-score every district's roads this often, in minutes (app/risk_schedule.py).
+    # 0 leaves it to POST /v1/risk/recompute.
+    risk_recompute_minutes: int = 0
 
     @property
     def resolved_source_fixture_root(self) -> Path | None:
@@ -99,6 +102,15 @@ class Settings(BaseSettings):
         if not normalized.startswith("/") or normalized == "/":
             raise ValueError("API_PREFIX must be a non-root absolute path")
         return normalized.rstrip("/")
+
+    @field_validator("risk_recompute_minutes")
+    @classmethod
+    def validate_risk_recompute_minutes(cls, value: int) -> int:
+        if value != 0 and not 5 <= value <= 1440:
+            raise ValueError(
+                "RISK_RECOMPUTE_MINUTES must be 0 (off) or between 5 and 1440"
+            )
+        return value
 
     @field_validator("request_id_header")
     @classmethod

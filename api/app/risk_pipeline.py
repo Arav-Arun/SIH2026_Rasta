@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -30,6 +31,8 @@ from app.sources import (
     warnings_in_force,
 )
 from app.terrain import load_terrain
+
+logger = logging.getLogger("rasta.risk_pipeline")
 
 #: A confirmed incident this recent counts as evidence about the road now.
 INCIDENT_WINDOW = timedelta(days=7)
@@ -426,9 +429,74 @@ def run_pipeline(
             updates,
         )
 
+    # The outcome log: each road's highest level of the day, so a later report can
+    # set what was predicted against what was confirmed. A database that predates
+    # the log still gets its scores.
+    if _outcome_log_ready(connection):
+        _log_predictions(
+            connection,
+            organization_id=organization_id,
+            district_id=district_id,
+            computed_at=moment,
+        )
+    else:
+        logger.warning(
+            "risk scores updated, but the outcome log is missing: apply migration "
+            "20261006000000_risk_outcome_log.sql"
+        )
+
     result.levels = levels
     result.risk_snapshot_version = snapshot_version(assessments)
     return result
+
+
+def _outcome_log_ready(connection: psycopg.Connection) -> bool:
+    row = connection.execute(
+        "select to_regclass('public.risk_daily_predictions') is not null as ready"
+    ).fetchone()
+    return bool(row["ready"])
+
+
+def _log_predictions(
+    connection: psycopg.Connection,
+    *,
+    organization_id: str,
+    district_id: str,
+    computed_at: datetime,
+) -> None:
+    """Fold this run's scores into each road's record for the day."""
+
+    connection.execute(
+        """
+        insert into public.risk_daily_predictions as p (
+          organization_id, district_id, segment_id, day, model_version,
+          max_score, max_level, runs, first_computed_at, last_computed_at
+        )
+        select scs.organization_id, s.district_id, scs.segment_id,
+               (scs.risk_computed_at at time zone 'UTC')::date,
+               scs.risk_model_version, scs.risk_score, scs.risk_level, 1,
+               scs.risk_computed_at, scs.risk_computed_at
+        from public.segment_current_state as scs
+        join public.road_segments as s
+          on s.id = scs.segment_id and s.organization_id = scs.organization_id
+        where scs.organization_id = %(org)s::uuid
+          and s.district_id = %(district)s::uuid
+          and scs.risk_computed_at = %(at)s
+          and scs.risk_model_version = %(model)s
+        on conflict (organization_id, segment_id, day, model_version) do update set
+          max_score = greatest(p.max_score, excluded.max_score),
+          max_level = greatest(p.max_level, excluded.max_level),
+          runs = p.runs + 1,
+          first_computed_at = least(p.first_computed_at, excluded.first_computed_at),
+          last_computed_at = greatest(p.last_computed_at, excluded.last_computed_at)
+        """,
+        {
+            "org": organization_id,
+            "district": district_id,
+            "at": computed_at,
+            "model": MODEL_VERSION,
+        },
+    )
 
 
 __all__ = ["INCIDENT_WINDOW", "PipelineResult", "register_model", "run_pipeline"]

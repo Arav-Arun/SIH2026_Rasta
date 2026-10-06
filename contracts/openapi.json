@@ -3146,6 +3146,41 @@
         "title": "OrganizationIdentity",
         "type": "object"
       },
+      "OutcomeRow": {
+        "properties": {
+          "level": {
+            "title": "Level",
+            "type": "string"
+          },
+          "model_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Version"
+          },
+          "road_days": {
+            "title": "Road Days",
+            "type": "integer"
+          },
+          "road_days_with_confirmed_incident": {
+            "title": "Road Days With Confirmed Incident",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "model_version",
+          "level",
+          "road_days",
+          "road_days_with_confirmed_incident"
+        ],
+        "title": "OutcomeRow",
+        "type": "object"
+      },
       "PointResult": {
         "properties": {
           "client_point_id": {
@@ -3668,6 +3703,57 @@
           "audit_event_ids"
         ],
         "title": "ReceiptResponse",
+        "type": "object"
+      },
+      "RiskOutcomesResponse": {
+        "properties": {
+          "confirmed_incident_road_days": {
+            "title": "Confirmed Incident Road Days",
+            "type": "integer"
+          },
+          "district_id": {
+            "title": "District Id",
+            "type": "string"
+          },
+          "first_score_day": {
+            "format": "date",
+            "title": "First Score Day",
+            "type": "string"
+          },
+          "last_score_day": {
+            "format": "date",
+            "title": "Last Score Day",
+            "type": "string"
+          },
+          "lead_days": {
+            "title": "Lead Days",
+            "type": "integer"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/OutcomeRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "district_id",
+          "lead_days",
+          "first_score_day",
+          "last_score_day",
+          "rows",
+          "confirmed_incident_road_days",
+          "notes"
+        ],
+        "title": "RiskOutcomesResponse",
         "type": "object"
       },
       "RiskRecomputeResponse": {
@@ -10119,6 +10205,121 @@
           }
         ],
         "summary": "Send a test notification to this caller's own registrations",
+        "tags": [
+          "operations"
+        ]
+      }
+    },
+    "/v1/risk/outcomes": {
+      "get": {
+        "operationId": "risk_outcomes_v1_risk_outcomes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "district_id",
+            "required": true,
+            "schema": {
+              "title": "District Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 366,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskOutcomesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Missing or invalid session."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Capability or district denied."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Missing or out of scope."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Database not configured."
+          }
+        },
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
+        "summary": "What the risk score said about each road, against what was confirmed",
         "tags": [
           "operations"
         ]

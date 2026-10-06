@@ -263,7 +263,9 @@ GitHub runs the same checks on every push (`.github/workflows/verify.yml`).
   repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (and optionally
   `DEMO_PASSWORD`), and reads the API and Supabase addresses from the same repository
   variables as the Android build.
-- **API:** Render deploys `render.yaml` from `main`.
+- **API:** Render deploys `render.yaml` from `main`, and the API re-scores every district's roads
+  hourly (`RISK_RECOMPUTE_MINUTES`). New database migrations are not applied by any of this:
+  run `supabase db push` against the hosted project after pulling them.
 - **Android:** `.github/workflows/android-apk.yml` publishes `rasta.apk` on the latest release.
 
 ## Data sources and attribution

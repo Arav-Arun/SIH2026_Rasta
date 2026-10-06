@@ -502,6 +502,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/risk/outcomes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What the risk score said about each road, against what was confirmed */
+        get: operations["risk_outcomes_v1_risk_outcomes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/risk/recompute": {
         parameters: {
             query?: never;
@@ -1898,6 +1915,17 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** OutcomeRow */
+        OutcomeRow: {
+            /** Level */
+            level: string;
+            /** Model Version */
+            model_version: string | null;
+            /** Road Days */
+            road_days: number;
+            /** Road Days With Confirmed Incident */
+            road_days_with_confirmed_incident: number;
+        };
         /** PointResult */
         PointResult: {
             /** Client Point Id */
@@ -2067,6 +2095,29 @@ export interface components {
              */
             replayed: boolean;
             trip: components["schemas"]["Trip"];
+        };
+        /** RiskOutcomesResponse */
+        RiskOutcomesResponse: {
+            /** Confirmed Incident Road Days */
+            confirmed_incident_road_days: number;
+            /** District Id */
+            district_id: string;
+            /**
+             * First Score Day
+             * Format: date
+             */
+            first_score_day: string;
+            /**
+             * Last Score Day
+             * Format: date
+             */
+            last_score_day: string;
+            /** Lead Days */
+            lead_days: number;
+            /** Notes */
+            notes: string[];
+            /** Rows */
+            rows: components["schemas"]["OutcomeRow"][];
         };
         /** RiskRecomputeResponse */
         RiskRecomputeResponse: {
@@ -5384,6 +5435,76 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PushTestResponse"];
+                };
+            };
+            /** @description Missing or invalid session. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Capability or district denied. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Missing or out of scope. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Database not configured. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    risk_outcomes_v1_risk_outcomes_get: {
+        parameters: {
+            query: {
+                district_id: string;
+                days?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskOutcomesResponse"];
                 };
             };
             /** @description Missing or invalid session. */

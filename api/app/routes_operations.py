@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated, Any, Literal
 
+import psycopg
 from fastapi import APIRouter, Depends, Query, Request, Response
 from pydantic import BaseModel
 
@@ -21,6 +22,7 @@ from app.push import (
     PushTestResponse,
 )
 from app.ratelimit import rate_limit
+from app.risk_outcomes import RiskOutcomesResponse, outcome_report
 from app.risk_pipeline import run_pipeline
 from app.scope import WorkspaceScope, require_workspace_scope
 from app.sources import connect
@@ -132,13 +134,22 @@ def build_operations_router(prefix: str = "/v1") -> APIRouter:
         scope.require("data_health:read")
 
         settings = request.app.state.settings
-        return await _health(request).report(
+        report = await _health(request).report(
             scope=scope,
             app_mode=settings.app_mode,
             ephemeral_credentials=bool(
                 getattr(request.app.state, "telemetry_token_secret_is_ephemeral", False)
             ),
         )
+        # How often roads are re-scored is this deployment's setting, not the
+        # database's, so it is added here.
+        every = settings.risk_recompute_minutes or None
+        report.risk_model["scheduled_recompute_minutes"] = every
+        if every is None:
+            report.notes.append(
+                "Risk is re-scored only when someone asks for it: no schedule is set."
+            )
+        return report
 
     @router.post(
         "/risk/recompute",
@@ -180,6 +191,44 @@ def build_operations_router(prefix: str = "/v1") -> APIRouter:
                 terrain_file=settings.resolved_terrain_file,
             )
         return RiskRecomputeResponse(**result.as_dict())
+
+    @router.get(
+        "/risk/outcomes",
+        response_model=RiskOutcomesResponse,
+        responses=RESPONSES,
+        tags=["operations"],
+        summary="What the risk score said about each road, against what was confirmed",
+    )
+    async def risk_outcomes(
+        request: Request,
+        district_id: Annotated[str, Query()],
+        days: Annotated[int, Query(ge=1, le=366)] = 30,
+        scope: WorkspaceScope = Depends(require_workspace_scope),
+    ) -> RiskOutcomesResponse:
+        # The same audience as data health: it describes how the model is doing.
+        scope.require("data_health:read")
+        scope.require_district(district_id)
+
+        settings = request.app.state.settings
+        if not settings.database_url:
+            raise ApiError(
+                503, "database_unavailable", "The database is not configured."
+            )
+        try:
+            with connect(settings.database_url) as connection:
+                return outcome_report(
+                    connection,
+                    organization_id=scope.organization_id,
+                    district_id=district_id,
+                    days=days,
+                    today=datetime.now(tz=UTC).date(),
+                )
+        except psycopg.errors.UndefinedTable as error:
+            raise ApiError(
+                503,
+                "outcome_log_unavailable",
+                "The outcome log is not set up on this database yet.",
+            ) from error
 
     @router.get(
         "/push-subscriptions",
