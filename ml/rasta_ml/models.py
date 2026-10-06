@@ -21,7 +21,7 @@ from rasta_ml.metrics import average_precision
 # baseline-v1 as the API defines it (api/app/risk_engine.py, api/app/sources.py and
 # api/app/terrain.py); a test keeps these in step with the API.
 BASELINE_WEIGHTS = {"forecast_rainfall": 0.35, "terrain_slope": 0.15}
-HEAVY_RAINFALL_MM = 115.0
+RAINFALL_FULL_SCALE_MM_48H = 115.0
 SLOPE_FULL_SCALE_DEG = 35.0
 
 LOGISTIC_C = (0.01, 0.1, 1.0, 10.0)
@@ -94,7 +94,9 @@ class Baseline(Scorer):
     calibration: Platt = field(default_factory=Platt)
 
     def score(self, data: Dataset, rows: np.ndarray) -> np.ndarray:
-        rain = np.minimum(1.0, data.column("rain_2d")[rows] / HEAVY_RAINFALL_MM)
+        rain = np.minimum(
+            1.0, data.column("rain_2d")[rows] / RAINFALL_FULL_SCALE_MM_48H
+        )
         slope = np.minimum(
             1.0, data.column("slope_p90_deg")[rows] / SLOPE_FULL_SCALE_DEG
         )
@@ -274,7 +276,7 @@ class Boosted(Scorer):
 
 __all__ = [
     "BASELINE_WEIGHTS",
-    "HEAVY_RAINFALL_MM",
+    "RAINFALL_FULL_SCALE_MM_48H",
     "SLOPE_FULL_SCALE_DEG",
     "Baseline",
     "Boosted",

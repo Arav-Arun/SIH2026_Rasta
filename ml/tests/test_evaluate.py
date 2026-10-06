@@ -18,7 +18,11 @@ from rasta_ml.dataset import build_dataset, label_audit, split_record
 from rasta_ml.evaluate import decide, evaluate
 from rasta_ml.events import Inventory, select_events
 from rasta_ml.metrics import average_precision, brier
-from rasta_ml.models import BASELINE_WEIGHTS, HEAVY_RAINFALL_MM, SLOPE_FULL_SCALE_DEG
+from rasta_ml.models import (
+    BASELINE_WEIGHTS,
+    RAINFALL_FULL_SCALE_MM_48H,
+    SLOPE_FULL_SCALE_DEG,
+)
 
 BENCHMARKS = ("baseline-v1", "rainfall rule", "climatology")
 CANDIDATES = ("logistic regression", "gradient-boosted trees")
@@ -175,7 +179,9 @@ def test_the_baseline_benchmark_uses_the_apis_own_numbers() -> None:
     weights = _assigned(API / "risk_engine.py", "WEIGHTS")
     for name, weight in BASELINE_WEIGHTS.items():
         assert weights[name] == weight
-    assert _assigned(API / "sources.py", "HEAVY_RAINFALL_MM") == HEAVY_RAINFALL_MM
+    assert (
+        _assigned(API / "sources.py", "FULL_SCALE_MM_48H") == RAINFALL_FULL_SCALE_MM_48H
+    )
     assert (
         _assigned(API / "terrain.py", "DEFAULT_FULL_SCALE_DEG") == SLOPE_FULL_SCALE_DEG
     )

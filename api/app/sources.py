@@ -334,9 +334,11 @@ class RainfallForecastAdapter:
     name = "imd_rainfall"
     freshness = timedelta(hours=6)
 
-    #: Millimetres in 24 hours that maps to a normalised 1.0. IMD's own
-    #: "heavy rainfall" threshold for the region, so the scale means something.
-    HEAVY_RAINFALL_MM = 115.0
+    #: Millimetres over the forecast's 48 hours that read as 1.0. An engineering
+    #: choice, not an IMD class: IMD grades rain per 24 hours (heavy 64.5 to 115.5 mm,
+    #: very heavy 115.6 to 204.4 mm), so 1.0 means about one very heavy day's rain
+    #: within the two days. Recalibrate it with the bands (backlog A7), not alone.
+    FULL_SCALE_MM_48H = 115.0
 
     def __init__(self, base_url: str | None) -> None:
         self._base_url = (base_url or "").strip()
@@ -389,7 +391,7 @@ class RainfallForecastAdapter:
     def normalise(cls, millimetres: float) -> float:
         if millimetres <= 0:
             return 0.0
-        return min(1.0, round(millimetres / cls.HEAVY_RAINFALL_MM, 4))
+        return min(1.0, round(millimetres / cls.FULL_SCALE_MM_48H, 4))
 
 
 class FixtureAdapter:
