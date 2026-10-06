@@ -62,6 +62,7 @@ const ROUTES: Record<
       result_incident_id: body.result_incident_id ?? null,
     },
   }),
+  'sos.raise': (body) => ({ path: '/v1/sos', payload: body }),
 };
 
 export type PushOutcome =

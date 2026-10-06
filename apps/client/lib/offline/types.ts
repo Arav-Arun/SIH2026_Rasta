@@ -8,7 +8,9 @@ export type MutationType =
   | 'incident.review'
   | 'inspection.accept'
   | 'inspection.start'
-  | 'inspection.complete';
+  | 'inspection.complete'
+  /** An SOS for the control room; the text to 112 goes separately. */
+  | 'sos.raise';
 
 /** States from the sync state machine. */
 export type MutationState =

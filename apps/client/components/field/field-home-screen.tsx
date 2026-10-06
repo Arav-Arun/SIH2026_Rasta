@@ -20,6 +20,8 @@ import { requestSync } from '@/lib/offline/sync-request';
 import type { MutationEnvelope, MutationType } from '@/lib/offline/types';
 import { cn } from '@/lib/utils';
 
+import { SosCard } from './sos-card';
+
 type InspectionAction =
   | 'inspection.accept'
   | 'inspection.start'
@@ -140,6 +142,8 @@ export function FieldHomeScreen() {
             {t('fieldHome.openQueue')}
           </Button>
         </div>
+
+        <SosCard />
 
         {queue.isError ? (
           <ErrorPanel

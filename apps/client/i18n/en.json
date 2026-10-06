@@ -438,7 +438,8 @@
       "inspection.accept": "Task accepted",
       "inspection.start": "Task started",
       "inspection.complete": "Task submitted",
-      "incident.attachment.upload": "Evidence photo upload"
+      "incident.attachment.upload": "Evidence photo upload",
+      "sos.raise": "SOS to the control room"
     },
     "blockedReason": "Waiting for the report it belongs to be sent first.",
     "attempts": "{count} attempt(s) so far",
@@ -944,7 +945,22 @@
     "queueFindings": "Queue submission",
     "reportHere": "Report on this road",
     "moveQueued": "{move}: waiting to send",
-    "moveNeedsAttention": "This move needs your attention in the sync queue."
+    "moveNeedsAttention": "This move needs your attention in the sync queue.",
+    "sos": {
+      "title": "Emergency",
+      "lede": "Opens a text message to 112 with your position for you to check and send, and alerts the control room at the same time. Neither calls emergency services by itself.",
+      "button": "SOS",
+      "confirm": "Send an SOS now?",
+      "confirmYes": "Send SOS",
+      "cancel": "Cancel",
+      "locating": "Getting your position…",
+      "queued": "The control room alert is queued. It is sent as soon as there is a connection.",
+      "sent": "Control room alerted: {count, plural, one {# person} other {# people}} notified.",
+      "sentNobody": "The control room has the alert, but nobody is assigned to this district to receive it.",
+      "notQueued": "The control room alert could not be kept on this device: {reason}. Send the text to 112.",
+      "messageHelp": "If the message did not open, copy this into a text to 112.",
+      "openAgain": "Open the message again"
+    }
   },
   "driverTrips": {
     "title": "My trips",
