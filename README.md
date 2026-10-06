@@ -254,7 +254,9 @@ cd api && .venv/bin/python -m pytest                        # API unit tests (no
 cd ml && .venv/bin/python -m pytest                         # model pipeline tests (synthetic data)
 ```
 
-GitHub runs the same checks on every push (`.github/workflows/verify.yml`).
+GitHub runs the same checks on every push (`.github/workflows/verify.yml`), and runs the API
+tests a second time against a Supabase stack started on the runner, so the database-backed
+ones run too.
 
 ## Deploy
 

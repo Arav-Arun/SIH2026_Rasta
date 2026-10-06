@@ -41,6 +41,63 @@ jobs:
         working-directory: api
         run: python -m pytest
 
+  api-db:
+    name: API against a database
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: api/pyproject.toml
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.118.0
+
+      - name: Install
+        run: python -m pip install -e './api[dev]'
+
+      - name: Start the database
+        run: supabase start -x realtime,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+
+      - name: Point the API at it
+        shell: bash
+        run: |
+          eval "$(supabase status -o env)"
+          {
+            echo "APP_MODE=local_demo"
+            echo "DATABASE_URL=$DB_URL"
+            echo "SUPABASE_URL=$API_URL"
+            echo "SUPABASE_PUBLISHABLE_KEY=$PUBLISHABLE_KEY"
+            echo "SUPABASE_SECRET_KEY=$SECRET_KEY"
+            echo "SOURCE_FIXTURE_ROOT=$RUNNER_TEMP/rasta-sources"
+            echo "TELEMETRY_TOKEN_SECRET=$(openssl rand -hex 32)"
+          } > api/.env
+          PYTHONPATH=api python -m app.recorded_samples "$RUNNER_TEMP/rasta-sources"
+
+      # The demo password is random and printed, so the output is not kept. The
+      # story runs twice because a re-run starts a second trip, and the probe-speed
+      # test needs two.
+      - name: Load the pilot network, demo accounts and story
+        shell: bash
+        run: |
+          PYTHONPATH=api python -m app.demo_setup --story > /dev/null
+          PYTHONPATH=api python -m app.demo_setup --skip-network --story > /dev/null
+
+      - name: Tests, database included
+        working-directory: api
+        shell: bash
+        run: |
+          python -m pytest -rs | tee "$RUNNER_TEMP/pytest.txt"
+          if grep -q " skipped" "$RUNNER_TEMP/pytest.txt"; then
+            echo "::error::Database tests were skipped; here they must run."
+            exit 1
+          fi
+
   ml:
     name: Model pipeline
     runs-on: ubuntu-latest
