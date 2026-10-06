@@ -296,17 +296,20 @@ def run_pipeline(
     #    Warnings: every one still in force counts, and the most serious one that
     #    covers a road is that road's input. One that names the district covers all
     #    of it; one that only draws a polygon or circle covers the roads it touches.
+    #    A warning is as fresh as the source's last confirmation of it, not as old as
+    #    the message: one issued yesterday and valid until tomorrow is current while
+    #    the feed still carries it, and doubtful once the feed stops being read.
     district_warning: Feature | None = None
     drawn_warnings: list[tuple[Feature, frozenset[str]]] = []
-    for record, source, mode in warnings_in_force(
+    for record, source, mode, confirmed_at in warnings_in_force(
         connection, organization_id=organization_id, now=moment
     ):
         warning = Feature(
             name="official_warning",
             value=float(record.value.get("severity_normalised", 0.0)),
-            observed_at=record.observed_at,
+            observed_at=confirmed_at,
             source=f"{source} ({mode})",
-            detail=record.value,
+            detail={**record.value, "sent_at": record.observed_at.isoformat()},
         )
         if _matches_area(record, district_name, district_code):
             if district_warning is None or warning.value > district_warning.value:

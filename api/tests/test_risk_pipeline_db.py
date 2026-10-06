@@ -242,3 +242,69 @@ def test_an_expired_warning_is_not_used(db, district, tmp_path) -> None:
         area=area,
     )
     assert run(db, district, tmp_path, expired, now=now) == {}
+
+
+def age_cap_reads(db, district: dict, hours: int) -> None:
+    """Make every read of the warning feed so far look ``hours`` older."""
+
+    db.execute(
+        "update public.source_runs set started_at = started_at - make_interval(hours => %s), "
+        "finished_at = finished_at - make_interval(hours => %s) "
+        "where organization_id = %s::uuid and source = 'sachet_cap_recorded'",
+        (hours, hours, district["org"]),
+    )
+
+
+def stale_inputs(db, district: dict) -> list[str]:
+    row = db.execute(
+        """
+        select scs.risk_explanation as explanation
+        from public.segment_current_state as scs
+        join public.road_segments as s
+          on s.id = scs.segment_id and s.organization_id = scs.organization_id
+        where s.organization_id = %s::uuid and s.district_id = %s::uuid
+        limit 1
+        """,
+        (district["org"], district["district"]),
+    ).fetchone()
+    return row["explanation"]["stale_inputs"]
+
+
+def test_a_warning_issued_hours_ago_counts_while_the_feed_carries_it(
+    db, district, tmp_path
+) -> None:
+    now = datetime.now(UTC)
+    area = f"<area><areaDesc>{district['name']}</areaDesc></area>"
+    standing = cap(
+        tag(), sent=now - timedelta(hours=9), expires=now + timedelta(days=1), area=area
+    )
+    assert len(run(db, district, tmp_path, standing, now=now)) == district["segments"]
+
+
+def test_an_unchanged_read_of_the_feed_confirms_its_warnings(
+    db, district, tmp_path
+) -> None:
+    now = datetime.now(UTC)
+    area = f"<area><areaDesc>{district['name']}</areaDesc></area>"
+    standing = cap(
+        tag(), sent=now - timedelta(hours=9), expires=now + timedelta(days=1), area=area
+    )
+    run(db, district, tmp_path, standing, now=now)
+    age_cap_reads(db, district, hours=8)
+    # The same feed again: the run finds it unchanged and stores nothing new.
+    assert len(run(db, district, tmp_path, standing, now=now)) == district["segments"]
+
+
+def test_a_warning_the_feed_has_not_confirmed_for_hours_is_set_aside(
+    db, district, tmp_path
+) -> None:
+    now = datetime.now(UTC)
+    area = f"<area><areaDesc>{district['name']}</areaDesc></area>"
+    standing = cap(
+        tag(), sent=now - timedelta(hours=9), expires=now + timedelta(days=1), area=area
+    )
+    run(db, district, tmp_path, standing, now=now)
+    age_cap_reads(db, district, hours=8)
+    # Every read since then failed: the warning may have been withdrawn unseen.
+    assert run(db, district, tmp_path, now=now) == {}
+    assert "official_warning" in stale_inputs(db, district)

@@ -40,7 +40,8 @@ BANDS: tuple[tuple[float, RiskLevel], ...] = (
 MIN_COVERAGE_FOR_SEVERE = 0.6
 CAPPED_LEVEL: RiskLevel = "moderate"
 
-#: How long each feature's observation stays usable.
+#: How long each feature's observation stays usable. A warning's observation is the
+#: source's last confirmation that it is in force, not the time it was issued.
 FRESHNESS: dict[str, timedelta] = {
     "forecast_rainfall": timedelta(hours=12),
     "official_warning": timedelta(hours=6),

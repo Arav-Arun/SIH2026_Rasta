@@ -677,20 +677,49 @@ def warnings_in_force(
     *,
     organization_id: str,
     now: datetime,
-) -> list[tuple[SourceRecord, str, str]]:
+) -> list[tuple[SourceRecord, str, str, datetime]]:
     """Every official warning that is still in force at ``now``.
 
     Unlike a forecast, several warnings can hold for one place at once, and a more
     serious one must not be hidden by a later, milder one. A warning is out of force
     when its validity has ended or when a later message from the same source
     withdraws it: a ``Cancel``, or an ``Update`` that names it in ``references``.
+
+    Each comes with when the source last confirmed it: the latest run that listed
+    it, or a later run that found the same content unchanged. A warning can stay in
+    force for days, so its age is not what makes it doubtful; a source that has not
+    been read since is.
     """
 
     rows = connection.execute(
         """
         select w.source, w.subject_type, w.subject_ref, w.kind, w.observed_at,
-               w.valid_until, w.value, w.source_mode::text as source_mode
+               w.valid_until, w.value, w.source_mode::text as source_mode,
+               greatest(
+                 coalesce(listed.finished_at, listed.started_at), reread.at
+               ) as confirmed_at
         from public.source_records as w
+        join public.source_runs as listed
+          on listed.id = w.run_id and listed.organization_id = w.organization_id
+        left join lateral (
+          -- An unchanged run read the same content again, until a newer
+          -- successful read replaced that content.
+          select max(coalesce(u.finished_at, u.started_at)) as at
+          from public.source_runs as u
+          where u.organization_id = w.organization_id
+            and u.source = w.source
+            and u.status = 'unchanged'
+            and u.started_at > listed.started_at
+            and not exists (
+              select 1
+              from public.source_runs as newer
+              where newer.organization_id = w.organization_id
+                and newer.source = w.source
+                and newer.status in ('success', 'partial')
+                and newer.started_at > listed.started_at
+                and newer.started_at < u.started_at
+            )
+        ) as reread on true
         where w.organization_id = %(org)s::uuid
           and w.kind = 'official_warning'
           and w.observed_at > %(since)s
@@ -712,7 +741,7 @@ def warnings_in_force(
             "now": now,
         },
     ).fetchall()
-    return [_source_record(row) for row in rows]
+    return [(*_source_record(row), row["confirmed_at"]) for row in rows]
 
 
 def build_adapters(
