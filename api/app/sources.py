@@ -116,8 +116,66 @@ def conditional_get(
 # --- adapters ---------------------------------------------------------------
 
 
+def _cap_text(element: ElementTree.Element, tag: str, namespace: str) -> str:
+    return (element.findtext(f"{namespace}{tag}") or "").strip()
+
+
+def parse_cap_references(text: str) -> list[str]:
+    """Identifiers named by a CAP ``references`` element.
+
+    The element is a space-separated list of ``sender,identifier,sent`` triples.
+    """
+
+    identifiers: list[str] = []
+    for triple in text.split():
+        parts = triple.split(",")
+        if len(parts) >= 3 and parts[1].strip():
+            identifiers.append(parts[1].strip())
+    return identifiers
+
+
+def parse_cap_polygon(text: str) -> list[list[float]] | None:
+    """A CAP polygon as a closed ring of ``[lat, lon]`` pairs, or None if unusable."""
+
+    points: list[list[float]] = []
+    for pair in text.split():
+        try:
+            lat, lon = (float(part) for part in pair.split(","))
+        except ValueError:
+            return None
+        if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+            return None
+        points.append([lat, lon])
+    if len(points) < 3:
+        return None
+    if points[0] != points[-1]:
+        points.append(points[0])
+    return points
+
+
+def parse_cap_circle(text: str) -> dict[str, float] | None:
+    """A CAP circle, ``lat,lon radius`` with the radius in kilometres, or None."""
+
+    try:
+        centre, radius = text.split()
+        lat, lon = (float(part) for part in centre.split(","))
+        radius_km = float(radius)
+    except ValueError:
+        return None
+    if not (-90 <= lat <= 90 and -180 <= lon <= 180 and 0 < radius_km <= 1000):
+        return None
+    return {"lat": lat, "lon": lon, "radius_km": radius_km}
+
+
 class CapWarningAdapter:
-    """Common Alerting Protocol warnings, as SACHET publishes them."""
+    """Common Alerting Protocol warnings, as SACHET publishes them.
+
+    Only messages that are actionable are turned into warnings: status ``Actual``,
+    and ``Exercise`` too when ``accept_exercise`` is set, which is for the recorded
+    sample that is an exercise message by design. Test, draft and system messages
+    never are. A ``Cancel`` message becomes a record that withdraws the alerts it
+    references, and an ``Update`` withdraws the alert it replaces.
+    """
 
     name = "sachet_cap"
     freshness = timedelta(hours=1)
@@ -125,8 +183,9 @@ class CapWarningAdapter:
     #: CAP severities, most serious first, mapped to what this system means.
     SEVERITY_ORDER = ("Extreme", "Severe", "Moderate", "Minor", "Unknown")
 
-    def __init__(self, base_url: str | None) -> None:
+    def __init__(self, base_url: str | None, *, accept_exercise: bool = False) -> None:
         self._base_url = (base_url or "").strip()
+        self._statuses = {"actual", "exercise"} if accept_exercise else {"actual"}
 
     def configured(self) -> bool:
         return bool(self._base_url)
@@ -141,55 +200,127 @@ class CapWarningAdapter:
         return conditional_get(self._base_url, etag=etag)
 
     def parse(self, body: bytes) -> list[SourceRecord]:
-        """Read CAP alert blocks. A document that is not CAP raises."""
+        """Read CAP alerts. A document with no ``alert`` element at all raises."""
 
         root = ElementTree.fromstring(body.decode("utf-8"))
-        namespace = ""
-        if root.tag.startswith("{"):
-            namespace = root.tag[: root.tag.index("}") + 1]
+        # A feed may wrap CAP alerts in its own, differently namespaced elements, so
+        # alerts are found by local name and each is read in its own namespace.
+        alerts = [
+            element
+            for element in root.iter()
+            if isinstance(element.tag, str)
+            and element.tag.rsplit("}", 1)[-1] == "alert"
+        ]
+        if not alerts:
+            raise ValueError("No CAP alert blocks found in the document.")
 
         records: list[SourceRecord] = []
-        alerts = (
-            [root]
-            if root.tag == f"{namespace}alert"
-            else root.findall(f".//{namespace}alert")
-        )
         for alert in alerts:
-            identifier = (alert.findtext(f"{namespace}identifier") or "").strip()
-            sent = (alert.findtext(f"{namespace}sent") or "").strip()
-            info = alert.find(f"{namespace}info")
-            if info is None or not identifier:
-                continue
-            severity = (info.findtext(f"{namespace}severity") or "Unknown").strip()
-            event = (info.findtext(f"{namespace}event") or "").strip()
-            headline = (info.findtext(f"{namespace}headline") or "").strip()
-            expires = (info.findtext(f"{namespace}expires") or "").strip()
-            areas = [
-                (area.findtext(f"{namespace}areaDesc") or "").strip()
-                for area in info.findall(f"{namespace}area")
-            ]
-            records.append(
-                SourceRecord(
-                    subject_type="area",
-                    subject_ref=areas[0] if areas else "unspecified",
-                    kind="official_warning",
-                    value={
-                        "identifier": identifier,
-                        "event": event,
-                        "headline": headline,
-                        "severity": severity,
-                        "areas": [area for area in areas if area],
-                        # Normalised 0..1 so the risk engine has one scale, with
-                        # the original severity kept beside it.
-                        "severity_normalised": self.normalise(severity),
-                    },
-                    observed_at=_parse_time(sent),
-                    valid_until=_parse_time(expires) if expires else None,
-                )
+            namespace = (
+                alert.tag[: alert.tag.index("}") + 1]
+                if alert.tag.startswith("{")
+                else ""
             )
-        if not records:
-            raise ValueError("No CAP alert blocks found in the document.")
+            record = self._read_alert(alert, namespace)
+            if record is not None:
+                records.append(record)
         return records
+
+    def _read_alert(
+        self, alert: ElementTree.Element, namespace: str
+    ) -> SourceRecord | None:
+        identifier = _cap_text(alert, "identifier", namespace)
+        status = _cap_text(alert, "status", namespace) or "Actual"
+        message_type = (_cap_text(alert, "msgType", namespace) or "Alert").title()
+        if not identifier or status.lower() not in self._statuses:
+            return None
+        if message_type in {"Ack", "Error"}:
+            return None
+
+        sent = _parse_time(_cap_text(alert, "sent", namespace))
+        sender = _cap_text(alert, "sender", namespace)
+        supersedes = parse_cap_references(_cap_text(alert, "references", namespace))
+
+        if message_type == "Cancel":
+            return SourceRecord(
+                subject_type="alert",
+                subject_ref=identifier,
+                kind="official_warning_cancel",
+                value={
+                    "identifier": identifier,
+                    "sender": sender,
+                    "msg_type": "Cancel",
+                    "status": status,
+                    "supersedes": supersedes,
+                },
+                observed_at=sent,
+            )
+
+        infos = alert.findall(f"{namespace}info")
+        if not infos:
+            return None
+
+        def severity_of(info: ElementTree.Element) -> float:
+            return self.normalise(_cap_text(info, "severity", namespace) or "Unknown")
+
+        # An alert may carry one info block per language or event. The most serious
+        # one speaks for the alert; every block's areas still count as covered.
+        lead = max(infos, key=severity_of)
+        severity = _cap_text(lead, "severity", namespace) or "Unknown"
+        areas: list[str] = []
+        geocodes: list[dict[str, str]] = []
+        polygons: list[list[list[float]]] = []
+        circles: list[dict[str, float]] = []
+        for info in infos:
+            for area in info.findall(f"{namespace}area"):
+                description = _cap_text(area, "areaDesc", namespace)
+                if description and description not in areas:
+                    areas.append(description)
+                for geocode in area.findall(f"{namespace}geocode"):
+                    code = {
+                        "name": _cap_text(geocode, "valueName", namespace),
+                        "value": _cap_text(geocode, "value", namespace),
+                    }
+                    if code["value"] and code not in geocodes:
+                        geocodes.append(code)
+                for text in (p.text or "" for p in area.findall(f"{namespace}polygon")):
+                    polygon = parse_cap_polygon(text)
+                    if polygon is not None and polygon not in polygons:
+                        polygons.append(polygon)
+                for text in (c.text or "" for c in area.findall(f"{namespace}circle")):
+                    circle = parse_cap_circle(text)
+                    if circle is not None and circle not in circles:
+                        circles.append(circle)
+
+        expires_text = _cap_text(lead, "expires", namespace)
+        expires = _parse_time(expires_text) if expires_text else None
+        if expires is not None and expires < sent:
+            expires = None  # a validity that ends before the message was sent is wrong
+
+        return SourceRecord(
+            subject_type="alert",
+            subject_ref=identifier,
+            kind="official_warning",
+            value={
+                "identifier": identifier,
+                "sender": sender,
+                "msg_type": message_type,
+                "status": status,
+                "event": _cap_text(lead, "event", namespace),
+                "headline": _cap_text(lead, "headline", namespace),
+                "severity": severity,
+                "areas": areas,
+                "geocodes": geocodes,
+                "polygons": polygons,
+                "circles": circles,
+                "supersedes": supersedes,
+                # Normalised 0..1 so the risk engine has one scale, with the
+                # original severity kept beside it.
+                "severity_normalised": self.normalise(severity),
+            },
+            observed_at=sent,
+            valid_until=expires,
+        )
 
     @classmethod
     def normalise(cls, severity: str) -> float:
@@ -484,13 +615,34 @@ def store_records(
     return len(records)
 
 
+def _source_record(row: dict[str, Any]) -> tuple[SourceRecord, str, str]:
+    return (
+        SourceRecord(
+            subject_type=row["subject_type"],
+            subject_ref=row["subject_ref"],
+            kind=row["kind"],
+            value=row["value"],
+            observed_at=row["observed_at"],
+            valid_until=row["valid_until"],
+        ),
+        row["source"],
+        row["source_mode"],
+    )
+
+
 def latest_records(
     connection: psycopg.Connection,
     *,
     organization_id: str,
     kinds: tuple[str, ...],
+    now: datetime | None = None,
+    only_in_force: bool = False,
 ) -> list[tuple[SourceRecord, str, str]]:
-    """The most recent reading of each kind per subject, with its source and mode."""
+    """The most recent reading of each kind per subject, with its source and mode.
+
+    With ``only_in_force``, a reading whose stated validity has ended by ``now`` is
+    left out, so an expired forecast is absent rather than used.
+    """
 
     if not kinds:
         return []
@@ -501,25 +653,66 @@ def latest_records(
           value, source_mode::text as source_mode
         from public.source_records
         where organization_id = %(org)s::uuid and kind = any(%(kinds)s::text[])
+          and (
+            not %(in_force)s or valid_until is null or valid_until > %(now)s
+          )
         order by kind, subject_ref, observed_at desc
         """,
-        {"org": organization_id, "kinds": list(kinds)},
+        {
+            "org": organization_id,
+            "kinds": list(kinds),
+            "in_force": only_in_force,
+            "now": now or datetime.now(tz=UTC),
+        },
     ).fetchall()
-    return [
-        (
-            SourceRecord(
-                subject_type=row["subject_type"],
-                subject_ref=row["subject_ref"],
-                kind=row["kind"],
-                value=row["value"],
-                observed_at=row["observed_at"],
-                valid_until=row["valid_until"],
-            ),
-            row["source"],
-            row["source_mode"],
-        )
-        for row in rows
-    ]
+    return [_source_record(row) for row in rows]
+
+
+#: Warnings older than this are never read, whatever they say about their validity.
+WARNING_LOOKBACK = timedelta(days=7)
+
+
+def warnings_in_force(
+    connection: psycopg.Connection,
+    *,
+    organization_id: str,
+    now: datetime,
+) -> list[tuple[SourceRecord, str, str]]:
+    """Every official warning that is still in force at ``now``.
+
+    Unlike a forecast, several warnings can hold for one place at once, and a more
+    serious one must not be hidden by a later, milder one. A warning is out of force
+    when its validity has ended or when a later message from the same source
+    withdraws it: a ``Cancel``, or an ``Update`` that names it in ``references``.
+    """
+
+    rows = connection.execute(
+        """
+        select w.source, w.subject_type, w.subject_ref, w.kind, w.observed_at,
+               w.valid_until, w.value, w.source_mode::text as source_mode
+        from public.source_records as w
+        where w.organization_id = %(org)s::uuid
+          and w.kind = 'official_warning'
+          and w.observed_at > %(since)s
+          and (w.valid_until is null or w.valid_until > %(now)s)
+          and not exists (
+            select 1
+            from public.source_records as later
+            where later.organization_id = w.organization_id
+              and later.source = w.source
+              and later.kind in ('official_warning', 'official_warning_cancel')
+              and later.observed_at >= w.observed_at
+              and (later.value -> 'supersedes') ? (w.value ->> 'identifier')
+          )
+        order by w.observed_at desc
+        """,
+        {
+            "org": organization_id,
+            "since": now - WARNING_LOOKBACK,
+            "now": now,
+        },
+    ).fetchall()
+    return [_source_record(row) for row in rows]
 
 
 def build_adapters(
@@ -533,10 +726,13 @@ def build_adapters(
     adapters: list[tuple[SourceAdapter, str]] = []
     rainfall = RainfallForecastAdapter(imd_base_url)
     warnings = CapWarningAdapter(cap_base_url)
+    # The recorded sample is an Exercise message by design, so only the parser that
+    # reads it accepts that status; a live feed's exercises are never warnings.
+    recorded_warnings = CapWarningAdapter(cap_base_url, accept_exercise=True)
 
-    for adapter, fixture_name in (
-        (rainfall, "imd_rainfall.json"),
-        (warnings, "sachet_cap.xml"),
+    for adapter, fixture_name, parser in (
+        (rainfall, "imd_rainfall.json", rainfall),
+        (warnings, "sachet_cap.xml", recorded_warnings),
     ):
         if adapter.configured():
             adapters.append((adapter, "live"))
@@ -545,7 +741,7 @@ def build_adapters(
             adapters.append(
                 (
                     FixtureAdapter(
-                        f"{adapter.name}_recorded", fixture_root / fixture_name, adapter
+                        f"{adapter.name}_recorded", fixture_root / fixture_name, parser
                     ),
                     "recorded",
                 )
@@ -575,7 +771,11 @@ __all__ = [
     "connect",
     "last_successful_etag",
     "latest_records",
+    "parse_cap_circle",
+    "parse_cap_polygon",
+    "parse_cap_references",
     "redact",
     "run_source",
     "store_records",
+    "warnings_in_force",
 ]

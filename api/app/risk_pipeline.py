@@ -26,6 +26,7 @@ from app.sources import (
     latest_records,
     run_source,
     store_records,
+    warnings_in_force,
 )
 from app.terrain import load_terrain
 
@@ -102,31 +103,107 @@ def register_model(connection: psycopg.Connection, *, organization_id: str) -> s
     return row["id"]
 
 
-def _district_name(
+def _district_identity(
     connection: psycopg.Connection, *, organization_id: str, district_id: str
-) -> str | None:
+) -> tuple[str | None, str | None]:
+    """The district's name and code, as a warning might refer to it."""
+
     row = connection.execute(
         """
-        select d.name
+        select d.name, d.code
         from public.districts as d
         join public.organization_districts as od on od.district_id = d.id
         where od.organization_id = %(org)s::uuid and d.id = %(district)s::uuid
         """,
         {"org": organization_id, "district": district_id},
     ).fetchone()
-    return row["name"] if row else None
+    return (row["name"], row["code"]) if row else (None, None)
 
 
-def _matches_area(record: SourceRecord, district_name: str | None) -> bool:
-    """Whether an area-scoped record is about this district."""
+def _matches_area(
+    record: SourceRecord, district_name: str | None, district_code: str | None = None
+) -> bool:
+    """Whether a record names this district: by area description or by geocode."""
 
-    if not district_name:
+    names = {value.strip().lower() for value in (district_name, district_code) if value}
+    if not names:
         return False
-    target = district_name.strip().lower()
-    if record.subject_ref.strip().lower() == target:
+    if (
+        district_name
+        and record.subject_ref.strip().lower() == district_name.strip().lower()
+    ):
         return True
     areas = record.value.get("areas") or []
-    return any(str(area).strip().lower() == target for area in areas)
+    if any(str(area).strip().lower() in names for area in areas):
+        return True
+    geocodes = record.value.get("geocodes") or []
+    return any(
+        str(code.get("value", "")).strip().lower() in names
+        for code in geocodes
+        if isinstance(code, dict)
+    )
+
+
+def _polygon_wkt(ring: list[list[float]]) -> str:
+    """WKT for a ring of [lat, lon] pairs; PostGIS wants longitude first."""
+
+    return "POLYGON((" + ", ".join(f"{lon:.7f} {lat:.7f}" for lat, lon in ring) + "))"
+
+
+def _segments_covered(
+    connection: psycopg.Connection,
+    *,
+    organization_id: str,
+    district_id: str,
+    value: dict[str, Any],
+) -> frozenset[str]:
+    """Segments of the district that a warning's polygons or circles touch."""
+
+    covered: set[str] = set()
+    for ring in value.get("polygons") or []:
+        rows = connection.execute(
+            """
+            select s.id::text as id
+            from public.road_segments as s
+            where s.organization_id = %(org)s::uuid and s.district_id = %(district)s::uuid
+              and extensions.st_intersects(
+                s.geometry,
+                extensions.st_makevalid(
+                  extensions.st_setsrid(extensions.st_geomfromtext(%(wkt)s), 4326)
+                )
+              )
+            """,
+            {
+                "org": organization_id,
+                "district": district_id,
+                "wkt": _polygon_wkt(ring),
+            },
+        ).fetchall()
+        covered.update(row["id"] for row in rows)
+    for circle in value.get("circles") or []:
+        rows = connection.execute(
+            """
+            select s.id::text as id
+            from public.road_segments as s
+            where s.organization_id = %(org)s::uuid and s.district_id = %(district)s::uuid
+              and extensions.st_dwithin(
+                s.geometry::extensions.geography,
+                extensions.st_setsrid(
+                  extensions.st_makepoint(%(lon)s, %(lat)s), 4326
+                )::extensions.geography,
+                %(metres)s
+              )
+            """,
+            {
+                "org": organization_id,
+                "district": district_id,
+                "lat": float(circle["lat"]),
+                "lon": float(circle["lon"]),
+                "metres": float(circle["radius_km"]) * 1000,
+            },
+        ).fetchall()
+        covered.update(row["id"] for row in rows)
+    return frozenset(covered)
 
 
 def _incident_counts(
@@ -167,7 +244,7 @@ def run_pipeline(
     moment = now or datetime.now(tz=UTC)
     result = PipelineResult(district_id=district_id, computed_at=moment.isoformat())
     register_model(connection, organization_id=organization_id)
-    district_name = _district_name(
+    district_name, district_code = _district_identity(
         connection, organization_id=organization_id, district_id=district_id
     )
 
@@ -193,41 +270,56 @@ def run_pipeline(
             )
         result.runs.append(outcome)
 
-    # 2. The features, from the latest reading of each kind, this run's or an
-    #    earlier one's. Each keeps its own `observed_at`, so the engine's
-    #    freshness rule still decides whether it may be used, and says so.
-    district_features: dict[str, Feature] = {}
+    # 2. The features. A forecast is the latest reading for the district, as long
+    #    as its stated validity has not ended. Each keeps its own `observed_at`, so
+    #    the engine's freshness rule still decides whether it may be used.
+    rainfall: Feature | None = None
     for record, source, mode in latest_records(
         connection,
         organization_id=organization_id,
-        kinds=("forecast_rainfall", "official_warning"),
+        kinds=("forecast_rainfall",),
+        now=moment,
+        only_in_force=True,
     ):
-        if not _matches_area(record, district_name):
+        if not _matches_area(record, district_name, district_code):
             continue
-        if record.kind == "forecast_rainfall":
-            existing = district_features.get("forecast_rainfall")
-            value = float(record.value.get("normalised", 0.0))
-            if existing is None or record.observed_at > existing.observed_at:
-                district_features["forecast_rainfall"] = Feature(
-                    name="forecast_rainfall",
-                    value=value,
-                    observed_at=record.observed_at,
-                    source=f"{source} ({mode})",
-                    detail=record.value,
-                )
-        elif record.kind == "official_warning":
-            existing = district_features.get("official_warning")
-            value = float(record.value.get("severity_normalised", 0.0))
-            # The most serious warning in force wins; a minor advisory does not
-            # dilute a severe one.
-            if existing is None or value > existing.value:
-                district_features["official_warning"] = Feature(
-                    name="official_warning",
-                    value=value,
-                    observed_at=record.observed_at,
-                    source=f"{source} ({mode})",
-                    detail=record.value,
-                )
+        value = float(record.value.get("normalised", 0.0))
+        if rainfall is None or record.observed_at > rainfall.observed_at:
+            rainfall = Feature(
+                name="forecast_rainfall",
+                value=value,
+                observed_at=record.observed_at,
+                source=f"{source} ({mode})",
+                detail=record.value,
+            )
+
+    #    Warnings: every one still in force counts, and the most serious one that
+    #    covers a road is that road's input. One that names the district covers all
+    #    of it; one that only draws a polygon or circle covers the roads it touches.
+    district_warning: Feature | None = None
+    drawn_warnings: list[tuple[Feature, frozenset[str]]] = []
+    for record, source, mode in warnings_in_force(
+        connection, organization_id=organization_id, now=moment
+    ):
+        warning = Feature(
+            name="official_warning",
+            value=float(record.value.get("severity_normalised", 0.0)),
+            observed_at=record.observed_at,
+            source=f"{source} ({mode})",
+            detail=record.value,
+        )
+        if _matches_area(record, district_name, district_code):
+            if district_warning is None or warning.value > district_warning.value:
+                district_warning = warning
+            continue
+        covered = _segments_covered(
+            connection,
+            organization_id=organization_id,
+            district_id=district_id,
+            value=record.value,
+        )
+        if covered:
+            drawn_warnings.append((warning, covered))
 
     # 3. Per-segment evidence.
     incidents = _incident_counts(
@@ -257,7 +349,15 @@ def run_pipeline(
     levels: dict[str, int] = {}
     updates: list[dict[str, Any]] = []
     for segment in segments:
-        features = list(district_features.values())
+        features = [rainfall] if rainfall is not None else []
+        warning = district_warning
+        for drawn, covered in drawn_warnings:
+            if segment["id"] in covered and (
+                warning is None or drawn.value > warning.value
+            ):
+                warning = drawn
+        if warning is not None:
+            features.append(warning)
         if terrain is not None:
             terrain_feature = terrain.feature_for(segment["edge_id"])
             if terrain_feature is not None:

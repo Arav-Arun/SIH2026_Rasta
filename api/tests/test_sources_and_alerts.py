@@ -28,13 +28,22 @@ NOW = datetime(2026, 9, 26, 10, 30, tzinfo=UTC)
 
 
 def test_a_cap_document_yields_a_normalised_warning() -> None:
-    records = CapWarningAdapter(None).parse((FIXTURES / "sachet_cap.xml").read_bytes())
+    # The recorded sample is an Exercise message, so only the recorded parser reads it.
+    adapter = CapWarningAdapter(None, accept_exercise=True)
+    records = adapter.parse((FIXTURES / "sachet_cap.xml").read_bytes())
     assert len(records) == 1
     record = records[0]
     assert record.kind == "official_warning"
-    assert record.subject_ref == "East Khasi Hills"
+    assert record.subject_ref == "FIXTURE-CAP-0001"
+    assert record.value["areas"] == ["East Khasi Hills"]
     assert record.value["severity"] == "Severe"
     assert record.value["severity_normalised"] == 0.75
+
+
+def test_a_live_feed_never_treats_the_exercise_sample_as_a_warning() -> None:
+    assert (
+        CapWarningAdapter(None).parse((FIXTURES / "sachet_cap.xml").read_bytes()) == []
+    )
 
 
 def test_a_document_that_is_not_cap_raises_rather_than_returning_nothing() -> None:
@@ -310,9 +319,10 @@ def test_the_pipeline_reads_features_from_the_store_not_from_one_run() -> None:
     pipeline = _without_comments(
         (Path(__file__).resolve().parents[1] / "app" / "risk_pipeline.py").read_text()
     )
-    built = pipeline[pipeline.index("district_features: dict[str, Feature] = {}") :]
+    built = pipeline[pipeline.index("rainfall: Feature | None = None") :]
     built = built[: built.index("incidents = _incident_counts(")]
-    assert "latest_records(" in built, "features must come from the store"
+    assert "latest_records(" in built, "forecasts must come from the store"
+    assert "warnings_in_force(" in built, "warnings must come from the store"
     assert "for record in records" not in built, "not from one run's return value"
     assert "store_records(" in pipeline, "a successful run must refresh the store"
 
