@@ -69,6 +69,12 @@ def logged(db, district: dict, day: date) -> dict:
 
 def test_each_run_folds_into_one_row_per_road_and_day(db, district, tmp_path) -> None:
     noon = datetime.combine(datetime.now(UTC).date(), time(12), tzinfo=UTC)
+    # Runs this database already logged today would add to the count.
+    db.execute(
+        "delete from public.risk_daily_predictions where organization_id = %s::uuid "
+        "and district_id = %s::uuid and day = %s",
+        (district["org"], district["district"], noon.date()),
+    )
     for moment in (noon, noon + timedelta(minutes=30)):
         redate_recorded_sources(tmp_path, now=moment)
         run_pipeline(
