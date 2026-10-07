@@ -17,8 +17,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from app.routing.core import CostPolicy, Edge, VehicleProfile
-from app.routing.planner import RoutePlanResult, RouteRequest, Snapshot, plan_routes
+from app.routing.core import CostPolicy, Edge, VehicleProfile, eta_band
+from app.routing.planner import (
+    Alternative,
+    RoutePlanResult,
+    RouteRequest,
+    Snapshot,
+    plan_routes,
+)
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 SCENARIOS = REPOSITORY_ROOT / "data" / "fixtures" / "synthetic_scenarios.json"
@@ -107,6 +113,13 @@ def edges_for(
     ]
 
 
+def policy_for(fixture: dict[str, Any]) -> CostPolicy:
+    speeds = fixture["network_policy"]["road_class_speed_kph"]
+    return CostPolicy(
+        road_class_speed_kph={name: float(kph) for name, kph in speeds.items()}
+    )
+
+
 def plan(
     graph: dict[str, Any],
     fixture: dict[str, Any],
@@ -117,10 +130,7 @@ def plan(
 ) -> RoutePlanResult:
     request = scenario["route_request"]
     vehicle = fixture["vehicles"][vehicle_id or request["vehicle_id"]]
-    speeds = fixture["network_policy"]["road_class_speed_kph"]
-    policy = CostPolicy(
-        road_class_speed_kph={name: float(kph) for name, kph in speeds.items()}
-    )
+    policy = policy_for(fixture)
     return plan_routes(
         edges_for(graph, fixture, scenario, with_overlays=with_overlays),
         RouteRequest(
@@ -155,11 +165,35 @@ def _excluded(result: RoutePlanResult, reason: str | None = None) -> set[str]:
     return {item["segment_id"] for group in groups for item in group}
 
 
+def _warned(alternative: Alternative, code: str, segment: str | None = None) -> bool:
+    return any(
+        warning["code"] == code
+        and (segment is None or segment in warning["segment_ids"])
+        for warning in alternative.constraint_warnings
+    )
+
+
+def _eta(result: RoutePlanResult) -> str:
+    if not result.alternatives:
+        return "no route"
+    low, high = result.alternatives[0].eta_range_seconds
+    return f"{low / 60:.1f}-{high / 60:.1f} min"
+
+
+def _with_states(
+    scenario: dict[str, Any], states: list[dict[str, Any]]
+) -> dict[str, Any]:
+    return {**scenario, "overlays": {**scenario["overlays"], "segment_states": states}}
+
+
 ROUTING_EXPECTATIONS = (
     "route_status",
     "reachability",
     "reason_code",
     "passability_change",
+    "restricted_segment_ids",
+    "unverified_limit_segment_ids",
+    "eta_includes_risk_penalty",
 )
 
 
@@ -218,6 +252,32 @@ def judge(
                 bool(primary & closed),
             )
         )
+    if expected.get("closures_each_forced_a_replan"):
+        # Applied one at a time, in the order listed, each closure must sit on the
+        # best route the earlier ones left. A closure off that route changes nothing,
+        # and counting it would make the scenario look harder than it is.
+        states = overlays.get("segment_states", [])
+        order = [
+            item["segment_id"] for item in states if item.get("passability") == "closed"
+        ]
+        missed = []
+        for index, segment in enumerate(order):
+            earlier = [
+                item
+                for item in states
+                if item.get("passability") != "closed"
+                or item["segment_id"] in order[:index]
+            ]
+            best = plan(graph, fixture, _with_states(scenario, earlier))
+            if not best.alternatives or segment not in best.alternatives[0].segment_ids:
+                missed.append(segment)
+        outcome.checks.append(
+            Check(
+                "each closure lay on the best route the earlier ones left",
+                bool(order) and not missed,
+                ", ".join(missed),
+            )
+        )
     if expected.get("reachability") == "isolated":
         outcome.checks.append(
             Check(
@@ -272,6 +332,169 @@ def judge(
                 not (limited & _excluded(light, "vehicle_exceeds_max_weight")),
                 lightest["vehicle_id"],
             )
+        )
+    policy = policy_for(fixture)
+    for segment in expected.get("restricted_segment_ids", []):
+        over = [item for item in result.alternatives if segment in item.segment_ids]
+        outcome.checks.append(
+            Check(
+                f"{segment} is restricted, not closed: a route still uses it",
+                segment not in _excluded(result) and bool(over),
+                f"{len(over)} of {len(result.alternatives)} routes",
+            )
+        )
+        outcome.checks.append(
+            Check(
+                "every route over the restricted road is marked for review",
+                bool(over)
+                and all(
+                    item.requires_review
+                    and _warned(item, "restricted_segment_used", segment)
+                    for item in over
+                ),
+            )
+        )
+        costs = [
+            cost
+            for item in over
+            for cost in item.edge_costs
+            if cost["segment_id"] == segment
+        ]
+        outcome.checks.append(
+            Check(
+                "its restriction delay is counted in the driving time",
+                bool(costs)
+                and all(
+                    cost["delay_seconds"] > 0
+                    and abs(
+                        cost["delay_seconds"]
+                        - cost["base_time_seconds"]
+                        * policy.restriction_delay_multiplier
+                    )
+                    < 0.01
+                    for cost in costs
+                ),
+            )
+        )
+    if expected.get("restricted_segment_ids"):
+        before = plan(graph, fixture, scenario, with_overlays=False)
+        outcome.notes.append(
+            f"primary ETA {_eta(result)} with the restriction, {_eta(before)} without it"
+        )
+    for segment in expected.get("unverified_limit_segment_ids", []):
+        edges = [
+            edge
+            for edge in edges_for(graph, fixture, scenario)
+            if edge.segment_id == segment
+        ]
+        outcome.checks.append(
+            Check(
+                f"{segment} is a bridge with no limit on record, and none is made up",
+                bool(edges)
+                and all(
+                    edge.is_bridge
+                    and edge.max_weight_t is None
+                    and edge.max_height_m is None
+                    for edge in edges
+                ),
+            )
+        )
+        over = [item for item in result.alternatives if segment in item.segment_ids]
+        outcome.checks.append(
+            Check(
+                "every route over it says the limit is unverified and needs review",
+                bool(over)
+                and all(
+                    item.requires_review
+                    and _warned(item, "unknown_constraint", segment)
+                    for item in over
+                ),
+                f"{len(over)} of {len(result.alternatives)} routes",
+            )
+        )
+        kept_off = [
+            vehicle_id
+            for vehicle_id in fixture["vehicles"]
+            if segment
+            in _excluded(plan(graph, fixture, scenario, vehicle_id=vehicle_id))
+        ]
+        outcome.checks.append(
+            Check(
+                "an unverified limit keeps no vehicle off the bridge",
+                not kept_off,
+                ", ".join(kept_off),
+            )
+        )
+    if "primary_keeps_warned_road" in expected:
+        warned = {item["segment_id"] for item in overlays.get("risk_observations", [])}
+        keeps = bool(result.alternatives) and bool(
+            warned & set(result.alternatives[0].segment_ids)
+        )
+        wanted = bool(expected["primary_keeps_warned_road"])
+        outcome.checks.append(
+            Check(
+                "the primary route keeps the warned road"
+                if wanted
+                else "the primary route drives around the warned road",
+                keeps == wanted,
+            )
+        )
+    if expected.get("eta_includes_risk_penalty") is False:
+        scores = {
+            edge.segment_id: float(edge.risk_score)
+            for edge in edges_for(graph, fixture, scenario)
+            if edge.risk_score is not None
+        }
+        outcome.checks.append(
+            Check(
+                "every ETA is a band around driving time, with no risk penalty in it",
+                bool(result.alternatives)
+                and all(
+                    abs(
+                        item.travel_time_seconds
+                        - sum(
+                            cost["base_time_seconds"] + cost["delay_seconds"]
+                            for cost in item.edge_costs
+                        )
+                    )
+                    < 0.01
+                    and item.eta_range_seconds
+                    == eta_band(
+                        item.travel_time_seconds,
+                        policy,
+                        _warned(item, "unobserved_segment_state"),
+                    )
+                    for item in result.alternatives
+                ),
+            )
+        )
+        priced = [
+            cost
+            for item in result.alternatives
+            for cost in item.edge_costs
+            if cost["segment_id"] in scores
+        ]
+        outcome.checks.append(
+            Check(
+                "a warned road on a route costs risk weight x score x km, in cost only",
+                bool(priced)
+                and all(
+                    abs(
+                        cost["risk_penalty_seconds"]
+                        - policy.risk_weight_seconds
+                        * scores[cost["segment_id"]]
+                        * cost["length_m"]
+                        / 1000.0
+                    )
+                    < 0.01
+                    for cost in priced
+                ),
+                f"{len(priced)} warned edge(s) on the offered routes",
+            )
+        )
+        before = plan(graph, fixture, scenario, with_overlays=False)
+        outcome.notes.append(
+            f"primary ETA {_eta(result)} with the warning, {_eta(before)} without it"
         )
     return outcome
 

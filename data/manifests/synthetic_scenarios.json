@@ -1,9 +1,19 @@
 {
-  "fixture_set_id": "sih26002-core-scenarios-v1",
+  "fixture_set_id": "sih26002-core-scenarios-v2",
   "generated_at": "2000-01-01T00:00:00Z",
   "generator": "scripts/pipeline/generate_scenarios.py",
   "generator_version": "scenario-generator-v1",
   "graph_version": "osm-shillong-4d449d18c4666431",
+  "hand_authored": {
+    "note": "S1 to S6 come from the generator. S7 to S11 were written by hand on the same graph and conventions; the generator does not produce them, so regenerating would drop them.",
+    "scenario_ids": [
+      "S7",
+      "S8",
+      "S9",
+      "S10",
+      "S11"
+    ]
+  },
   "input_checksums": {
     "data/pilot/scenario_endpoints.json": "sha256:83045734fa2bee6fd945a20c2409f569cf102cece6eaca6d2a1f23456e0b8edc",
     "data/pilot/shillong_facilities.json": "sha256:f3865f00850d5576d3825c11bce9318e294c8c21e1cafd9216aa02059194802c",
@@ -12,7 +22,7 @@
   "live_data": false,
   "mode": "synthetic",
   "output": "data/fixtures/synthetic_scenarios.json",
-  "output_checksum": "sha256:94b35348f4c0d4316c763e29d7671993ec7e192a6eb95bbec67e90876da3bfdc",
+  "output_checksum": "sha256:f25375a11be9f38701cae46fedda9e880222cb9115d621d96c96cd2ca205cd24",
   "schema_version": "fixture-manifest-v1",
   "seed": 26002,
   "ui_label": "SIMULATED SCENARIO"

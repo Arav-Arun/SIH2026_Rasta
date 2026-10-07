@@ -1,5 +1,5 @@
 {
-  "fixture_set_id": "sih26002-core-scenarios-v1",
+  "fixture_set_id": "sih26002-core-scenarios-v2",
   "generator_version": "scenario-generator-v1",
   "graph_version": "osm-shillong-4d449d18c4666431",
   "mode": "synthetic",
@@ -262,6 +262,213 @@
         "vehicle_id": "SIM-TRUCK-08T"
       },
       "title": "Vehicle exceeds a simulated bridge limit",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "restriction handling: usable, slower, flagged for review",
+        "restricted_segment_ids": [
+          "osm-way-993917081-segment-5"
+        ],
+        "route_status": "feasible"
+      },
+      "id": "S7",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [],
+        "segment_states": [
+          {
+            "cause": "road_damage",
+            "observed_at": "2000-01-01T00:10:00Z",
+            "passability": "restricted",
+            "review_status": "approved",
+            "segment_id": "osm-way-993917081-segment-5",
+            "source_mode": "synthetic"
+          }
+        ]
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-3431260100",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Restricted road stays usable, slower and flagged",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "unverified limits: flagged for review, never invented",
+        "route_status": "feasible",
+        "unverified_limit_segment_ids": [
+          "osm-way-345758400-segment-0"
+        ]
+      },
+      "id": "S8",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [],
+        "segment_states": []
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-1365146330",
+        "origin_node_id": "osm-node-9685188119",
+        "vehicle_id": "SIM-TRUCK-08T"
+      },
+      "title": "Bridge with no recorded load limit",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "simulated closure handling, several at once",
+        "closures_each_forced_a_replan": true,
+        "excluded_segment_ids": [
+          "osm-way-44769004-segment-3",
+          "osm-way-278789303-segment-2",
+          "osm-way-1262824616-segment-7"
+        ],
+        "route_status": "feasible_replan"
+      },
+      "id": "S9",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [],
+        "segment_states": [
+          {
+            "cause": "landslide_debris",
+            "observed_at": "2000-01-01T00:10:00Z",
+            "passability": "closed",
+            "review_status": "approved",
+            "segment_id": "osm-way-44769004-segment-3",
+            "source_mode": "synthetic"
+          },
+          {
+            "cause": "flooding",
+            "observed_at": "2000-01-01T00:20:00Z",
+            "passability": "closed",
+            "review_status": "approved",
+            "segment_id": "osm-way-278789303-segment-2",
+            "source_mode": "synthetic"
+          },
+          {
+            "cause": "road_damage",
+            "observed_at": "2000-01-01T00:30:00Z",
+            "passability": "closed",
+            "review_status": "approved",
+            "segment_id": "osm-way-1262824616-segment-7",
+            "source_mode": "synthetic"
+          }
+        ]
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-3431260100",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Three reviewed closures at once",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "risk penalty in route cost, not in the ETA",
+        "eta_includes_risk_penalty": false,
+        "passability_change": false,
+        "primary_keeps_warned_road": true,
+        "route_status": "feasible"
+      },
+      "id": "S10",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [
+          {
+            "observation_type": "forecast_rainfall",
+            "segment_id": "osm-way-993917081-segment-5",
+            "source_mode": "synthetic",
+            "source_name": "SIMULATED_WEATHER_ADAPTER",
+            "valid_from": "2000-01-01T00:15:00Z",
+            "valid_until": "2000-01-01T06:15:00Z",
+            "warning_severity": "orange"
+          }
+        ],
+        "segment_states": []
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-3431260100",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Orange warning priced into the route, not the ETA",
+      "ui_label": "SIMULATED SCENARIO"
+    },
+    {
+      "expected": {
+        "claim_scope": "risk penalty in route cost, not in the ETA",
+        "eta_includes_risk_penalty": false,
+        "passability_change": false,
+        "primary_keeps_warned_road": false,
+        "route_status": "feasible"
+      },
+      "id": "S11",
+      "mode": "synthetic",
+      "overlays": {
+        "risk_observations": [
+          {
+            "observation_type": "forecast_rainfall",
+            "segment_id": "osm-way-993917081-segment-5",
+            "source_mode": "synthetic",
+            "source_name": "SIMULATED_WEATHER_ADAPTER",
+            "valid_from": "2000-01-01T00:15:00Z",
+            "valid_until": "2000-01-01T06:15:00Z",
+            "warning_severity": "red"
+          }
+        ],
+        "segment_states": []
+      },
+      "route_request": {
+        "commodity": {
+          "category": "medicine",
+          "priority": "essential",
+          "synthetic": true,
+          "weight_kg": 420
+        },
+        "deadline_at": "2000-01-01T03:00:00Z",
+        "departure_at": "2000-01-01T00:05:00Z",
+        "destination_node_id": "osm-node-3431260100",
+        "origin_node_id": "osm-node-9657608975",
+        "vehicle_id": "SIM-LCV-01"
+      },
+      "title": "Red warning on the same road: the planner drives around it",
       "ui_label": "SIMULATED SCENARIO"
     }
   ],
