@@ -1,33 +1,30 @@
-# RASTA (रास्ता)
+# RASTA
 
 **Road Accessibility & Supply Tracking Assistant**
 
-A logistics and accessibility intelligence platform for the North Eastern Region
-of India. RASTA links a field officer's report of a blocked road to the
+A logistics and accessibility intelligence platform for the North Eastern Region of India.
+RASTA links a field officer's report of a blocked road to the
 deliveries, trips and facilities it affects, so district teams can reroute
 essential supplies before a disruption turns into a shortage.
 
-| | |
-|---|---|
 | **Team name** | Side Quest |
+|---|---|
 | **Team ID** | 127269 |
-| **Team leader** | Arav Arun |
 | **College** | Somaiya Vidyavihar University |
 | **Problem statement** | SIH26002: AI-Based Smart Logistics and Accessibility Intelligence Platform for North Eastern Region (NER) |
 | **Organisation** | Ministry of Development of North Eastern Region (MDoNER) |
 | **Theme / category** | Transportation & Logistics / Software |
 
-## Live demo
 
-| | |
-|---|---|
+## Pitch Video :
+
+https://github.com/user-attachments/assets/9c3bef69-24a6-4d96-9c33-be637a67502c
+
+## Live demo
 | **Website and control room** | https://rasta-client.aravarun.workers.dev |
+|---|---|
 | **Android app (APK)** | [Download rasta.apk](https://github.com/Arav-Arun/SIH2026_Rasta/releases/latest/download/rasta.apk) |
 | **Demo video** | https://youtu.be/d7QWfgCOpME |
-
-On the sign-in page, **Try the demo** signs you in as a dispatcher, field officer
-or driver with one click. The server sleeps when idle, so the first request after
-a quiet spell can take up to a minute.
 
 ## The problem
 
@@ -76,12 +73,8 @@ Mapped to the problem statement's requirements (a) to (h).
 | **(h) Multilingual and offline** | The control room and offline web app in English and all 22 Eighth Schedule languages. Reports, GPS positions, approved routes and map data packs work offline and sync on reconnect. |
 
 Across the platform:
-
 - **Integrations:** IMD and SACHET source adapters, OpenStreetMap import, and a
   versioned OpenAPI contract for other government systems.
-- **Security:** Supabase Auth, organisation and district scope on every request,
-  row-level security in PostgreSQL, private evidence storage, a full audit
-  trail, rate limits and a strict Content Security Policy.
 - **Human control:** officials approve every route and every road-status change;
   drivers acknowledge every reroute.
 
@@ -180,8 +173,6 @@ flowchart LR
 | Maps and data | OpenStreetMap, Overpass API |
 | Hosting | Cloudflare Workers (web), Render (API), Supabase (database) |
 
-Every part of the stack is open source or free to run.
-
 ## Pilot data
 
 - **Road network:** 2,860 road segments in central Shillong, imported from
@@ -206,59 +197,6 @@ data/           Pilot road network, facilities and recorded samples
 ml/             Landslide model pipeline: dataset, training, evaluation, model card
 Screenshots/    Screenshots used in this README
 ```
-
-## Run locally
-
-Requirements: Docker, the [Supabase CLI](https://supabase.com/docs/guides/local-development),
-Node 22 and Python 3.12 or newer.
-
-```bash
-npm ci
-supabase start && supabase db reset          # database schema
-supabase status                              # prints the URLs and keys used below
-
-python3.12 -m venv api/.venv
-api/.venv/bin/pip install -e ./api
-cp api/.env.example api/.env                 # fill in DATABASE_URL and the Supabase values
-
-# Weather and alert samples, re-dated to now (still labelled recorded).
-api/.venv/bin/python -m app.recorded_samples /tmp/rasta-sources
-echo "SOURCE_FIXTURE_ROOT=/tmp/rasta-sources" >> api/.env
-
-# Shillong road network, demo accounts and the demo story's starting point.
-api/.venv/bin/python -m app.demo_setup --password 'pick-a-demo-password' --story
-
-api/.venv/bin/uvicorn app.main:app --app-dir api --port 8000
-
-cp apps/client/.env.example apps/client/.env.local
-# set the Supabase values and NEXT_PUBLIC_DEMO_PASSWORD to the same password
-npm run dev --workspace apps/client          # http://localhost:3000
-```
-
-`demo_setup` can be run again at any time: it keeps the accounts, cancels the
-previous story trip and starts a fresh one, and prints where to report the
-landslide. It refuses to run unless `APP_MODE` is `local_demo` or `hosted_demo`.
-
-For the Android app:
-
-```bash
-cp apps/mobile/.env.example apps/mobile/.env   # API and Supabase addresses
-npm run mobile:start
-```
-
-## Checks
-
-```bash
-npm run lint && npm run typecheck && npm run format:check   # web and Android app
-npm test                                                    # web unit tests
-npm run contracts:check                                     # TypeScript types match contracts/openapi.json
-cd api && .venv/bin/python -m pytest                        # API unit tests (no database needed)
-cd ml && .venv/bin/python -m pytest                         # model pipeline tests (synthetic data)
-```
-
-GitHub runs the same checks on every push (`.github/workflows/verify.yml`), and runs the API
-tests a second time against a Supabase stack started on the runner, so the database-backed
-ones run too.
 
 ## Data sources and attribution
 
