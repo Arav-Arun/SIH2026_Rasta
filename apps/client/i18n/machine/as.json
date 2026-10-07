@@ -2923,19 +2923,9 @@
       "output_sha256": "65ce029c7c502db68e0f4dd88af71d69fbe241e364212e033fd2a7476e5f3803",
       "translated_at": "2026-10-07T19:38:46+00:00"
     },
-    "mobile.tracker.consent": {
-      "source_sha256": "cf5109985cd9dc26420899673ca788f8099f27a36d097c23feb3e4ab4e8bec82",
-      "output_sha256": "672b58c29f160b32737043def398f5c00637b8ed73b3302ef096dc3ed023cecd",
-      "translated_at": "2026-10-07T19:38:46+00:00"
-    },
     "mobile.tracker.dropped": {
       "source_sha256": "620529303bad9cb3f96cc761ae5cb5438846db1b23e2ca7cd16a0b2dec509eef",
       "output_sha256": "057fc69d183174aa007a7a3c3a5749a5aaa95d4d8406cf6c0fe4672e5e00a440",
-      "translated_at": "2026-10-07T19:38:46+00:00"
-    },
-    "mobile.tracker.foregroundOnly": {
-      "source_sha256": "357dc2cc5fc90a3bf09472c6b0d70f7b601700d176d3be0b7960ea38e4c66813",
-      "output_sha256": "22784cc2cd88c99165657f7c248e810824844df0866fe1edfb4b426fc3e4c722",
       "translated_at": "2026-10-07T19:38:46+00:00"
     },
     "mobile.tracker.heading": {

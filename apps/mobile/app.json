@@ -22,7 +22,14 @@
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
         "CAMERA"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW"
       ]
     },
     "web": {
@@ -43,8 +50,10 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "RASTA records where a disruption was photographed so the control room can place it on the road network.",
-          "locationWhenInUsePermission": "RASTA records where a disruption was photographed so the control room can place it on the road network."
+          "locationAlwaysAndWhenInUsePermission": "RASTA reports a trip's position to the control room, including with the phone locked, until the trip's reporting is stopped or its delivery is recorded.",
+          "locationWhenInUsePermission": "RASTA records where a disruption was photographed so the control room can place it on the road network.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
         }
       ],
       [

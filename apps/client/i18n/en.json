@@ -1244,8 +1244,9 @@
       "notStarted": "This trip has not started, so it is not reporting positions. Start the trip first.",
       "noTrip": "No trip is running, so there is nothing to report positions for.",
       "permissionHelp": "{message} Open the system settings for this app and allow location, then switch reporting on again.",
-      "consent": "While reporting is on, this phone records its position for this trip about every 15 seconds as the vehicle moves, and sends it to the control room so dispatchers can see where the load is and reroute it around closures. The district's dispatchers and state coordinators can see it. It stops when you press Stop, when you record the delivery, or when you sign out. The pilot keeps position history for 30 days after a trip ends.",
-      "foregroundOnly": "This build reports only while the app is open and in front. Locking the phone stops reporting until you open it again.",
+      "consent": "While reporting is on, this phone records its position for this trip about every 15 seconds as the vehicle moves, and sends it to the control room so dispatchers can see where the load is and reroute it around closures. If location is allowed all the time, it keeps reporting with the phone locked, and a notification shows while it does. The district's dispatchers and state coordinators can see it. It stops when you press Stop, when you record the delivery, or when you sign out. The pilot keeps position history for 30 days after a trip ends.",
+      "background": "Reporting continues with the phone locked. A notification stays in the status bar while it does.",
+      "openOnly": "Location is not allowed all the time, so reporting stops when the phone is locked. To keep reporting, allow location \"All the time\" for RASTA in the system settings, then switch reporting on again.",
       "waiting": "Waiting",
       "sent": "Sent",
       "refused": "Refused",
@@ -1257,7 +1258,9 @@
       "stop": "Stop",
       "start": "Start reporting",
       "sendNowLabel": "Send waiting positions now",
-      "sendNow": "Send now"
+      "sendNow": "Send now",
+      "noticeTitle": "RASTA is reporting this trip's position",
+      "noticeBody": "Positions go to the control room until you stop reporting or record the delivery."
     },
     "sos": {
       "savedOnPhone": "It is saved on this phone.",

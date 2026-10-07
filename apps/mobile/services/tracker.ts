@@ -1,4 +1,6 @@
 import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
+import { Platform } from 'react-native';
 
 import { newUuid } from './ids';
 
@@ -29,7 +31,21 @@ import {
   type QueuedFix,
 } from './telemetryQueue';
 
-/** Foreground position tracking for an active trip. */
+/**
+ * Position tracking for an active trip. With location allowed all the time it
+ * runs as a background task under a foreground service, so it keeps reporting
+ * with the phone locked and a notification shows while it does. Otherwise it
+ * reports only while the app is open.
+ */
+
+/** The background task's name; the system restarts it under this name. */
+const TRACKING_TASK = 'rasta-trip-tracking';
+const SAMPLING = {
+  accuracy: Location.Accuracy.High,
+  timeInterval: 15_000,
+  distanceInterval: 10,
+};
+const DRAIN_EVERY_MS = 30_000;
 
 export type TrackerState =
   | 'off'
@@ -48,6 +64,8 @@ export interface TrackerSnapshot {
   grantExpiresAt: string | null;
   /** True while the device is holding positions it has not managed to send. */
   backlog: boolean;
+  /** True when reporting continues with the phone locked. */
+  background: boolean;
 }
 
 type Listener = (snapshot: TrackerSnapshot) => void;
@@ -61,10 +79,12 @@ let snapshot: TrackerSnapshot = {
   lastFixAt: null,
   grantExpiresAt: null,
   backlog: false,
+  background: false,
 };
 
 let watcher: Location.LocationSubscription | null = null;
 let drainTimer: ReturnType<typeof setInterval> | null = null;
+let lastDrainAt = 0;
 let lastKept: {
   captured_at: string;
   latitude: number;
@@ -98,12 +118,57 @@ export function subscribeToTracker(listener: Listener): () => void {
   return () => listeners.delete(listener);
 }
 export async function restoreTracker(): Promise<void> {
-  const [stats, grant] = await Promise.all([loadStats(), loadGrant()]);
+  const [stats, grant, background] = await Promise.all([
+    loadStats(),
+    loadGrant(),
+    backgroundRunning(),
+  ]);
   publish({
     stats,
     grantExpiresAt: grant?.expires_at ?? null,
     tripId: grant?.trip_id ?? null,
   });
+  // The system kept the background task alive while the app was closed.
+  if (background && grant && snapshot.state === 'off') {
+    startDrainTimer(grant.trip_id);
+    publish({ state: 'running', background: true, message: null });
+  }
+}
+
+function backgroundSupported(): boolean {
+  return Platform.OS === 'android';
+}
+
+async function backgroundRunning(): Promise<boolean> {
+  if (!backgroundSupported()) return false;
+  try {
+    return await Location.hasStartedLocationUpdatesAsync(TRACKING_TASK);
+  } catch {
+    return false;
+  }
+}
+
+if (backgroundSupported()) {
+  // Defined when this module loads, which the app's root layout makes happen
+  // first, so the system can hand over positions even after a restart.
+  TaskManager.defineTask<{ locations?: Location.LocationObject[] }>(
+    TRACKING_TASK,
+    async ({ data, error }) => {
+      if (error || !data?.locations?.length) return;
+      for (const fix of data.locations) await record(fix);
+      const grant = await loadGrant();
+      if (grant && Date.now() - lastDrainAt >= DRAIN_EVERY_MS) {
+        await drainQueue(grant.trip_id);
+      }
+    },
+  );
+}
+
+function startDrainTimer(tripId: string): void {
+  if (drainTimer) clearInterval(drainTimer);
+  drainTimer = setInterval(() => {
+    void drainQueue(tripId);
+  }, DRAIN_EVERY_MS);
 }
 
 /** A credential the device holds and that has not run out. */
@@ -209,6 +274,7 @@ export function drainQueue(
   tripId: string,
 ): Promise<{ sent: number; error: string | null }> {
   if (!drainInFlight) {
+    lastDrainAt = Date.now();
     drainInFlight = drainOnce(tripId).finally(() => {
       drainInFlight = null;
     });
@@ -261,8 +327,14 @@ async function drainOnce(
   return { sent: response.data.results.length, error: null };
 }
 
-export async function startTracking(tripId: string): Promise<void> {
-  if (watcher) await stopTracking();
+/** The notification Android shows while the trip reports in the background. */
+export type TrackingNotice = { title: string; body: string };
+
+export async function startTracking(
+  tripId: string,
+  notice: TrackingNotice,
+): Promise<void> {
+  if (watcher || (await backgroundRunning())) await stopTracking();
 
   publish({ state: 'requesting_permission', tripId, message: null });
   const permission = await Location.requestForegroundPermissionsAsync();
@@ -279,27 +351,43 @@ export async function startTracking(tripId: string): Promise<void> {
 
   publish({ state: 'starting' });
   lastKept = null;
-  watcher = await Location.watchPositionAsync(
-    {
-      accuracy: Location.Accuracy.High,
-      timeInterval: 15_000,
-      distanceInterval: 10,
-    },
-    (fix) => {
-      void record(fix);
-    },
-  );
-  drainTimer = setInterval(() => {
-    void drainQueue(tripId);
-  }, 30_000);
-  publish({ state: 'running', message: null });
+  startDrainTimer(tripId);
+
+  if (backgroundSupported()) {
+    const always = await Location.requestBackgroundPermissionsAsync();
+    if (always.granted) {
+      try {
+        await Location.startLocationUpdatesAsync(TRACKING_TASK, {
+          ...SAMPLING,
+          pausesUpdatesAutomatically: false,
+          foregroundService: {
+            notificationTitle: notice.title,
+            notificationBody: notice.body,
+            killServiceOnDestroy: false,
+          },
+        });
+        publish({ state: 'running', background: true, message: null });
+        return;
+      } catch {
+        // Some devices refuse the service; reporting while open still works.
+      }
+    }
+  }
+
+  watcher = await Location.watchPositionAsync(SAMPLING, (fix) => {
+    void record(fix);
+  });
+  publish({ state: 'running', background: false, message: null });
 }
 
 export async function stopTracking(): Promise<void> {
   watcher?.remove();
   watcher = null;
+  if (await backgroundRunning()) {
+    await Location.stopLocationUpdatesAsync(TRACKING_TASK).catch(() => {});
+  }
   if (drainTimer) clearInterval(drainTimer);
   drainTimer = null;
   lastKept = null;
-  publish({ state: 'off', message: null });
+  publish({ state: 'off', background: false, message: null });
 }

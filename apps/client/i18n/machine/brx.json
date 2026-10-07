@@ -4353,19 +4353,9 @@
       "output_sha256": "65ce029c7c502db68e0f4dd88af71d69fbe241e364212e033fd2a7476e5f3803",
       "translated_at": "2026-10-07T19:38:53+00:00"
     },
-    "mobile.tracker.consent": {
-      "source_sha256": "cf5109985cd9dc26420899673ca788f8099f27a36d097c23feb3e4ab4e8bec82",
-      "output_sha256": "bff608dff7008baa42157e04638543a1d272e340655d7d2d22779cb120a1a617",
-      "translated_at": "2026-10-07T19:38:53+00:00"
-    },
     "mobile.tracker.dropped": {
       "source_sha256": "620529303bad9cb3f96cc761ae5cb5438846db1b23e2ca7cd16a0b2dec509eef",
       "output_sha256": "36dffd79c92e9ca48668d5c61d4d8d5cc7c9dac5c1f03bcd521c49fe07dd9f30",
-      "translated_at": "2026-10-07T19:38:53+00:00"
-    },
-    "mobile.tracker.foregroundOnly": {
-      "source_sha256": "357dc2cc5fc90a3bf09472c6b0d70f7b601700d176d3be0b7960ea38e4c66813",
-      "output_sha256": "84bc7a1b7b204ce9887d20c0e219d8de285f2849961ba3df39a5af88463aa743",
       "translated_at": "2026-10-07T19:38:53+00:00"
     },
     "mobile.tracker.heading": {

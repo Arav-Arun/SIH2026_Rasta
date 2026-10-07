@@ -21,6 +21,8 @@ import { Theme } from '../constants/theme';
 import { LocaleProvider } from '../contexts/LocaleContext';
 import { SessionProvider, useSession } from '../contexts/SessionContext';
 import { OutboxRunner } from '../components/sync/OutboxRunner';
+// Registers the background tracking task before anything else runs.
+import '../services/tracker';
 
 export { ErrorBoundary } from 'expo-router';
 

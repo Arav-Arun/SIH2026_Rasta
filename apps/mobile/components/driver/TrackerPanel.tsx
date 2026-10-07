@@ -56,11 +56,16 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
         return;
       }
       const target = trip?.id ?? snapshot.tripId;
-      if (target) await startTracking(target);
+      if (target) {
+        await startTracking(target, {
+          title: t('mobile.tracker.noticeTitle'),
+          body: t('mobile.tracker.noticeBody'),
+        });
+      }
     } finally {
       setBusy(false);
     }
-  }, [snapshot, trip]);
+  }, [snapshot, trip, t]);
 
   const send = useCallback(async () => {
     const target = trip?.id ?? snapshot?.tripId;
@@ -126,11 +131,13 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
         </View>
       )}
 
-      {/* The limit, stated where it matters rather than in a footnote. */}
+      {/* How long reporting lasts, stated where it matters rather than in a footnote. */}
       {running && (
         <View style={styles.noteBox}>
           <Text style={styles.noteText}>
-            {t('mobile.tracker.foregroundOnly')}
+            {snapshot.background
+              ? t('mobile.tracker.background')
+              : t('mobile.tracker.openOnly')}
           </Text>
         </View>
       )}
