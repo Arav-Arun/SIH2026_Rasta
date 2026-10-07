@@ -260,19 +260,6 @@ GitHub runs the same checks on every push (`.github/workflows/verify.yml`), and 
 tests a second time against a Supabase stack started on the runner, so the database-backed
 ones run too.
 
-## Deploy
-
-- **Web:** `.github/workflows/deploy-web.yml` builds the client, deploys it to Cloudflare
-  Workers and checks that the live site answers with its security headers. It runs after a
-  push to `main` that changes the web client, or from the Actions tab. It needs the
-  repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (and optionally
-  `DEMO_PASSWORD`), and reads the API and Supabase addresses from the same repository
-  variables as the Android build.
-- **API:** Render deploys `render.yaml` from `main`, and the API re-scores every district's roads
-  hourly (`RISK_RECOMPUTE_MINUTES`). New database migrations are not applied by any of this:
-  run `supabase db push` against the hosted project after pulling them.
-- **Android:** `.github/workflows/android-apk.yml` publishes `rasta.apk` on the latest release.
-
 ## Data sources and attribution
 
 - Road and facility data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),
