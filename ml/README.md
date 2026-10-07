@@ -58,10 +58,11 @@ result is a result.
 python3.12 -m venv ml/.venv
 ml/.venv/bin/pip install -e './ml[dev]'
 
-# 1. The inventory: the NASA Global Landslide Catalog export from data.nasa.gov, or an
-#    authority's CSV with date, latitude and longitude columns. Save it as
-#    ml/work/events.csv (ml/work/ is not committed), read its terms of use, record them
-#    in manifest.json and set licence_confirmed to true for "events".
+# 1. The inventory: the NASA Global Landslide Catalog export (its link and terms are in
+#    manifest.json), or an authority's CSV with date, latitude and longitude columns once
+#    its terms are recorded there. ml/work/ is not committed.
+mkdir -p ml/work && curl -L -o ml/work/events.csv \
+  https://data.nasa.gov/docs/legacy/Global_Landslide_Catalog_Export/Global_Landslide_Catalog_Export_rows.csv
 # 2. Everything else:
 ml/.venv/bin/python -m rasta_ml all
 ```
@@ -80,11 +81,21 @@ The tests build small worlds from **synthetic** data to check the mechanics: par
 split, the metrics, calibration, the gate and the export. Their numbers are not results
 and must never be quoted as such.
 
-## Not done here
+## First run
 
-- No model is trained in this repository, because no landslide inventory is in it. The
-  environment this pipeline was written in could not reach NASA's servers. The first real
-  run, its audit and its card belong in a commit of their own.
+[`results/`](results/) holds the first run on real data: the model card, the evaluation,
+the label audit, the split and the hashes of every input. It used the NASA Global
+Landslide Catalog (682 events in the region, 309 kept after the label rules), PERSIANN-CDR
+rainfall and SRTM terrain.
+
+**Decision: neither candidate passed the gate, so RASTA keeps `baseline-v1`.** On
+2016 to 2017, logistic regression ranked better overall (ROC-AUC 0.81 against
+`baseline-v1`'s 0.71), but the test years hold only 27 landslide cell-days and its PR-AUC
+interval overlaps every benchmark's. A new inventory with more events, or official
+closure records, is what could change this.
+
+## Limits
+
 - RASTA's live rainfall input is a district forecast, not this satellite record. A model
   that passes would still need the same kind of rainfall in the API before it could be
   served (see the card's limits).

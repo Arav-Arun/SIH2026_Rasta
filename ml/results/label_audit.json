@@ -1,0 +1,118 @@
+{
+  "dataset": {
+    "cells": 46,
+    "dropped": {
+      "missing rainfall": 2852,
+      "outside the split years": 0,
+      "positives lost to missing rainfall": 0
+    },
+    "positives": {
+      "test": 27,
+      "train": 104,
+      "validate": 16
+    },
+    "rows": {
+      "test": 33626,
+      "train": 114770,
+      "validate": 33580
+    }
+  },
+  "excluded": {
+    "another country": 103,
+    "another state": 174,
+    "located less precisely than 25 km": 46,
+    "location accuracy not stated": 11,
+    "not triggered by rain": 39,
+    "outside the period": 45,
+    "outside the region": 10306
+  },
+  "inventory": {
+    "columns_used": {
+      "accuracy": "location_accuracy",
+      "country": "country_name",
+      "day": "event_date",
+      "lat": "latitude",
+      "lon": "longitude",
+      "ref": "event_id",
+      "source": "source_name",
+      "state": "admin_division_name",
+      "trigger": "landslide_trigger"
+    },
+    "rows": 11033,
+    "sha256": "2c4898899dd4f373c4320e121c5b655ebb5394d431fa42e57ec4828d07d48b04",
+    "unreadable": {}
+  },
+  "kept": {
+    "by_location_accuracy_km": {
+      "0": 7,
+      "1": 67,
+      "10": 62,
+      "25": 55,
+      "5": 118
+    },
+    "by_source": {
+      "Arunachal Times": 10,
+      "Assam Times": 7,
+      "Assam Tribune": 10,
+      "Business Standard": 7,
+      "E-PAO": 15,
+      "Hindustan Times": 12,
+      "Indian Express": 12,
+      "Mizoram Express": 7,
+      "Nagaland Post": 12,
+      "Telegraph India": 9,
+      "The Arunachal Times": 9,
+      "The Assam Tribune": 5,
+      "The Northeast Today": 7,
+      "articles.timesofindia.indiatimes.com": 6,
+      "e-pao.net": 7
+    },
+    "by_state": {
+      "Arunachal Pradesh": 13,
+      "Assam": 67,
+      "Manipur": 40,
+      "Meghalaya": 13,
+      "Mizoram": 24,
+      "Nagaland": 10,
+      "Sikkim": 26,
+      "Tripura": 3,
+      "not given": 113
+    },
+    "by_trigger": {
+      "continuous_rain": 99,
+      "downpour": 120,
+      "monsoon": 9,
+      "rain": 80,
+      "tropical_cyclone": 1
+    },
+    "by_year": {
+      "2007": 13,
+      "2008": 3,
+      "2009": 9,
+      "2010": 37,
+      "2011": 12,
+      "2012": 17,
+      "2013": 17,
+      "2014": 21,
+      "2015": 54,
+      "2016": 33,
+      "2017": 93
+    },
+    "events": 309
+  },
+  "location": {
+    "kept_with_error_10km_or_more": 117
+  },
+  "reporting_bias": {
+    "cells_with_events": 120,
+    "events_outside_the_observed_area": {
+      "test": 91,
+      "validate": 50
+    },
+    "median_events_per_cell": 1.0,
+    "most_events_in_one_cell": 30,
+    "note": "Catalogues record landslides that reach the news or an office, so events cluster near roads and towns. Rows come only from cells with a training-year event; events elsewhere cannot be scored and are counted above.",
+    "share_of_events_in_busiest_tenth_of_cells": 0.414
+  },
+  "same_cell_same_day_merged": 46
+}

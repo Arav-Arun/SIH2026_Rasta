@@ -27,9 +27,9 @@ def test_the_committed_manifest_is_valid_and_fixes_a_forward_split() -> None:
     assert split.train[1] < split.validate[0] <= split.validate[1] < split.test[0]
     assert manifest.split.part_of(2016) == "test"
     assert len(manifest.sha256) == 64
-    # The events' terms cannot be checked from where this was written, so the
-    # manifest must not claim they were.
-    assert manifest.unconfirmed_licences() == ["events"]
+    # Every source's terms are recorded before anything is fetched from it.
+    assert manifest.unconfirmed_licences() == []
+    assert all(source.licence.strip() for source in manifest.sources.values())
 
 
 def test_a_split_that_looks_back_is_refused() -> None:
@@ -152,7 +152,11 @@ def test_nothing_is_fetched_before_the_inventorys_terms_are_confirmed(
 ) -> None:
     from rasta_ml.__main__ import main
 
+    document = synthetic.manifest_document()
+    document["sources"]["events"]["licence_confirmed"] = False
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps(document))
     (tmp_path / "events.csv").write_text("date,lat,lon\n2008-07-01,25.57,91.88\n")
-    assert main(["fetch", "--work", str(tmp_path)]) == 2
+    assert main(["fetch", "--work", str(tmp_path), "--manifest", str(manifest)]) == 2
     assert "licence_confirmed" in capsys.readouterr().err
     assert not (tmp_path / "cache").exists()

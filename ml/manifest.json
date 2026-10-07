@@ -51,11 +51,11 @@
       "licence_confirmed": true
     },
     "events": {
-      "title": "Landslide inventory: the NASA Global Landslide Catalog export, or any CSV with date, latitude and longitude",
-      "url": "https://data.nasa.gov/ (search for Global Landslide Catalog)",
+      "title": "NASA Global Landslide Catalog export (2007 to 2017)",
+      "url": "https://data.nasa.gov/docs/legacy/Global_Landslide_Catalog_Export/Global_Landslide_Catalog_Export_rows.csv",
       "resolution": "points with a stated location accuracy",
-      "licence": "Not yet checked: read the terms on the download page and record them here",
-      "licence_confirmed": false
+      "licence": "Listed as public access by NASA on data.gov, with no licence restriction stated; a U.S. Government Work where prepared by NASA staff. NASA asks users to cite Kirschbaum et al. (2010), Natural Hazards 52:561-575, and Kirschbaum et al. (2015), Geomorphology 249:4-15. The export's 'Terms and Conditions' text is not published with the record.",
+      "licence_confirmed": true
     }
   },
   "seed": 20261006,

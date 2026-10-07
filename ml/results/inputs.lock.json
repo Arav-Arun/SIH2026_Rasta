@@ -1,0 +1,39 @@
+{
+  "events": {
+    "file": "events.csv",
+    "sha256": "2c4898899dd4f373c4320e121c5b655ebb5394d431fa42e57ec4828d07d48b04"
+  },
+  "manifest_sha256": "05f1f654c811716eff4a43f9189e79ee5a0aabe5eaf49ffab70a661597d8f7ee",
+  "rainfall": {
+    "files": 4047,
+    "first_day": "2006-12-03",
+    "last_day": "2017-12-31",
+    "missing_days": [],
+    "sha256_of_file_digests": "547540ed748f02321efca07565ae88086b8412d40fa95ef073ba867fc5f82cd3",
+    "source": "https://s3.amazonaws.com/noaa-cdr-precip-persiann-pds"
+  },
+  "terrain": {
+    "source": "https://s3.amazonaws.com/elevation-tiles-prod/skadi",
+    "tiles": {
+      "N22E092": "cd4797ea2dbe54effaf93db3ac8a09606144f5d49eee18e447441a196c370e59",
+      "N23E091": "0cd4fbbbcba314caf34d5677f3d751cee207396c343b9bba3a480b8717c9af2c",
+      "N23E092": "70cecaeb15103cbcd45795774cf7b0ad30e1cfaa87bc9c298e0e11d5567d394e",
+      "N23E093": "fda821f5acf83754dcc1243c5cf3ba36311cbde2915e0dbac5fc3bcd9552a762",
+      "N24E091": "444d3344bc40cb979b2050b89af29b5acfa68e6e253c6334c3692f1d79d25051",
+      "N24E092": "8f7e1cb4c2acdeca5b757beb10349522b7540258e768f2630aac99b2ed20407a",
+      "N24E093": "7b9981e9806ba672d08b301b3b8d3f7cb51d40b56b8a51fe770bdb867d3c04d4",
+      "N24E094": "7d28e289be599d610a265968ef3c42150ca61d715d50dc840008dc438d0258db",
+      "N25E092": "5a0f433b84b4e4d5cf9cb9fcafa4803f6ec9d06cdc3d2f4dd15ca8f0c325d13d",
+      "N25E093": "f9c8cf62ff300a126a9028726079ec547390ed46829ebabeba6e2f9820c1ffe7",
+      "N25E094": "ee98b1bfd18167457b753f8fe1e0688f0cb9f9ecea53729066782af10a58d6e7",
+      "N26E088": "026a48813c3363b52bfce9ed71404387cbfeeae2d77944c96cadbaefb0780ebe",
+      "N26E091": "ab7907a5e4b7e248df8aa378783331f83654311c110a7ccd69feff366cf929a0",
+      "N26E094": "1cbc6d5cf4f66729089320112f234252ae40bab3974dabdff2dbf0473c2dfd33",
+      "N27E088": "7fe3800064057256cc431a0d7d7258899b251b8facc355c3c45d93ad5d127ee1",
+      "N27E093": "321a01e9ff8a7fdf7c80cc11e180e7aa3c43a9d68229518be3c506f286bdf5de",
+      "N27E094": "75332aefbbfb18ed9d735a024e6aeb95fe43776981c0ef12f11ac755dc883998",
+      "N28E094": "e82d1c3e4cdaa36d3d193136aa492f67938362177d1e27c111f33d7093efc640"
+    }
+  },
+  "written_at": "2026-10-07T19:51:33+00:00"
+}

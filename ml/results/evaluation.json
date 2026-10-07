@@ -1,0 +1,540 @@
+{
+  "bootstrap": {
+    "brier": {
+      "baseline-v1": [
+        0.000476,
+        0.001129
+      ],
+      "climatology": [
+        0.000476,
+        0.001129
+      ],
+      "gradient-boosted trees": [
+        0.000476,
+        0.001128
+      ],
+      "logistic regression": [
+        0.000475,
+        0.001128
+      ],
+      "rainfall rule": [
+        0.000475,
+        0.001128
+      ]
+    },
+    "interval": 0.95,
+    "pr_auc": {
+      "baseline-v1": [
+        0.001813,
+        0.028281
+      ],
+      "climatology": [
+        0.000987,
+        0.003461
+      ],
+      "gradient-boosted trees": [
+        0.00191,
+        0.019073
+      ],
+      "logistic regression": [
+        0.002176,
+        0.021628
+      ],
+      "rainfall rule": [
+        0.001478,
+        0.049221
+      ]
+    },
+    "pr_auc_difference": {
+      "gradient-boosted trees minus baseline-v1": [
+        -0.022572,
+        0.011743
+      ],
+      "gradient-boosted trees minus climatology": [
+        4.3e-05,
+        0.017057
+      ],
+      "gradient-boosted trees minus rainfall rule": [
+        -0.042128,
+        0.013086
+      ],
+      "logistic regression minus baseline-v1": [
+        -0.017068,
+        0.012225
+      ],
+      "logistic regression minus climatology": [
+        0.000284,
+        0.019356
+      ],
+      "logistic regression minus rainfall rule": [
+        -0.038863,
+        0.014757
+      ]
+    },
+    "resamples": 1000,
+    "skipped_without_positives": 0
+  },
+  "dataset": {
+    "features": [
+      "rain_1d",
+      "rain_2d",
+      "rain_3d",
+      "rain_7d",
+      "rain_30d",
+      "slope_mean_deg",
+      "slope_p90_deg",
+      "steep_fraction",
+      "relief_m"
+    ],
+    "positives": {
+      "test": 27,
+      "train": 104,
+      "validate": 16
+    },
+    "rows": {
+      "test": 33626,
+      "train": 114770,
+      "validate": 33580
+    },
+    "sha256": "32b719f748cf453f0267317913a0f74a996bd88b88e5336574c467b61d15e392"
+  },
+  "decision": {
+    "gradient-boosted trees": {
+      "passed": false,
+      "reasons": [
+        "its PR-AUC interval [0.00191, 0.019073] does not lie above baseline-v1's [0.001813, 0.028281]",
+        "its PR-AUC interval [0.00191, 0.019073] does not lie above rainfall rule's [0.001478, 0.049221]",
+        "its PR-AUC interval [0.00191, 0.019073] does not lie above climatology's [0.000987, 0.003461]"
+      ]
+    },
+    "logistic regression": {
+      "passed": false,
+      "reasons": [
+        "its PR-AUC interval [0.002176, 0.021628] does not lie above baseline-v1's [0.001813, 0.028281]",
+        "its PR-AUC interval [0.002176, 0.021628] does not lie above rainfall rule's [0.001478, 0.049221]",
+        "its PR-AUC interval [0.002176, 0.021628] does not lie above climatology's [0.000987, 0.003461]"
+      ]
+    }
+  },
+  "exported_model": {
+    "file": "model_logistic.json",
+    "sha256": "85d0836f9d1026044c7b1f0c39e7d8dc1262a741f65294c0099c676232d22fd0",
+    "version": "lr-32b719f748cf"
+  },
+  "gate_rule": "A candidate passes only if its test PR-AUC interval lies wholly above every benchmark's interval and its test Brier score is below climatology's.",
+  "generated_at": "2026-10-07T19:51:43+00:00",
+  "inputs": {
+    "events": {
+      "file": "events.csv",
+      "sha256": "2c4898899dd4f373c4320e121c5b655ebb5394d431fa42e57ec4828d07d48b04"
+    },
+    "manifest_sha256": "05f1f654c811716eff4a43f9189e79ee5a0aabe5eaf49ffab70a661597d8f7ee",
+    "rainfall": {
+      "files": 4047,
+      "first_day": "2006-12-03",
+      "last_day": "2017-12-31",
+      "missing_days": [],
+      "sha256_of_file_digests": "547540ed748f02321efca07565ae88086b8412d40fa95ef073ba867fc5f82cd3",
+      "source": "https://s3.amazonaws.com/noaa-cdr-precip-persiann-pds"
+    },
+    "terrain": {
+      "source": "https://s3.amazonaws.com/elevation-tiles-prod/skadi",
+      "tiles": {
+        "N22E092": "cd4797ea2dbe54effaf93db3ac8a09606144f5d49eee18e447441a196c370e59",
+        "N23E091": "0cd4fbbbcba314caf34d5677f3d751cee207396c343b9bba3a480b8717c9af2c",
+        "N23E092": "70cecaeb15103cbcd45795774cf7b0ad30e1cfaa87bc9c298e0e11d5567d394e",
+        "N23E093": "fda821f5acf83754dcc1243c5cf3ba36311cbde2915e0dbac5fc3bcd9552a762",
+        "N24E091": "444d3344bc40cb979b2050b89af29b5acfa68e6e253c6334c3692f1d79d25051",
+        "N24E092": "8f7e1cb4c2acdeca5b757beb10349522b7540258e768f2630aac99b2ed20407a",
+        "N24E093": "7b9981e9806ba672d08b301b3b8d3f7cb51d40b56b8a51fe770bdb867d3c04d4",
+        "N24E094": "7d28e289be599d610a265968ef3c42150ca61d715d50dc840008dc438d0258db",
+        "N25E092": "5a0f433b84b4e4d5cf9cb9fcafa4803f6ec9d06cdc3d2f4dd15ca8f0c325d13d",
+        "N25E093": "f9c8cf62ff300a126a9028726079ec547390ed46829ebabeba6e2f9820c1ffe7",
+        "N25E094": "ee98b1bfd18167457b753f8fe1e0688f0cb9f9ecea53729066782af10a58d6e7",
+        "N26E088": "026a48813c3363b52bfce9ed71404387cbfeeae2d77944c96cadbaefb0780ebe",
+        "N26E091": "ab7907a5e4b7e248df8aa378783331f83654311c110a7ccd69feff366cf929a0",
+        "N26E094": "1cbc6d5cf4f66729089320112f234252ae40bab3974dabdff2dbf0473c2dfd33",
+        "N27E088": "7fe3800064057256cc431a0d7d7258899b251b8facc355c3c45d93ad5d127ee1",
+        "N27E093": "321a01e9ff8a7fdf7c80cc11e180e7aa3c43a9d68229518be3c506f286bdf5de",
+        "N27E094": "75332aefbbfb18ed9d735a024e6aeb95fe43776981c0ef12f11ac755dc883998",
+        "N28E094": "e82d1c3e4cdaa36d3d193136aa492f67938362177d1e27c111f33d7093efc640"
+      }
+    },
+    "written_at": "2026-10-07T19:51:33+00:00"
+  },
+  "manifest": {
+    "name": "ner-landslide-cell-day",
+    "sha256": "05f1f654c811716eff4a43f9189e79ee5a0aabe5eaf49ffab70a661597d8f7ee"
+  },
+  "reliability": {
+    "climatology": [
+      {
+        "mean_predicted": 6.864817200206465e-05,
+        "observed_rate": 0.0,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 6.864817200206465e-05,
+        "observed_rate": 0.0,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.000124118473941111,
+        "observed_rate": 0.0,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.0001789039698439705,
+        "observed_rate": 0.0002973535533749628,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.0002949759173127818,
+        "observed_rate": 0.0005947071067499256,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.00038956731912149356,
+        "observed_rate": 0.0011894142134998512,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.00045346279690428124,
+        "observed_rate": 0.000297441998810232,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.0005484091550688457,
+        "observed_rate": 0.002379535990481856,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.0010525261737414841,
+        "observed_rate": 0.00297441998810232,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.0016637263951577346,
+        "observed_rate": 0.000297441998810232,
+        "rows": 3362
+      }
+    ],
+    "gradient-boosted trees": [
+      {
+        "mean_predicted": 7.370030249760841e-06,
+        "observed_rate": 0.0002973535533749628,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 8.701336615010256e-06,
+        "observed_rate": 0.0,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 9.572621990829138e-06,
+        "observed_rate": 0.0,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 2.7377682199797333e-05,
+        "observed_rate": 0.0002973535533749628,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 9.982658552316408e-05,
+        "observed_rate": 0.0002973535533749628,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.00020230144829337093,
+        "observed_rate": 0.0002973535533749628,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.0003546006449515175,
+        "observed_rate": 0.000297441998810232,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.0005894990322548878,
+        "observed_rate": 0.00148720999405116,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.0010673843629143405,
+        "observed_rate": 0.001189767995240928,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.004072355975773536,
+        "observed_rate": 0.003866745984533016,
+        "rows": 3362
+      }
+    ],
+    "logistic regression": [
+      {
+        "mean_predicted": 1.190870819718538e-06,
+        "observed_rate": 0.0,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 2.8884952334587682e-06,
+        "observed_rate": 0.0,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 8.338778671450356e-06,
+        "observed_rate": 0.0,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 2.8594554285503974e-05,
+        "observed_rate": 0.0005947071067499256,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 9.915525821214215e-05,
+        "observed_rate": 0.0002973535533749628,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.00023969221214791976,
+        "observed_rate": 0.0002973535533749628,
+        "rows": 3363
+      },
+      {
+        "mean_predicted": 0.00043929879335914007,
+        "observed_rate": 0.000297441998810232,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.0007232987411425079,
+        "observed_rate": 0.001189767995240928,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.001203474586094191,
+        "observed_rate": 0.001189767995240928,
+        "rows": 3362
+      },
+      {
+        "mean_predicted": 0.0028839687883191775,
+        "observed_rate": 0.004164187983343248,
+        "rows": 3362
+      }
+    ]
+  },
+  "results": {
+    "baseline-v1": {
+      "brier": 0.00080254,
+      "calibration": {
+        "intercept": -7.100457,
+        "method": "Platt, fitted on the validation years",
+        "slope": -1.486449
+      },
+      "kind": "benchmark",
+      "operating_point": {
+        "alerts": 33488,
+        "alerts_per_cell_per_week": 6.9713,
+        "hits": 25,
+        "missed": 2,
+        "precision": 0.0007,
+        "recall": 0.9259,
+        "threshold": 0.00023269014491233975
+      },
+      "pr_auc": 0.006117,
+      "roc_auc": 0.711125
+    },
+    "climatology": {
+      "brier": 0.00080201,
+      "calibration": {
+        "intercept": -4.478284,
+        "method": "Platt, fitted on the validation years",
+        "slope": 0.369741
+      },
+      "kind": "benchmark",
+      "operating_point": {
+        "alerts": 1632,
+        "alerts_per_cell_per_week": 0.3397,
+        "hits": 1,
+        "missed": 26,
+        "precision": 0.0006,
+        "recall": 0.037,
+        "threshold": 0.0015335114998595556
+      },
+      "pr_auc": 0.00192,
+      "roc_auc": 0.731484
+    },
+    "gradient-boosted trees": {
+      "brier": 0.00080173,
+      "calibration": {
+        "intercept": -0.127903,
+        "method": "Platt, fitted on the validation years",
+        "slope": 1.044478
+      },
+      "kind": "candidate",
+      "operating_point": {
+        "alerts": 1269,
+        "alerts_per_cell_per_week": 0.2642,
+        "hits": 7,
+        "missed": 20,
+        "precision": 0.0055,
+        "recall": 0.2593,
+        "threshold": 0.0033297050245910268
+      },
+      "pr_auc": 0.005393,
+      "roc_auc": 0.799404,
+      "setting": {
+        "learning_rate": 0.05,
+        "max_leaf_nodes": 7
+      }
+    },
+    "logistic regression": {
+      "brier": 0.00080084,
+      "calibration": {
+        "intercept": -0.12176,
+        "method": "Platt, fitted on the validation years",
+        "slope": 1.063556
+      },
+      "kind": "candidate",
+      "operating_point": {
+        "alerts": 256,
+        "alerts_per_cell_per_week": 0.0533,
+        "hits": 3,
+        "missed": 24,
+        "precision": 0.0117,
+        "recall": 0.1111,
+        "threshold": 0.005116047691108864
+      },
+      "pr_auc": 0.006108,
+      "roc_auc": 0.81309,
+      "setting": {
+        "C": 10.0
+      }
+    },
+    "rainfall rule": {
+      "brier": 0.00080143,
+      "calibration": {
+        "intercept": -9.531772,
+        "method": "Platt, fitted on the validation years",
+        "slope": 1.069643
+      },
+      "feature": "rain_1d",
+      "kind": "benchmark",
+      "operating_point": {
+        "alerts": 28,
+        "alerts_per_cell_per_week": 0.0058,
+        "hits": 1,
+        "missed": 26,
+        "precision": 0.0357,
+        "recall": 0.037,
+        "threshold": 0.009504329350959469
+      },
+      "pr_auc": 0.006234,
+      "roc_auc": 0.744732
+    }
+  },
+  "software": {
+    "numpy": "2.5.3",
+    "scikit-learn": "1.9.1"
+  },
+  "spatial_check": {
+    "block_deg": 1.0,
+    "folds": [
+      {
+        "fold": 0,
+        "pr_auc": {
+          "baseline-v1": 0.005275,
+          "climatology": 0.001725,
+          "gradient-boosted trees": 0.049218,
+          "logistic regression": 0.032025,
+          "rainfall rule": 0.002866
+        },
+        "test_positives": 3,
+        "test_rows": 2924
+      },
+      {
+        "fold": 1,
+        "note": "no positives to train or test on in this fold",
+        "test_positives": 0,
+        "test_rows": 5848
+      },
+      {
+        "fold": 2,
+        "pr_auc": {
+          "baseline-v1": 0.009331,
+          "climatology": 0.001762,
+          "gradient-boosted trees": 0.005743,
+          "logistic regression": 0.017453,
+          "rainfall rule": 0.034222
+        },
+        "test_positives": 11,
+        "test_rows": 13889
+      },
+      {
+        "fold": 3,
+        "pr_auc": {
+          "baseline-v1": 0.023972,
+          "climatology": 0.001932,
+          "gradient-boosted trees": 0.007656,
+          "logistic regression": 0.016461,
+          "rainfall rule": 0.007417
+        },
+        "test_positives": 6,
+        "test_rows": 7310
+      },
+      {
+        "fold": 4,
+        "pr_auc": {
+          "baseline-v1": 0.003588,
+          "climatology": 0.004137,
+          "gradient-boosted trees": 0.004046,
+          "logistic regression": 0.004817,
+          "rainfall rule": 0.003969
+        },
+        "test_positives": 7,
+        "test_rows": 3655
+      }
+    ]
+  },
+  "split": {
+    "dataset_sha256": "32b719f748cf453f0267317913a0f74a996bd88b88e5336574c467b61d15e392",
+    "features": [
+      "rain_1d",
+      "rain_2d",
+      "rain_3d",
+      "rain_7d",
+      "rain_30d",
+      "slope_mean_deg",
+      "slope_p90_deg",
+      "steep_fraction",
+      "relief_m"
+    ],
+    "manifest_sha256": "05f1f654c811716eff4a43f9189e79ee5a0aabe5eaf49ffab70a661597d8f7ee",
+    "positives": {
+      "test": 27,
+      "train": 104,
+      "validate": 16
+    },
+    "rows": {
+      "test": 33626,
+      "train": 114770,
+      "validate": 33580
+    },
+    "written_at": "2026-10-07T19:51:33+00:00",
+    "years": {
+      "test": [
+        2016,
+        2017
+      ],
+      "train": [
+        2007,
+        2013
+      ],
+      "validate": [
+        2014,
+        2015
+      ]
+    }
+  }
+}

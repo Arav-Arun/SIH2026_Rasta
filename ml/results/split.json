@@ -1,0 +1,40 @@
+{
+  "dataset_sha256": "32b719f748cf453f0267317913a0f74a996bd88b88e5336574c467b61d15e392",
+  "features": [
+    "rain_1d",
+    "rain_2d",
+    "rain_3d",
+    "rain_7d",
+    "rain_30d",
+    "slope_mean_deg",
+    "slope_p90_deg",
+    "steep_fraction",
+    "relief_m"
+  ],
+  "manifest_sha256": "05f1f654c811716eff4a43f9189e79ee5a0aabe5eaf49ffab70a661597d8f7ee",
+  "positives": {
+    "test": 27,
+    "train": 104,
+    "validate": 16
+  },
+  "rows": {
+    "test": 33626,
+    "train": 114770,
+    "validate": 33580
+  },
+  "written_at": "2026-10-07T19:51:33+00:00",
+  "years": {
+    "test": [
+      2016,
+      2017
+    ],
+    "train": [
+      2007,
+      2013
+    ],
+    "validate": [
+      2014,
+      2015
+    ]
+  }
+}
