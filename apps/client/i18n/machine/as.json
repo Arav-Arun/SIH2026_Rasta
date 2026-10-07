@@ -1668,11 +1668,6 @@
       "output_sha256": "23a685bc92f53675a9ca0b5e8fb2fadcbdd9a60f7f3df63f9542561b20f1db6f",
       "translated_at": "2026-10-07T19:38:46+00:00"
     },
-    "mobile.map.unavailable": {
-      "source_sha256": "71b090242bb047175f818acb8b2e3eb7f5f3f18165512503209592f521395a54",
-      "output_sha256": "44aec483381b685f722177c51f4a4aeb172376aa48fd15b551496e74886c97fa",
-      "translated_at": "2026-10-07T19:38:46+00:00"
-    },
     "mobile.notFound.body": {
       "source_sha256": "3e2f07d1295784159545b0400c29b7834da7b4a5de1d5884bc727083189b641e",
       "output_sha256": "4a7a382acad70b9f416c86459e8143a2be74328577968c7806ab5916f003d678",

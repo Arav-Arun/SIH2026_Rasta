@@ -1351,8 +1351,7 @@
     },
     "map": {
       "offline": "The map needs a network connection. The route is listed above, road by road.",
-      "title": "Approved route",
-      "unavailable": "The map cannot be drawn on this device. The road sections and distances above are the route."
+      "title": "Approved route"
     },
     "notFound": {
       "title": "Not found",

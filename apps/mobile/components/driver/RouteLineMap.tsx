@@ -1,126 +1,150 @@
-import React, { useMemo } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import {
+  Image,
+  PixelRatio,
+  StyleSheet,
+  Text,
+  View,
+  type LayoutChangeEvent,
+} from 'react-native';
+import Svg, { Circle, Polyline } from 'react-native-svg';
 
 import { Theme } from '../../constants/theme';
 import { useT } from '../../contexts/LocaleContext';
-import { API_BASE_URL } from '../../services/rastaApi';
-import { linesFromGeometry, type RouteLine } from '../../services/routePack';
+import { fitLines } from '../../services/mapTiles';
+import { linesFromGeometry } from '../../services/routePack';
 
-/** The approved route drawn as a line, from the geometry the server sent. */
+/**
+ * The approved route drawn over OpenStreetMap tiles. The line comes from the
+ * route pack, so it is drawn even when the tiles cannot load.
+ */
 
-let NativeWebView: React.ComponentType<Record<string, unknown>> | null = null;
-if (Platform.OS !== 'web') {
-  try {
-    // Loaded lazily so the web build does not pull in a native-only module.
-    // oxlint-disable-next-line typescript/no-require-imports
-    NativeWebView = require('react-native-webview').WebView;
-  } catch {
-    NativeWebView = null;
-  }
-}
-
-const OSM_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-const OSM_ATTRIBUTION = '© OpenStreetMap contributors';
-
-/** The page's own address. */
-const PAGE_BASE_URL = `${API_BASE_URL.replace(/\/+$/, '')}/`;
-
-/** `offlineNote` is shown in place of the map when Leaflet cannot be fetched. */
-function html(lines: RouteLine[], offlineNote: string): string {
-  // GeoJSON is [lng, lat]; Leaflet wants [lat, lng].
-  const latLngs = lines.map((line) => line.map(([lng, lat]) => [lat, lng]));
-  return `<!doctype html>
-<html><head>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<style>html,body,#map{margin:0;height:100%;background:${Theme.colors.surfaceElevated}}</style>
-</head><body><div id="map"></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-  if (typeof L === 'undefined') {
-    document.body.innerHTML = '<p style="font:14px/1.4 sans-serif;color:${Theme.colors.textMuted};padding:16px;margin:0">' + ${JSON.stringify(offlineNote)} + '</p>';
-    throw new Error('leaflet unavailable');
-  }
-  var lines = ${JSON.stringify(latLngs)};
-  var map = L.map('map', { zoomControl: false, attributionControl: true });
-  L.tileLayer('${OSM_TILE_URL}', { maxZoom: 18, attribution: '${OSM_ATTRIBUTION}' }).addTo(map);
-  // The view is set before anything is drawn: a line added to a map that has
-  // no view yet is never rendered.
-  map.fitBounds(L.latLngBounds([].concat.apply([], lines)), { padding: [24, 24] });
-  lines.forEach(function (line) {
-    L.polyline(line, { color: '${Theme.colors.brandLight}', weight: 5, opacity: 0.9 }).addTo(map);
-  });
-  var first = lines[0] && lines[0][0];
-  var lastLine = lines[lines.length - 1];
-  var last = lastLine && lastLine[lastLine.length - 1];
-  if (first) L.circleMarker(first, { radius: 6, color: '${Theme.colors.brand}', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(map);
-  if (last) L.circleMarker(last, { radius: 6, color: '${Theme.colors.passable}', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(map);
-</script>
-</body></html>`;
-}
+const HEIGHT = 200;
+const FRAME = { height: HEIGHT, padding: 24 };
+const TILE_URL = 'https://tile.openstreetmap.org';
+/** OpenStreetMap's tile policy asks every app to identify itself. */
+const TILE_HEADERS = {
+  'User-Agent': 'RASTA/1.0 (+https://github.com/Arav-Arun/SIH2026_Rasta)',
+};
+/** Dense screens get half-size tiles from one zoom deeper, so the map stays sharp. */
+const SHARP = PixelRatio.get() >= 2;
 
 export function RouteLineMap({ geometry }: { geometry: unknown }) {
   const t = useT();
   const lines = useMemo(() => linesFromGeometry(geometry), [geometry]);
+  const [width, setWidth] = useState(0);
+  const [tilesFailed, setTilesFailed] = useState(false);
+  const view = useMemo(
+    () =>
+      width > 0 && lines.length > 0
+        ? fitLines(lines, { ...FRAME, width }, SHARP)
+        : null,
+    [lines, width],
+  );
   if (lines.length === 0) return null;
 
-  const source = html(lines, t('mobile.map.offline'));
+  const onLayout = (event: LayoutChangeEvent) =>
+    setWidth(Math.round(event.nativeEvent.layout.width));
+  const first = view?.lines[0]?.[0];
+  const lastLine = view?.lines[view.lines.length - 1];
+  const last = lastLine?.[lastLine.length - 1];
 
-  if (Platform.OS === 'web') {
-    return (
-      <View style={styles.frame}>
-        <iframe
-          title={t('mobile.map.title')}
-          srcDoc={source}
-          style={{ border: 'none', width: '100%', height: '100%' }}
-        />
-      </View>
-    );
-  }
-
-  if (!NativeWebView) {
-    return (
-      <View style={[styles.frame, styles.fallback]}>
-        <Text style={styles.fallbackText}>{t('mobile.map.unavailable')}</Text>
-      </View>
-    );
-  }
-
-  const WebView = NativeWebView;
   return (
-    <View style={styles.frame}>
-      <WebView
-        originWhitelist={['*']}
-        source={{ html: source, baseUrl: PAGE_BASE_URL }}
-        style={styles.web}
-        scrollEnabled={false}
-        // Nothing in this page needs to reach anything but the tile server.
-        javaScriptEnabled
-        domStorageEnabled={false}
-      />
+    <View
+      style={styles.frame}
+      onLayout={onLayout}
+      accessible
+      accessibilityLabel={t('mobile.map.title')}
+    >
+      {view?.tiles.map((tile) => (
+        <Image
+          key={tile.key}
+          source={{
+            uri: `${TILE_URL}/${tile.zoom}/${tile.x}/${tile.y}.png`,
+            headers: TILE_HEADERS,
+          }}
+          style={[
+            styles.tile,
+            {
+              left: tile.left,
+              top: tile.top,
+              width: view.tileSize,
+              height: view.tileSize,
+            },
+          ]}
+          onError={() => setTilesFailed(true)}
+        />
+      ))}
+      {view ? (
+        <Svg width={width} height={HEIGHT} style={StyleSheet.absoluteFill}>
+          {view.lines.map((line, index) => (
+            <Polyline
+              key={index}
+              points={line.map((p) => `${p.x},${p.y}`).join(' ')}
+              fill="none"
+              stroke={Theme.colors.brandLight}
+              strokeWidth={5}
+              strokeOpacity={0.9}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          ))}
+          {first ? (
+            <Circle
+              cx={first.x}
+              cy={first.y}
+              r={6}
+              fill="#fff"
+              stroke={Theme.colors.brand}
+              strokeWidth={3}
+            />
+          ) : null}
+          {last ? (
+            <Circle
+              cx={last.x}
+              cy={last.y}
+              r={6}
+              fill="#fff"
+              stroke={Theme.colors.passable}
+              strokeWidth={3}
+            />
+          ) : null}
+        </Svg>
+      ) : null}
+      {tilesFailed ? (
+        <Text style={styles.offline}>{t('mobile.map.offline')}</Text>
+      ) : null}
+      <Text style={styles.attribution}>© OpenStreetMap contributors</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   frame: {
-    height: 200,
+    height: HEIGHT,
     borderRadius: Theme.radius.md,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: Theme.colors.border,
     backgroundColor: Theme.colors.surfaceElevated,
   },
-  web: { flex: 1, backgroundColor: 'transparent' },
-  fallback: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Theme.spacing.md,
-  },
-  fallbackText: {
+  tile: { position: 'absolute' },
+  offline: {
+    position: 'absolute',
+    left: Theme.spacing.sm,
+    right: Theme.spacing.sm,
+    top: Theme.spacing.sm,
     fontSize: Theme.typography.caption,
     color: Theme.colors.textMuted,
-    textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 16,
+  },
+  attribution: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 4,
+    fontSize: 10,
+    color: Theme.colors.textMuted,
+    backgroundColor: 'rgba(255,255,255,0.8)',
   },
 });
