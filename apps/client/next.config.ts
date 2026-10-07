@@ -43,9 +43,9 @@ function contentSecurityPolicy(development: boolean): string {
     `img-src ${images.join(' ')}`,
     "font-src 'self' data:",
     `connect-src ${connect.join(' ')}`,
-    // MapLibre runs its tile workers from blob: URLs; the offline worker is same-origin.
-    "worker-src 'self' blob:",
-    "child-src 'self' blob:",
+    // MapLibre's tile worker and the offline worker are both served from this origin.
+    "worker-src 'self'",
+    "child-src 'self'",
     // The demo video player, loaded only after a visitor presses play.
     'frame-src https://www.youtube-nocookie.com',
     "manifest-src 'self'",

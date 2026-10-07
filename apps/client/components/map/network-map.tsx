@@ -1,15 +1,16 @@
 'use client';
 
 import type { FeatureCollection, Geometry } from 'geojson';
-import maplibregl, {
-  type LngLatBoundsLike,
-  type Map as MapLibreMap,
-  type MapLayerMouseEvent,
+import type {
+  LngLatBoundsLike,
+  Map as MapLibreMap,
+  MapLayerMouseEvent,
 } from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
 
 import type { BBox } from '@/lib/api/network';
 import type { ConnectivityFacility, SegmentFeature } from '@/lib/api/contracts';
+import maplibregl from '@/lib/maplibre';
 import { cn } from '@/lib/utils';
 
 import {
@@ -387,7 +388,7 @@ export function NetworkMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    (
+    void (
       map.getSource('segments') as maplibregl.GeoJSONSource | undefined
     )?.setData(segmentCollection(segments));
   }, [segments, ready]);
@@ -395,7 +396,7 @@ export function NetworkMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    (
+    void (
       map.getSource('facilities') as maplibregl.GeoJSONSource | undefined
     )?.setData(facilityCollection(facilities));
   }, [facilities, ready]);
@@ -403,7 +404,7 @@ export function NetworkMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || !coverageBBox) return;
-    (
+    void (
       map.getSource('coverage') as maplibregl.GeoJSONSource | undefined
     )?.setData(coverageOutline(coverageBBox));
     if (!fittedRef.current) {

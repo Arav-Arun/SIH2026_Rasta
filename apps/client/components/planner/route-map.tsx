@@ -1,10 +1,11 @@
 'use client';
 
 import type { FeatureCollection, LineString, MultiLineString } from 'geojson';
-import maplibregl, { type Map as MapLibreMap } from 'maplibre-gl';
+import type { Map as MapLibreMap } from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
 
 import type { RouteAlternative } from '@/lib/api/contracts';
+import maplibregl from '@/lib/maplibre';
 import { cn } from '@/lib/utils';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -191,9 +192,9 @@ export function RouteMap({
     const map = mapRef.current;
     if (!map || !ready) return;
     const collection = toCollection(alternatives, selectedId);
-    (map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined)?.setData(
-      collection,
-    );
+    void (
+      map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined
+    )?.setData(collection);
 
     // Fit once per distinct set of routes: refitting on every selection would
     // fight the dispatcher's own panning.
