@@ -9,6 +9,7 @@ from app.risk_pipeline import _matches_area, _polygon_wkt
 from app.sources import (
     CapWarningAdapter,
     SourceRecord,
+    expand_cap_feed,
     parse_cap_circle,
     parse_cap_polygon,
     parse_cap_references,
@@ -182,3 +183,89 @@ def test_a_warning_names_the_district_by_area_or_by_geocode() -> None:
     )
     assert not _matches_area(record_with(areas=["Ri Bhoi"]), "East Khasi Hills", "EKH")
     assert not _matches_area(record_with(areas=["East Khasi Hills"]), None, None)
+
+
+FEED_URL = "https://sachet.example.test/rss/rss_meghalaya.xml"
+
+
+def feed(*links: str) -> bytes:
+    items = "".join(
+        f"<item><title>t</title><link>{link}</link></item>" for link in links
+    )
+    return f'<rss version="2.0"><channel>{items}</channel></rss>'.encode()
+
+
+def with_polygon_url(identifier: str, url: str) -> str:
+    """A CAP message whose area, as SACHET sends it, is only behind a link."""
+
+    parameter = (
+        f"<parameter><valueName>Polygon URL</valueName><value>{url}</value></parameter>"
+    )
+    return alert(
+        identifier,
+        infos=f"<info><event>Heavy Rain</event><severity>Severe</severity>{parameter}"
+        "<area><areaDesc>Heavy Rain</areaDesc></area></info>",
+    )
+
+
+def test_a_feed_is_followed_to_its_messages_and_their_polygons() -> None:
+    documents = {
+        "https://sachet.example.test/cap?id=1": with_polygon_url(
+            "IN-1", "https://sachet.example.test/polygon?id=1"
+        ),
+        "https://sachet.example.test/polygon?id=1": (
+            "<alert><polygon>25.5,91.8 25.6,91.8 25.6,91.9 25.5,91.8</polygon></alert>"
+        ),
+    }
+    body, counts = expand_cap_feed(
+        feed("https://sachet.example.test/cap?id=1"),
+        FEED_URL,
+        get=lambda url: documents[url].encode(),
+    )
+    (record,) = CapWarningAdapter(FEED_URL).parse(body)
+    assert record.subject_ref == "IN-1"
+    assert record.value["polygons"] == [
+        [[25.5, 91.8], [25.6, 91.8], [25.6, 91.9], [25.5, 91.8]]
+    ]
+    assert counts == {"feed_entries": 1, "messages": 1, "unreadable": 0, "polygons": 1}
+
+
+def test_links_to_other_hosts_are_never_followed() -> None:
+    asked: list[str] = []
+
+    def get(url: str) -> bytes:
+        asked.append(url)
+        return alert("IN-2").encode()
+
+    body, counts = expand_cap_feed(
+        feed(
+            "https://elsewhere.example.test/cap?id=9",
+            "https://sachet.example.test/c?id=2",
+        ),
+        FEED_URL,
+        get=get,
+    )
+    assert asked == ["https://sachet.example.test/c?id=2"]
+    assert counts["feed_entries"] == 1
+
+
+def test_a_feed_whose_messages_all_fail_is_an_error_not_an_empty_feed() -> None:
+    def broken(url: str) -> bytes:
+        raise OSError("unreachable")
+
+    with pytest.raises(ValueError):
+        expand_cap_feed(
+            feed("https://sachet.example.test/cap?id=3"), FEED_URL, get=broken
+        )
+
+
+def test_a_feed_with_no_entries_reads_as_no_warnings() -> None:
+    body, counts = expand_cap_feed(feed(), FEED_URL, get=lambda url: b"")
+    assert counts["messages"] == 0
+    assert CapWarningAdapter(FEED_URL).parse(body) == []
+
+
+def test_a_document_that_is_not_a_feed_is_left_for_the_parser() -> None:
+    assert expand_cap_feed(alert("IN-4").encode(), FEED_URL) is None
+    with pytest.raises(ValueError):
+        parse("<rss><channel/></rss>")

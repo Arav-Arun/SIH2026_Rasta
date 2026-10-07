@@ -5,8 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 import urllib.error
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ElementTree
+from collections.abc import Callable
 from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
@@ -153,6 +155,86 @@ def parse_cap_polygon(text: str) -> list[list[float]] | None:
     return points
 
 
+def _local_name(tag: object) -> str:
+    return tag.rsplit("}", 1)[-1] if isinstance(tag, str) else ""
+
+
+def _http_body(url: str, timeout: float = 20.0) -> bytes:
+    request = urllib.request.Request(url, headers={"Accept": "*/*"})
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return response.read()
+
+
+#: The most feed entries one run follows. A SACHET state feed lists about ten.
+MAX_FEED_ENTRIES = 30
+
+
+def expand_cap_feed(
+    body: bytes, feed_url: str, get: Callable[[str], bytes] = _http_body
+) -> tuple[bytes, dict[str, int]] | None:
+    """Turn an RSS feed of links to CAP messages into one document holding them.
+
+    SACHET lists each alert as a link to its CAP file, and gives the alert's area as
+    a "Polygon URL" parameter rather than in the area itself. Each linked message is
+    fetched, its polygons are written into its areas as CAP ``polygon`` elements, and
+    the alerts are returned together for ``CapWarningAdapter.parse``. Only links on
+    the feed's own host are followed. Returns None for a document that is not a feed.
+    """
+
+    root = ElementTree.fromstring(body)
+    if _local_name(root.tag) != "rss":
+        return None
+    origin = urllib.parse.urlsplit(feed_url)[:2]
+
+    def followable(url: str) -> bool:
+        return bool(url) and urllib.parse.urlsplit(url)[:2] == origin
+
+    links = [(item.findtext("link") or "").strip() for item in root.iter("item")][
+        :MAX_FEED_ENTRIES
+    ]
+    links = [link for link in links if followable(link)]
+    container = ElementTree.Element("capFeed")
+    counts = {"feed_entries": len(links), "messages": 0, "unreadable": 0, "polygons": 0}
+    for link in links:
+        try:
+            alert = ElementTree.fromstring(get(link))
+        except Exception:
+            counts["unreadable"] += 1
+            continue
+        if _local_name(alert.tag) != "alert":
+            counts["unreadable"] += 1
+            continue
+        namespace = (
+            alert.tag[: alert.tag.index("}") + 1] if alert.tag.startswith("{") else ""
+        )
+        for info in alert.findall(f"{namespace}info"):
+            polygons: list[str] = []
+            for parameter in info.findall(f"{namespace}parameter"):
+                name = _cap_text(parameter, "valueName", namespace).lower()
+                url = _cap_text(parameter, "value", namespace)
+                if name != "polygon url" or not followable(url):
+                    continue
+                try:
+                    shapes = ElementTree.fromstring(get(url))
+                except Exception:
+                    continue
+                polygons += [
+                    (shape.text or "").strip()
+                    for shape in shapes.iter()
+                    if _local_name(shape.tag) == "polygon"
+                    and (shape.text or "").strip()
+                ]
+            for area in info.findall(f"{namespace}area"):
+                for text in polygons:
+                    ElementTree.SubElement(area, f"{namespace}polygon").text = text
+            counts["polygons"] += len(polygons)
+        container.append(alert)
+        counts["messages"] += 1
+    if links and not counts["messages"]:
+        raise ValueError("No CAP message linked from the feed could be read.")
+    return ElementTree.tostring(container, encoding="utf-8"), counts
+
+
 def parse_cap_circle(text: str) -> dict[str, float] | None:
     """A CAP circle, ``lat,lon radius`` with the radius in kilometres, or None."""
 
@@ -197,7 +279,29 @@ class CapWarningAdapter:
                 error_code="not_configured",
                 detail="No CAP feed URL is configured for this deployment.",
             )
-        return conditional_get(self._base_url, etag=etag)
+        result = conditional_get(self._base_url, etag=etag)
+        if result.status != "success" or result.body is None:
+            return result
+        try:
+            expanded = expand_cap_feed(result.body, self._base_url)
+        except ElementTree.ParseError:
+            return result  # not XML at all; parse() reports it as malformed
+        except ValueError as error:
+            return FetchResult(
+                status="failed",
+                error_code="feed_unreadable",
+                detail=f"No message the feed links to could be read ({redact(error)}).",
+            )
+        if expanded is None:
+            return result
+        body, counts = expanded
+        return FetchResult(
+            status="success",
+            etag=result.etag,
+            checksum=checksum_of(body),
+            body=body,
+            metadata={**result.metadata, **counts},
+        )
 
     def parse(self, body: bytes) -> list[SourceRecord]:
         """Read CAP alerts. A document with no ``alert`` element at all raises."""
@@ -212,6 +316,8 @@ class CapWarningAdapter:
             and element.tag.rsplit("}", 1)[-1] == "alert"
         ]
         if not alerts:
+            if _local_name(root.tag) == "capFeed":
+                return []  # a feed with no entries: nothing is in force
             raise ValueError("No CAP alert blocks found in the document.")
 
         records: list[SourceRecord] = []

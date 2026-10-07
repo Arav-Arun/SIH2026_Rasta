@@ -5,9 +5,9 @@ services:
     plan: free
     region: singapore
     buildCommand: pip install ./api
-    # The recorded IMD and SACHET samples are re-dated at every start, and again
-    # before each hourly re-scoring round, so the risk engine never sees them as
-    # stale; they stay labelled recorded. Two
+    # The recorded IMD sample is re-dated at every start, and again before each
+    # hourly re-scoring round, so the risk engine never sees it as stale; it stays
+    # labelled recorded. SACHET warnings are read live. Two
     # workers keep one answering while the other runs a long request such as a
     # risk recompute; there is no health check path, because a busy worker
     # missing a check would otherwise get the service restarted mid-request.
@@ -28,6 +28,9 @@ services:
       # (api/app/risk_schedule.py). One of the two workers scores each round.
       - key: RISK_RECOMPUTE_MINUTES
         value: "60"
+      # NDMA SACHET's public CAP feed for Meghalaya: live official warnings.
+      - key: SACHET_CAP_BASE_URL
+        value: https://sachet.ndma.gov.in/cap_public_website/rss/rss_meghalaya.xml
       # Filled in on the Render dashboard when the blueprint is created.
       - key: DATABASE_URL
         sync: false

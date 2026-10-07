@@ -179,10 +179,14 @@ flowchart LR
   OpenStreetMap, with 30 health, pharmacy, market and warehouse facilities.
 - **Terrain:** the slope of the ground around each of those road segments, computed
   from SRTM elevation (`data/sources/build_terrain.py`).
-- **Weather and alerts:** IMD rainfall and NDMA SACHET adapters. Until live feed
-  access is granted they read recorded samples, labelled as recorded on screen.
+- **Weather and alerts:** official warnings are read live from NDMA SACHET's public
+  CAP feed for Meghalaya, and each one is matched to roads by its polygon. IMD's
+  rainfall API only answers whitelisted addresses, so rainfall comes from a recorded
+  IMD-format sample, labelled as recorded on screen.
 - **Languages:** the web interface is available in English and all 22 Eighth
-  Schedule languages, including Assamese, Bengali, Bodo, Manipuri and Nepali.
+  Schedule languages, including Assamese, Bengali, Bodo, Manipuri and Nepali. The
+  translations are machine-drafted with Sarvam Translate and await native-speaker
+  review.
 
 ## Repository layout
 
@@ -205,5 +209,5 @@ Screenshots/    Screenshots used in this README
 - Terrain slope uses SRTM elevation data, packaged as Tilezen terrain tiles: United States
   3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S.
   Geological Survey. See `data/manifests/terrain_shillong_srtm.json`.
-- Weather and alert formats follow the [IMD API reference](https://api.imd.gov.in/public/api_reference.html)
-  and [NDMA SACHET](https://sachet.ndma.gov.in/) (OASIS CAP 1.2).
+- Official warnings come from [NDMA SACHET](https://sachet.ndma.gov.in/)'s public CAP 1.2
+  feed. The rainfall format follows the [IMD API reference](https://api.imd.gov.in/public/api_reference.html).

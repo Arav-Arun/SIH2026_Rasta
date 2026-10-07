@@ -11,5 +11,6 @@ provenance as a live feed.
 | `sachet_cap.xml` | OASIS CAP 1.2 alert (`status: Exercise`) | A success run parses a warning and normalises its severity |
 
 Any run reading these is recorded with `source_mode = 'recorded'`, so no screen
-can present them as live. RASTA has **no confirmed access** to the live IMD or
-SACHET feeds yet; the same adapters read them once an endpoint is configured.
+can present them as live. A deployment with `SACHET_CAP_BASE_URL` set reads
+SACHET's public feed live instead of `sachet_cap.xml`. IMD's API admits only
+whitelisted addresses, so `imd_rainfall.json` stays in use until access is granted.
