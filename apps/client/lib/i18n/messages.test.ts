@@ -47,8 +47,18 @@ function catalogueFiles(): string[] {
 const PENDING_TRANSLATION =
   /^(newConsignment\.|map\.risk(Why|Caveats|Model|NotScored|Shadow)|status\.risk\.(critical|unknown)$|alert\.|alerts\.evidence\.(reporter|position|positionNoAccuracy|noPosition|pressedAt|note|openMap|notDispatch|slowTraffic|notClosed)$|alerts\.inspect$|fieldHome\.sos\.|outbox\.type\.sos\.raise$|health\.(outcomes|schedule)\.|health\.suggested$|health\.trainedModel\.|supplyGaps\.|admin\.|mobile\.)/;
 
+/**
+ * The argument names a message uses. A plural branch is text, not an argument,
+ * so `one {has}` is dropped first: its word is translated like any other.
+ */
 const placeholders = (s: string) =>
-  [...s.matchAll(/\{\s*([a-zA-Z_]+)\s*(?:,|\})/g)].map((m) => m[1]).sort();
+  [
+    ...s
+      .replace(/(?:=\d+|zero|one|two|few|many|other)\s*\{[^{}]*\}/g, '')
+      .matchAll(/\{\s*([a-zA-Z_]+)\s*(?:,|\})/g),
+  ]
+    .map((m) => m[1])
+    .sort();
 
 beforeAll(async () => {
   for (const code of catalogueFiles()) await loadCatalogue(code);
