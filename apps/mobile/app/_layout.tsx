@@ -18,6 +18,7 @@ import {
   View,
 } from 'react-native';
 import { Theme } from '../constants/theme';
+import { LocaleProvider } from '../contexts/LocaleContext';
 import { SessionProvider, useSession } from '../contexts/SessionContext';
 import { OutboxRunner } from '../components/sync/OutboxRunner';
 
@@ -104,14 +105,16 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <SessionProvider>
-      <ThemeProvider value={NAVIGATION_THEME}>
-        <StatusBar style="dark" />
-        <AppFrame>
-          <RootNavigator />
-        </AppFrame>
-      </ThemeProvider>
-    </SessionProvider>
+    <LocaleProvider>
+      <SessionProvider>
+        <ThemeProvider value={NAVIGATION_THEME}>
+          <StatusBar style="dark" />
+          <AppFrame>
+            <RootNavigator />
+          </AppFrame>
+        </ThemeProvider>
+      </SessionProvider>
+    </LocaleProvider>
   );
 }
 

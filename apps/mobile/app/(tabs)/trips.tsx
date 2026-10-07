@@ -11,6 +11,7 @@ import {
 import { useFocusEffect, useRouter } from 'expo-router';
 import { ArrowRight, PackageCheck, Truck } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 import { MinimalCard } from '../../components/ui/MinimalCard';
 import { TrackerPanel } from '../../components/driver/TrackerPanel';
@@ -29,6 +30,7 @@ import { stopTracking } from '../../services/tracker';
 /** The load this driver is carrying. */
 export default function TripsScreen() {
   const crew = useCrew();
+  const t = useT();
   const router = useRouter();
 
   const [trips, setTrips] = useState<Trip[] | null>(null);
@@ -116,9 +118,9 @@ export default function TripsScreen() {
     >
       {error && (
         <View style={styles.errorBox}>
-          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.errorText}>{t(error)}</Text>
           <TouchableOpacity onPress={load} accessibilityRole="button">
-            <Text style={styles.errorAction}>Try again</Text>
+            <Text style={styles.errorAction}>{t('mobile.home.retry')}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -136,11 +138,11 @@ export default function TripsScreen() {
       {trips?.length === 0 && (
         <MinimalCard style={styles.empty}>
           <Truck size={22} color={Theme.colors.textDim} />
-          <Text style={styles.emptyTitle}>No load assigned</Text>
+          <Text style={styles.emptyTitle}>{t('mobile.trips.noLoad')}</Text>
           <Text style={styles.emptyBody}>
             {isLocal
-              ? 'Sign in with your district account to receive loads.'
-              : 'When a dispatcher assigns you a vehicle and a consignment it appears here.'}
+              ? t('mobile.trips.signInForLoads')
+              : t('mobile.trips.noLoadBody')}
           </Text>
         </MinimalCard>
       )}
@@ -158,7 +160,7 @@ export default function TripsScreen() {
 
       {done.length > 0 && (
         <>
-          <Text style={styles.sectionLabel}>Finished</Text>
+          <Text style={styles.sectionLabel}>{t('mobile.trips.finished')}</Text>
           {done.map((trip) => (
             <TripCard
               key={trip.id}
@@ -188,25 +190,31 @@ function TripCard({
   onMove: (action: DriverTripAction) => void;
   onReceipt: () => void;
 }) {
+  const t = useT();
   return (
     <MinimalCard style={styles.card}>
       <View style={styles.cardHead}>
-        <Text style={styles.status}>{STATUS_LABEL[trip.status]}</Text>
+        <Text style={styles.status}>
+          {t(`mobile.trips.status.${trip.status}`)}
+        </Text>
         <Text style={styles.vehicle}>{trip.vehicle_registration ?? '-'}</Text>
       </View>
 
       <Text style={styles.reference}>
-        {trip.consignment_reference ?? consignment?.reference ?? 'Consignment'}
+        {trip.consignment_reference ??
+          consignment?.reference ??
+          t('mobile.trips.consignment')}
       </Text>
 
       {consignment && (
         <View style={styles.routeRow}>
           <Text style={styles.routeText} numberOfLines={1}>
-            {consignment.origin_facility_name ?? 'Origin'}
+            {consignment.origin_facility_name ?? t('mobile.trips.origin')}
           </Text>
           <ArrowRight size={13} color={Theme.colors.textMuted} />
           <Text style={styles.routeText} numberOfLines={1}>
-            {consignment.destination_facility_name ?? 'Destination'}
+            {consignment.destination_facility_name ??
+              t('mobile.delivery.destination')}
           </Text>
         </View>
       )}
@@ -219,7 +227,10 @@ function TripCard({
                 {item.commodity}
               </Text>
               <Text style={styles.manifestQuantity}>
-                {formatQuantity(item.quantity)} {item.unit}
+                {t('mobile.trips.quantity', {
+                  quantity: formatQuantity(item.quantity),
+                  unit: item.unit,
+                })}
               </Text>
             </View>
           ))}
@@ -231,7 +242,7 @@ function TripCard({
       {trip.status === 'awaiting_driver' && (
         <PrimaryButton
           busy={busy}
-          label="Start trip"
+          label={t('mobile.trips.start')}
           onPress={() => onMove('active')}
         />
       )}
@@ -239,7 +250,7 @@ function TripCard({
         <>
           <PrimaryButton
             busy={false}
-            label="Record what arrived"
+            label={t('mobile.delivery.title')}
             onPress={onReceipt}
           />
           <TouchableOpacity
@@ -248,26 +259,28 @@ function TripCard({
             disabled={busy}
             accessibilityRole="button"
           >
-            <Text style={styles.secondaryActionText}>Pause</Text>
+            <Text style={styles.secondaryActionText}>
+              {t('mobile.trips.pause')}
+            </Text>
           </TouchableOpacity>
         </>
       )}
       {trip.status === 'paused' && (
         <PrimaryButton
           busy={busy}
-          label="Resume"
+          label={t('mobile.trips.resume')}
           onPress={() => onMove('active')}
         />
       )}
       {trip.status === 'planned' && (
-        <Text style={styles.waiting}>
-          Waiting for the control room to hand this trip over.
-        </Text>
+        <Text style={styles.waiting}>{t('mobile.trips.waitingHandover')}</Text>
       )}
       {trip.status === 'completed' && (
         <View style={styles.completedRow}>
           <PackageCheck size={14} color={Theme.colors.passable} />
-          <Text style={styles.completedText}>Receipt recorded</Text>
+          <Text style={styles.completedText}>
+            {t('mobile.trips.receiptRecorded')}
+          </Text>
         </View>
       )}
     </MinimalCard>
@@ -298,16 +311,6 @@ function PrimaryButton({
     </TouchableOpacity>
   );
 }
-
-const STATUS_LABEL: Record<Trip['status'], string> = {
-  planned: 'Being planned',
-  awaiting_driver: 'Ready for you',
-  active: 'Running',
-  paused: 'Paused',
-  completed: 'Completed',
-  failed: 'Failed',
-  cancelled: 'Cancelled',
-};
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Theme.colors.bg },

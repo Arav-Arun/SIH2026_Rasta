@@ -13,6 +13,7 @@ import {
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { PackageCheck } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 import { MinimalCard } from '../../components/ui/MinimalCard';
 import {
   type Consignment,
@@ -31,16 +32,11 @@ import {
 import { newUuid } from '../../services/ids';
 import { stopTracking } from '../../services/tracker';
 
-const STATUS_SENTENCE: Record<string, string> = {
-  delivered: 'Everything loaded arrived.',
-  partially_delivered: 'Some of the load is short.',
-  failed: 'Nothing arrived.',
-};
-
 /** Records what actually changed hands at the facility. */
 export default function ReceiptScreen() {
   const { tripId } = useLocalSearchParams<{ tripId: string }>();
   const router = useRouter();
+  const t = useT();
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [consignment, setConsignment] = useState<Consignment | null>(null);
@@ -67,7 +63,7 @@ export default function ReceiptScreen() {
         tripResult.data.trips.find((row) => row.id === tripId) ?? null;
       setTrip(found);
       if (!found) {
-        setError('That trip is not assigned to you.');
+        setError('mobile.delivery.notYourTrip');
         return;
       }
       if (consignmentResult.ok) {
@@ -124,7 +120,7 @@ export default function ReceiptScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Record what arrived' }} />
+      <Stack.Screen options={{ title: t('mobile.delivery.title') }} />
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -141,7 +137,7 @@ export default function ReceiptScreen() {
 
           {error && (
             <View style={styles.errorBox}>
-              <Text style={styles.errorText}>{error}</Text>
+              <Text style={styles.errorText}>{t(error)}</Text>
             </View>
           )}
 
@@ -150,12 +146,10 @@ export default function ReceiptScreen() {
               <MinimalCard style={styles.card}>
                 <Text style={styles.reference}>{consignment.reference}</Text>
                 <Text style={styles.destination}>
-                  {consignment.destination_facility_name ?? 'Destination'}
+                  {consignment.destination_facility_name ??
+                    t('mobile.delivery.destination')}
                 </Text>
-                <Text style={styles.hint}>
-                  Enter what the storekeeper counted. A line left at zero says
-                  nothing arrived for that item.
-                </Text>
+                <Text style={styles.hint}>{t('mobile.delivery.hint')}</Text>
               </MinimalCard>
 
               {items.map((item) => {
@@ -173,7 +167,10 @@ export default function ReceiptScreen() {
                         {item.commodity}
                       </Text>
                       <Text style={styles.ordered}>
-                        Loaded {formatQuantity(item.quantity)} {item.unit}
+                        {t('mobile.delivery.loaded', {
+                          quantity: formatQuantity(item.quantity),
+                          unit: item.unit,
+                        })}
                       </Text>
                     </View>
 
@@ -189,7 +186,9 @@ export default function ReceiptScreen() {
                         keyboardType="decimal-pad"
                         placeholder="0"
                         placeholderTextColor={Theme.colors.textDim}
-                        accessibilityLabel={`Quantity of ${item.commodity} received`}
+                        accessibilityLabel={t('mobile.delivery.quantityLabel', {
+                          commodity: item.commodity,
+                        })}
                         style={[
                           styles.input,
                           parsed.kind === 'invalid' && styles.inputInvalid,
@@ -206,16 +205,18 @@ export default function ReceiptScreen() {
                         accessibilityRole="button"
                         style={styles.allButton}
                       >
-                        <Text style={styles.allButtonText}>All</Text>
+                        <Text style={styles.allButtonText}>
+                          {t('mobile.delivery.all')}
+                        </Text>
                       </TouchableOpacity>
                     </View>
 
                     {parsed.kind === 'invalid' && (
-                      <Text style={styles.lineError}>{parsed.reason}</Text>
+                      <Text style={styles.lineError}>{t(parsed.reason)}</Text>
                     )}
                     {short && (
                       <Text style={styles.lineShort}>
-                        Short of what was loaded
+                        {t('mobile.delivery.short')}
                       </Text>
                     )}
                   </MinimalCard>
@@ -223,19 +224,21 @@ export default function ReceiptScreen() {
               })}
 
               <MinimalCard style={styles.card}>
-                <Text style={styles.label}>Who received it</Text>
+                <Text style={styles.label}>
+                  {t('mobile.delivery.receivedBy')}
+                </Text>
                 <TextInput
                   value={receivedBy}
                   onChangeText={setReceivedBy}
-                  placeholder="Name or post, e.g. PHC storekeeper"
+                  placeholder={t('mobile.delivery.receivedByPlaceholder')}
                   placeholderTextColor={Theme.colors.textDim}
                   style={styles.textField}
                 />
-                <Text style={styles.label}>Notes</Text>
+                <Text style={styles.label}>{t('mobile.delivery.notes')}</Text>
                 <TextInput
                   value={notes}
                   onChangeText={setNotes}
-                  placeholder="Optional"
+                  placeholder={t('mobile.delivery.optional')}
                   placeholderTextColor={Theme.colors.textDim}
                   multiline
                   style={[styles.textField, styles.notesField]}
@@ -247,8 +250,8 @@ export default function ReceiptScreen() {
                   <PackageCheck size={16} color={Theme.colors.telemetry} />
                   <Text style={styles.summaryText}>
                     {everyLineAnswered
-                      ? STATUS_SENTENCE[status]
-                      : 'Enter a quantity for every line.'}
+                      ? t(`mobile.delivery.status.${status}`)
+                      : t('mobile.delivery.everyLine')}
                   </Text>
                 </View>
               </MinimalCard>
@@ -262,7 +265,9 @@ export default function ReceiptScreen() {
                 {saving ? (
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
-                  <Text style={styles.submitText}>Record receipt</Text>
+                  <Text style={styles.submitText}>
+                    {t('mobile.delivery.submit')}
+                  </Text>
                 )}
               </TouchableOpacity>
             </>

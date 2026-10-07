@@ -12,12 +12,14 @@ import {
   Users,
 } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useLocale } from '../../contexts/LocaleContext';
 import { useSession } from '../../contexts/SessionContext';
 import { CrewHeaderBadge } from '../../components/crew/CrewHeaderBadge';
 import { BrandMark } from '../../components/ui/BrandMark';
 
 export default function TabLayout() {
   const { session } = useSession();
+  const { t } = useLocale();
   const insets = useSafeAreaInsets();
 
   // Every tab screen reads the crew session and cannot render without one.
@@ -59,8 +61,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="capture"
         options={{
-          title: 'Capture',
-          headerTitle: 'Report a disruption',
+          title: t('mobile.tabs.capture'),
+          headerTitle: t('mobile.tabs.captureHeader'),
           href: isObserver ? '/capture' : null,
           tabBarIcon: ({ color, size }) => (
             <Camera size={size - 2} color={color} />
@@ -72,7 +74,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Radar',
+          title: t('mobile.tabs.radar'),
           headerTitle: () => <BrandMark />,
           tabBarIcon: ({ color, size }) => (
             <Compass size={size - 2} color={color} />
@@ -84,8 +86,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="routes"
         options={{
-          title: 'Routes',
-          headerTitle: 'Routes',
+          title: t('mobile.tabs.routes'),
+          headerTitle: t('mobile.tabs.routes'),
           href: isObserver ? null : '/routes',
           tabBarIcon: ({ color, size }) => (
             <Route size={size - 2} color={color} />
@@ -97,8 +99,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="trips"
         options={{
-          title: 'Load',
-          headerTitle: 'Your load',
+          title: t('mobile.tabs.load'),
+          headerTitle: t('mobile.tabs.loadHeader'),
           href: isObserver ? null : '/trips',
           tabBarIcon: ({ color, size }) => (
             <Package size={size - 2} color={color} />
@@ -110,8 +112,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="tasks"
         options={{
-          title: 'Tasks',
-          headerTitle: 'Assigned inspections',
+          title: t('mobile.tabs.tasks'),
+          headerTitle: t('mobile.tabs.tasksHeader'),
           href: isObserver ? '/tasks' : null,
           tabBarIcon: ({ color, size }) => (
             <ClipboardList size={size - 2} color={color} />
@@ -122,8 +124,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="crew"
         options={{
-          title: 'Crew',
-          headerTitle: isObserver ? 'Sent from this cab' : 'From your observer',
+          title: t('mobile.tabs.crew'),
+          headerTitle: isObserver
+            ? t('mobile.tabs.crewHeaderObserver')
+            : t('mobile.tabs.crewHeaderDriver'),
           tabBarIcon: ({ color, size }) => (
             <Users size={size - 2} color={color} />
           ),
@@ -133,8 +137,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="sync"
         options={{
-          title: 'Outbox',
-          headerTitle: 'Offline reports',
+          title: t('mobile.tabs.outbox'),
+          headerTitle: t('mobile.tabs.outboxHeader'),
           tabBarIcon: ({ color, size }) => (
             <RefreshCw size={size - 2} color={color} />
           ),
@@ -144,8 +148,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="sos"
         options={{
-          title: 'SOS',
-          headerTitle: 'Emergency help',
+          title: t('mobile.tabs.sos'),
+          headerTitle: t('mobile.tabs.sosHeader'),
           tabBarActiveTintColor: Theme.colors.blocked,
           tabBarIcon: ({ color, size }) => (
             <Siren size={size - 2} color={color} />
@@ -157,8 +161,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="report"
         options={{
-          title: 'Report',
-          headerTitle: 'Report hazard',
+          title: t('mobile.tabs.report'),
+          headerTitle: t('mobile.tabs.reportHeader'),
           href: null,
           tabBarIcon: ({ color, size }) => (
             <AlertTriangle size={size - 2} color={color} />

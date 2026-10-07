@@ -37,7 +37,7 @@ async function request<T>(
       ok: false,
       status: null,
       code: 'no_session',
-      reason: 'Not signed in, so this cannot be sent to the control room.',
+      reason: 'mobile.api.noSession',
     };
   }
 
@@ -72,9 +72,8 @@ async function request<T>(
         ok: false,
         status: response.status,
         code: envelope?.code ?? null,
-        reason:
-          envelope?.message ??
-          `The control room refused this (${response.status}).`,
+        // A catalogue key when the API gave no message; screens translate it.
+        reason: envelope?.message ?? 'mobile.api.refused',
       };
     }
 
@@ -85,9 +84,7 @@ async function request<T>(
       ok: false,
       status: null,
       code: aborted ? 'timeout' : 'network_error',
-      reason: aborted
-        ? 'The control room did not answer in time.'
-        : 'The control room could not be reached.',
+      reason: aborted ? 'mobile.api.timeout' : 'mobile.api.unreachable',
     };
   } finally {
     clearTimeout(timeout);

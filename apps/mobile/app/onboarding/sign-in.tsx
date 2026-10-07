@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AlertTriangle, ArrowLeft } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
 import { CrewRole, VehicleType } from '../../types';
+import { useT } from '../../contexts/LocaleContext';
 import { useSession } from '../../contexts/SessionContext';
 import {
   signInWithCredentials,
@@ -22,20 +23,18 @@ import {
 } from '../../services/session';
 
 /** Without an account there is no server role, so the person says which seat. */
-const SEATS: { id: CrewRole; label: string }[] = [
-  { id: 'driver', label: 'Driver' },
-  { id: 'observer', label: 'Onboard observer' },
-];
+const SEATS: CrewRole[] = ['driver', 'observer'];
 
-const VEHICLES: { id: VehicleType; label: string }[] = [
-  { id: 'suv_4x4', label: 'SUV / 4x4' },
-  { id: 'commercial_6w', label: '6-wheel truck' },
-  { id: 'heavy_freight_12w', label: '12-wheel freight' },
-  { id: 'car_sedan', label: 'Light vehicle' },
+const VEHICLES: VehicleType[] = [
+  'suv_4x4',
+  'commercial_6w',
+  'heavy_freight_12w',
+  'car_sedan',
 ];
 
 export default function SignInScreen() {
   const router = useRouter();
+  const t = useT();
   const { adoptSession } = useSession();
 
   const [email, setEmail] = useState('');
@@ -100,7 +99,7 @@ export default function SignInScreen() {
             onPress={() => router.back()}
             hitSlop={12}
             accessibilityRole="button"
-            accessibilityLabel="Go back"
+            accessibilityLabel={t('mobile.common.back')}
           >
             <ArrowLeft size={20} color={Theme.colors.text} />
           </TouchableOpacity>
@@ -112,45 +111,47 @@ export default function SignInScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <Text style={styles.title}>
-            {localMode ? 'Local-only session' : 'Sign in'}
+            {localMode
+              ? t('mobile.signIn.titleLocal')
+              : t('mobile.signIn.title')}
           </Text>
           <Text style={styles.subtitle}>
             {localMode
-              ? 'Nothing you capture leaves this phone.'
-              : 'Use the account your district issued. Your seat comes from it.'}
+              ? t('mobile.signIn.subtitleLocal')
+              : t('mobile.signIn.subtitle')}
           </Text>
 
           {error && (
             <View style={styles.errorBox}>
               <AlertTriangle size={15} color={Theme.colors.blocked} />
-              <Text style={styles.errorText}>{error}</Text>
+              <Text style={styles.errorText}>{t(error)}</Text>
             </View>
           )}
 
           {localMode ? (
             <>
-              <Text style={styles.label}>Name shown on your reports</Text>
+              <Text style={styles.label}>{t('mobile.signIn.name')}</Text>
               <TextInput
                 style={styles.input}
                 value={displayName}
                 onChangeText={setDisplayName}
-                placeholder="e.g. R. Lyngdoh"
+                placeholder={t('mobile.signIn.namePlaceholder')}
                 placeholderTextColor={Theme.colors.textDim}
                 autoCapitalize="words"
               />
 
-              <Text style={styles.label}>Seat</Text>
+              <Text style={styles.label}>{t('mobile.signIn.seat')}</Text>
               <View style={styles.vehicleGrid}>
                 {SEATS.map((option) => {
-                  const active = seat === option.id;
+                  const active = seat === option;
                   return (
                     <TouchableOpacity
-                      key={option.id}
+                      key={option}
                       style={[
                         styles.vehicleChip,
                         active && styles.vehicleChipActive,
                       ]}
-                      onPress={() => setSeat(option.id)}
+                      onPress={() => setSeat(option)}
                       accessibilityRole="radio"
                       accessibilityState={{ selected: active }}
                     >
@@ -160,7 +161,7 @@ export default function SignInScreen() {
                           active && styles.vehicleChipTextActive,
                         ]}
                       >
-                        {option.label}
+                        {t(`mobile.seat.${option}`)}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -169,7 +170,7 @@ export default function SignInScreen() {
             </>
           ) : (
             <>
-              <Text style={styles.label}>Email</Text>
+              <Text style={styles.label}>{t('mobile.signIn.email')}</Text>
               <TextInput
                 style={styles.input}
                 value={email}
@@ -182,12 +183,12 @@ export default function SignInScreen() {
                 textContentType="emailAddress"
               />
 
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('mobile.signIn.password')}</Text>
               <TextInput
                 style={styles.input}
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Your issued password"
+                placeholder={t('mobile.signIn.passwordPlaceholder')}
                 placeholderTextColor={Theme.colors.textDim}
                 secureTextEntry
                 autoCapitalize="none"
@@ -196,30 +197,30 @@ export default function SignInScreen() {
             </>
           )}
 
-          <Text style={styles.label}>Crew code for this vehicle</Text>
+          <Text style={styles.label}>{t('mobile.signIn.crewCode')}</Text>
           <TextInput
             style={[styles.input, styles.inputMono]}
             value={crewCode}
             onChangeText={setCrewCode}
-            placeholder="e.g. ML-01-AB-1234"
+            placeholder={t('mobile.signIn.crewCodePlaceholder')}
             placeholderTextColor={Theme.colors.textDim}
             autoCapitalize="characters"
             autoCorrect={false}
           />
-          <Text style={styles.hint}>Both seats enter the same code.</Text>
+          <Text style={styles.hint}>{t('mobile.signIn.crewCodeHint')}</Text>
 
-          <Text style={styles.label}>Vehicle</Text>
+          <Text style={styles.label}>{t('mobile.signIn.vehicle')}</Text>
           <View style={styles.vehicleGrid}>
             {VEHICLES.map((vehicle) => {
-              const active = vehicleType === vehicle.id;
+              const active = vehicleType === vehicle;
               return (
                 <TouchableOpacity
-                  key={vehicle.id}
+                  key={vehicle}
                   style={[
                     styles.vehicleChip,
                     active && styles.vehicleChipActive,
                   ]}
-                  onPress={() => setVehicleType(vehicle.id)}
+                  onPress={() => setVehicleType(vehicle)}
                   accessibilityRole="radio"
                   accessibilityState={{ selected: active }}
                 >
@@ -229,7 +230,7 @@ export default function SignInScreen() {
                       active && styles.vehicleChipTextActive,
                     ]}
                   >
-                    {vehicle.label}
+                    {t(`mobile.vehicle.${vehicle}`)}
                   </Text>
                 </TouchableOpacity>
               );
@@ -246,7 +247,9 @@ export default function SignInScreen() {
               <ActivityIndicator color="#FFFFFF" size="small" />
             ) : (
               <Text style={styles.primaryButtonText}>
-                {localMode ? 'Continue' : 'Sign in'}
+                {localMode
+                  ? t('mobile.signIn.continue')
+                  : t('mobile.signIn.submit')}
               </Text>
             )}
           </TouchableOpacity>
@@ -260,15 +263,16 @@ export default function SignInScreen() {
             accessibilityRole="button"
           >
             <Text style={styles.switchModeText}>
-              {localMode ? 'Sign in instead' : 'Try it without an account'}
+              {localMode
+                ? t('mobile.signIn.signInInstead')
+                : t('mobile.signIn.tryLocal')}
             </Text>
           </TouchableOpacity>
 
           {localMode && (
             <View style={styles.localWarning}>
               <Text style={styles.localWarningBody}>
-                Captures will not reach the driver, the control room or the risk
-                model.
+                {t('mobile.signIn.localWarning')}
               </Text>
             </View>
           )}

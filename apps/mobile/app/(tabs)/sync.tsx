@@ -30,16 +30,8 @@ import {
 import { pendingWork } from '../../services/reportOutbox';
 import { MinimalCard } from '../../components/ui/MinimalCard';
 import { TrackerPanel } from '../../components/driver/TrackerPanel';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
-
-const EVIDENCE_LINE: Record<string, string> = {
-  verified: 'Photo verified by the control room',
-  uploaded: 'Photo uploaded; the control room has not checked it yet',
-  not_sent: 'Photo still to be sent',
-  rejected: 'Photo not accepted by the control room',
-  failed: 'Photo not sent',
-  none: 'No photo',
-};
 
 function when(report: HazardReport): string {
   const date = new Date(report.reportedAt);
@@ -54,6 +46,7 @@ function when(report: HazardReport): string {
  */
 export default function SyncScreen() {
   const crew = useCrew();
+  const t = useT();
   const [mode, setMode] = useState<NetworkMode>('online');
   const [reports, setReports] = useState<HazardReport[]>([]);
   const [syncing, setSyncing] = useState<boolean>(false);
@@ -77,21 +70,25 @@ export default function SyncScreen() {
     try {
       const result = await syncOutboxQueue();
       const parts = [
-        `${result.sent} accepted by the control room`,
-        result.waiting ? `${result.waiting} still waiting` : null,
-        result.refused ? `${result.refused} refused` : null,
+        t('mobile.outboxTab.accepted', { count: result.sent }),
+        result.waiting
+          ? t('mobile.outboxTab.stillWaiting', { count: result.waiting })
+          : null,
+        result.refused
+          ? t('mobile.outboxTab.refusedCount', { count: result.refused })
+          : null,
       ].filter(Boolean);
       Alert.alert(
         result.waiting === 0 && result.refused === 0
-          ? 'Outbox sent'
-          : 'Outbox not fully sent',
-        `${parts.join(', ')}.${result.reason && result.waiting ? `\n\n${result.reason}` : ''}`,
+          ? t('mobile.outboxTab.sent')
+          : t('mobile.outboxTab.notFullySent'),
+        `${parts.join(', ')}.${result.reason && result.waiting ? `\n\n${t(result.reason)}` : ''}`,
       );
     } finally {
       setSyncing(false);
       void loadData();
     }
-  }, [loadData]);
+  }, [loadData, t]);
 
   async function toggleHold() {
     const next = mode === 'online' ? 'dead_zone' : 'online';
@@ -107,14 +104,14 @@ export default function SyncScreen() {
 
   function confirmRemove(report: HazardReport) {
     Alert.alert(
-      'Remove this report from the phone?',
+      t('mobile.outboxTab.removeTitle'),
       report.controlRoomIncidentId
-        ? 'The control room keeps its copy. Only this phone forgets it.'
-        : 'It has not reached the control room, so it will be lost.',
+        ? t('mobile.outboxTab.removeKept')
+        : t('mobile.outboxTab.removeLost'),
       [
-        { text: 'Keep', style: 'cancel' },
+        { text: t('mobile.outboxTab.keep'), style: 'cancel' },
         {
-          text: 'Remove',
+          text: t('mobile.outboxTab.remove'),
           style: 'destructive',
           onPress: () => void removeReport(report.id),
         },
@@ -146,7 +143,9 @@ export default function SyncScreen() {
           <View style={styles.holdHeader}>
             <View style={styles.holdTitleRow}>
               <Database size={16} color={Theme.colors.textMuted} />
-              <Text style={styles.holdTitle}>Sending reports</Text>
+              <Text style={styles.holdTitle}>
+                {t('mobile.outboxTab.sendingReports')}
+              </Text>
             </View>
             <Text
               style={[
@@ -154,14 +153,16 @@ export default function SyncScreen() {
                 holding ? styles.holdStateHeld : styles.holdStateSending,
               ]}
             >
-              {holding ? 'On hold' : 'Sending'}
+              {holding
+                ? t('mobile.outboxTab.onHold')
+                : t('mobile.outboxTab.sending')}
             </Text>
           </View>
 
           <Text style={styles.holdText}>
             {holding
-              ? 'New reports stay on this phone until you release the hold.'
-              : 'Reports are sent as soon as they are saved. Anything that could not go is retried every minute while the app is open.'}
+              ? t('mobile.outboxTab.heldText')
+              : t('mobile.outboxTab.sendingText')}
           </Text>
 
           <TouchableOpacity
@@ -176,15 +177,15 @@ export default function SyncScreen() {
             )}
             <Text style={styles.holdButtonText}>
               {holding
-                ? 'Release the hold and send'
-                : 'Hold reports on this phone'}
+                ? t('mobile.outboxTab.release')
+                : t('mobile.outboxTab.hold')}
             </Text>
           </TouchableOpacity>
         </MinimalCard>
 
         <View style={styles.queueHeaderRow}>
           <Text style={styles.sectionHeading}>
-            Waiting to send ({waiting.length})
+            {t('mobile.outboxTab.waitingHeading', { count: waiting.length })}
           </Text>
           {waiting.length > 0 && !holding && (
             <TouchableOpacity
@@ -195,7 +196,9 @@ export default function SyncScreen() {
             >
               <RefreshCw size={13} color="#FFF" />
               <Text style={styles.syncBtnText}>
-                {syncing ? 'Sending…' : 'Send now'}
+                {syncing
+                  ? t('mobile.home.sending')
+                  : t('mobile.tracker.sendNow')}
               </Text>
             </TouchableOpacity>
           )}
@@ -204,7 +207,9 @@ export default function SyncScreen() {
         {waiting.length === 0 ? (
           <View style={styles.emptyOutbox}>
             <CheckCircle2 size={24} color={Theme.colors.passable} />
-            <Text style={styles.emptyTitle}>Nothing waiting</Text>
+            <Text style={styles.emptyTitle}>
+              {t('mobile.outboxTab.nothingWaiting')}
+            </Text>
           </View>
         ) : (
           waiting.map((item) => {
@@ -217,7 +222,7 @@ export default function SyncScreen() {
                 <View style={styles.queueItemTop}>
                   <View style={styles.queueTitleGroup}>
                     <Text style={styles.queueCategory}>
-                      {item.categoryLabel}
+                      {t(`mobile.category.${item.category}`)}
                     </Text>
                     <Text style={styles.queueLoc}>
                       {item.corridorCode}, {item.locationName}
@@ -226,19 +231,21 @@ export default function SyncScreen() {
                   <View style={styles.queuedBadge}>
                     <Clock size={11} color={Theme.colors.caution} />
                     <Text style={styles.queuedBadgeText}>
-                      {photoOnly ? 'PHOTO WAITING' : 'NOT SENT'}
+                      {(photoOnly
+                        ? t('mobile.outboxTab.photoWaiting')
+                        : t('mobile.outboxTab.notSent')
+                      ).toUpperCase()}
                     </Text>
                   </View>
                 </View>
 
                 {photoOnly ? (
                   <Text style={styles.reasonText}>
-                    The report is filed with the control room; its photo is
-                    still to be sent.
+                    {t('mobile.outboxTab.photoOnly')}
                   </Text>
                 ) : null}
                 {reason ? (
-                  <Text style={styles.reasonText}>{reason}</Text>
+                  <Text style={styles.reasonText}>{t(reason)}</Text>
                 ) : null}
                 {item.notes ? (
                   <Text style={styles.queueNotes}>{item.notes}</Text>
@@ -247,8 +254,10 @@ export default function SyncScreen() {
                 <View style={styles.queueFooter}>
                   <Text style={styles.idempText}>
                     {item.filing?.attempts
-                      ? `${item.filing.attempts} attempt(s)`
-                      : 'Not tried yet'}
+                      ? t('mobile.outboxTab.attempts', {
+                          count: item.filing.attempts,
+                        })
+                      : t('mobile.outboxTab.notTried')}
                   </Text>
                   <Text style={styles.queueTime}>{when(item)}</Text>
                 </View>
@@ -265,14 +274,14 @@ export default function SyncScreen() {
                 { marginTop: 20, marginBottom: 10 },
               ]}
             >
-              Refused by the control room ({refused.length})
+              {t('mobile.outboxTab.refusedHeading', { count: refused.length })}
             </Text>
             {refused.map((item) => (
               <MinimalCard key={item.id} style={styles.failedCard}>
                 <View style={styles.queueItemTop}>
                   <View style={styles.queueTitleGroup}>
                     <Text style={styles.queueCategory}>
-                      {item.categoryLabel}
+                      {t(`mobile.category.${item.category}`)}
                     </Text>
                     <Text style={styles.queueLoc}>
                       {item.corridorCode}, {item.locationName}
@@ -280,12 +289,13 @@ export default function SyncScreen() {
                   </View>
                   <View style={styles.failedBadge}>
                     <AlertTriangle size={11} color={Theme.colors.blocked} />
-                    <Text style={styles.failedBadgeText}>REFUSED</Text>
+                    <Text style={styles.failedBadgeText}>
+                      {t('mobile.outboxTab.refusedBadge').toUpperCase()}
+                    </Text>
                   </View>
                 </View>
                 <Text style={styles.reasonText}>
-                  {item.filing?.lastError ??
-                    'The control room did not accept this report.'}
+                  {t(item.filing?.lastError ?? 'mobile.outboxTab.notAccepted')}
                 </Text>
                 <TouchableOpacity
                   style={styles.removeBtn}
@@ -293,7 +303,7 @@ export default function SyncScreen() {
                   accessibilityRole="button"
                 >
                   <Text style={styles.removeBtnText}>
-                    Remove from this phone
+                    {t('mobile.outboxTab.removeFromPhone')}
                   </Text>
                 </TouchableOpacity>
               </MinimalCard>
@@ -304,16 +314,20 @@ export default function SyncScreen() {
         <Text
           style={[styles.sectionHeading, { marginTop: 20, marginBottom: 10 }]}
         >
-          Accepted by the control room ({accepted.length})
+          {t('mobile.outboxTab.acceptedHeading', { count: accepted.length })}
         </Text>
 
         {accepted.slice(0, 5).map((item) => (
           <MinimalCard key={item.id} style={styles.syncedCard}>
             <View style={styles.syncedTop}>
-              <Text style={styles.syncedTitle}>{item.categoryLabel}</Text>
+              <Text style={styles.syncedTitle}>
+                {t(`mobile.category.${item.category}`)}
+              </Text>
               <View style={styles.syncedBadge}>
                 <CheckCircle2 size={11} color={Theme.colors.passable} />
-                <Text style={styles.syncedBadgeText}>FILED</Text>
+                <Text style={styles.syncedBadgeText}>
+                  {t('mobile.outboxTab.filedBadge').toUpperCase()}
+                </Text>
               </View>
             </View>
             <Text style={styles.syncedLoc}>
@@ -322,16 +336,18 @@ export default function SyncScreen() {
             <Text style={styles.syncedDetail}>
               {[
                 item.controlRoomIncidentId
-                  ? `Reference ${item.controlRoomIncidentId.slice(0, 8)}`
+                  ? t('mobile.outboxTab.reference', {
+                      id: item.controlRoomIncidentId.slice(0, 8),
+                    })
                   : null,
-                EVIDENCE_LINE[item.evidenceStatus ?? 'none'],
+                t(`mobile.outboxTab.photo.${item.evidenceStatus ?? 'none'}`),
               ]
                 .filter(Boolean)
                 .join(', ')}
             </Text>
             {item.filing?.evidenceError ? (
               <Text style={styles.syncedDetail}>
-                {item.filing.evidenceError}
+                {t(item.filing.evidenceError)}
               </Text>
             ) : null}
           </MinimalCard>

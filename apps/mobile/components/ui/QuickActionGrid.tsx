@@ -2,32 +2,34 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FileText, Route, Shield, ChevronRight } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 import { MinimalCard } from './MinimalCard';
 
 export function QuickActionGrid() {
   const router = useRouter();
   const crew = useCrew();
+  const t = useT();
 
   const actions = [
     {
       id: 'action-report',
-      title: 'Report a hazard',
-      subtitle: 'Add a photo and location, even offline',
+      title: t('mobile.quick.reportTitle'),
+      subtitle: t('mobile.quick.reportSubtitle'),
       icon: FileText,
       route: '/(tabs)/report',
     },
     {
       id: 'action-routes',
-      title: 'Your route',
-      subtitle: 'The route the control room approved',
+      title: t('mobile.quick.routeTitle'),
+      subtitle: t('mobile.quick.routeSubtitle'),
       icon: Route,
       route: '/(tabs)/routes',
     },
     {
       id: 'action-safehavens',
-      title: 'Get emergency help',
-      subtitle: 'Find support or send an SOS',
+      title: t('mobile.quick.helpTitle'),
+      subtitle: t('mobile.quick.helpSubtitle'),
       icon: Shield,
       route: '/(tabs)/sos',
     },
@@ -35,7 +37,7 @@ export function QuickActionGrid() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionHeader}>For the road</Text>
+      <Text style={styles.sectionHeader}>{t('mobile.quick.heading')}</Text>
       <View style={styles.grid}>
         {/* Only a driver follows a route; an observer's phone has none. */}
         {actions

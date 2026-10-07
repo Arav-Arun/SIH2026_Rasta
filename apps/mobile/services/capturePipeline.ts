@@ -11,6 +11,7 @@ import {
   getNetworkMode,
   sendStoredReport,
 } from './offlineStorage';
+import { message, type Message } from './i18n';
 
 // ---------------------------------------------------------------------------
 // Device capture, real camera, real GPS. Nothing here invents a coordinate or
@@ -41,8 +42,7 @@ export async function captureGpsFix(): Promise<GpsResult> {
       return {
         ok: false,
         permissionDenied: true,
-        reason:
-          'Location permission was refused. A disruption report without a position cannot be placed on the map.',
+        reason: 'mobile.capture.locationRefused',
       };
     }
 
@@ -70,10 +70,7 @@ export async function captureGpsFix(): Promise<GpsResult> {
     return {
       ok: false,
       permissionDenied: false,
-      reason:
-        err instanceof Error
-          ? err.message
-          : 'The device could not obtain a position fix.',
+      reason: err instanceof Error ? err.message : 'mobile.capture.noFix',
     };
   }
 }
@@ -87,8 +84,7 @@ export async function capturePhoto(): Promise<PhotoResult> {
       return {
         ok: false,
         cancelled: false,
-        reason:
-          'Camera permission was refused. Photo evidence is what lets the control room verify this report.',
+        reason: 'mobile.capture.cameraRefused',
       };
     }
 
@@ -99,7 +95,7 @@ export async function capturePhoto(): Promise<PhotoResult> {
     });
 
     if (result.canceled || !result.assets?.length) {
-      return { ok: false, cancelled: true, reason: 'No photo was taken.' };
+      return { ok: false, cancelled: true, reason: 'mobile.capture.noPhoto' };
     }
 
     const asset = result.assets[0];
@@ -114,7 +110,7 @@ export async function capturePhoto(): Promise<PhotoResult> {
       ok: false,
       cancelled: false,
       reason:
-        err instanceof Error ? err.message : 'The camera could not be opened.',
+        err instanceof Error ? err.message : 'mobile.capture.cameraFailed',
     };
   }
 }
@@ -132,14 +128,12 @@ export async function publishObservation(
   capture: ObservationCapture,
   crew: CrewSession,
 ): Promise<{ report: HazardReport; receipt: CaptureDeliveryReceipt }> {
-  const notes: string[] = [];
+  const notes: Message[] = [];
 
   if (capture.latitude === null || capture.longitude === null) {
     // The capture screen does not offer Send without a position; this is the
     // guard behind it. Nothing is saved that could never be filed.
-    throw new Error(
-      'A report needs a position (a GPS fix or a pin) before it can be saved.',
-    );
+    throw new Error('mobile.capture.needsPosition');
   }
 
   const held = (await getNetworkMode()) === 'dead_zone';
@@ -170,15 +164,11 @@ export async function publishObservation(
   };
 
   if (held) {
-    notes.push(
-      'Reports are being held on this phone. It will be sent when you release the hold on the Outbox screen.',
-    );
+    notes.push('mobile.capture.held');
     return { report: saved, receipt };
   }
   if (crew.mode === 'local_only') {
-    notes.push(
-      'Local-only session: this report stays on this device. Sign in to send it to the control room.',
-    );
+    notes.push('mobile.capture.localOnly');
     return { report: saved, receipt };
   }
 
@@ -190,23 +180,25 @@ export async function publishObservation(
 
   if (report.syncStatus === 'queued' || report.syncStatus === 'syncing') {
     notes.push(
-      `Not sent yet${report.filing?.lastError ? `: ${report.filing.lastError}` : '.'} ` +
-        'It stays in the outbox and is tried again automatically.',
+      report.filing?.lastError
+        ? message('mobile.capture.notSentYetBecause', {
+            error: report.filing.lastError,
+          })
+        : 'mobile.capture.notSentYet',
     );
   } else if (report.syncStatus === 'failed') {
     notes.push(
-      `The control room refused this report${
-        report.filing?.lastError ? `: ${report.filing.lastError}` : '.'
-      }`,
+      report.filing?.lastError
+        ? message('mobile.capture.refusedBecause', {
+            error: report.filing.lastError,
+          })
+        : 'mobile.capture.refused',
     );
   }
   if (report.filing?.evidenceError) notes.push(report.filing.evidenceError);
 
   // Risk is not scored here.
-  notes.push(
-    'Risk is scored by the control room, not on this phone, so this report ' +
-      'changes no score until a reviewer has seen it.',
-  );
+  notes.push('mobile.capture.riskNotScoredHere');
 
   return { report, receipt };
 }

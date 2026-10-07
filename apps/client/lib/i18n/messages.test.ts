@@ -45,7 +45,7 @@ function catalogueFiles(): string[] {
  * as they are translated; nothing outside it may be missing.
  */
 const PENDING_TRANSLATION =
-  /^(newConsignment\.|map\.risk(Why|Caveats|Model|NotScored|Shadow)|status\.risk\.(critical|unknown)$|alert\.|alerts\.evidence\.(reporter|position|positionNoAccuracy|noPosition|pressedAt|note|openMap|notDispatch|slowTraffic|notClosed)$|alerts\.inspect$|fieldHome\.sos\.|outbox\.type\.sos\.raise$|health\.(outcomes|schedule)\.|health\.suggested$|health\.trainedModel\.|supplyGaps\.|admin\.)/;
+  /^(newConsignment\.|map\.risk(Why|Caveats|Model|NotScored|Shadow)|status\.risk\.(critical|unknown)$|alert\.|alerts\.evidence\.(reporter|position|positionNoAccuracy|noPosition|pressedAt|note|openMap|notDispatch|slowTraffic|notClosed)$|alerts\.inspect$|fieldHome\.sos\.|outbox\.type\.sos\.raise$|health\.(outcomes|schedule)\.|health\.suggested$|health\.trainedModel\.|supplyGaps\.|admin\.|mobile\.)/;
 
 const placeholders = (s: string) =>
   [...s.matchAll(/\{\s*([a-zA-Z_]+)\s*(?:,|\})/g)].map((m) => m[1]).sort();

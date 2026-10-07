@@ -63,18 +63,16 @@ export async function signInWithCredentials(
   const crewCode = normaliseCrewCode(request.crewCode);
 
   if (!email || !request.password) {
-    return { ok: false, reason: 'Enter both your email and password.' };
+    return { ok: false, reason: 'mobile.session.enterCredentials' };
   }
   if (!SUPABASE_CONFIGURED) {
     return {
       ok: false,
-      reason:
-        'This build has no sign-in service configured (EXPO_PUBLIC_SUPABASE_URL and ' +
-        'EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY). Use a local-only session, or rebuild with them set.',
+      reason: 'mobile.session.notConfigured',
     };
   }
   if (!crewCode) {
-    return { ok: false, reason: 'Enter the crew code for this vehicle.' };
+    return { ok: false, reason: 'mobile.session.enterCrewCode' };
   }
 
   try {
@@ -87,7 +85,7 @@ export async function signInWithCredentials(
       return { ok: false, reason: error.message };
     }
     if (!data.user) {
-      return { ok: false, reason: 'Sign-in returned no user. Try again.' };
+      return { ok: false, reason: 'mobile.session.noUser' };
     }
 
     // The seat is the account's, as the server grants it, never a choice made
@@ -100,9 +98,7 @@ export async function signInWithCredentials(
       await supabase.auth.signOut().catch(() => undefined);
       return {
         ok: false,
-        reason: me.ok
-          ? 'This account is not a driver or field officer account. Use the web control room.'
-          : me.reason,
+        reason: me.ok ? 'mobile.session.wrongAccount' : me.reason,
       };
     }
 
@@ -121,9 +117,7 @@ export async function signInWithCredentials(
     return { ok: true, session };
   } catch (err) {
     const message =
-      err instanceof Error
-        ? err.message
-        : 'Could not reach the sign-in service.';
+      err instanceof Error ? err.message : 'mobile.session.unreachable';
     return { ok: false, reason: message };
   }
 }
@@ -139,10 +133,10 @@ export async function startLocalSession(
   const displayName = request.displayName.trim();
 
   if (!displayName) {
-    return { ok: false, reason: 'Enter the name to show on your reports.' };
+    return { ok: false, reason: 'mobile.session.enterName' };
   }
   if (!crewCode) {
-    return { ok: false, reason: 'Enter the crew code for this vehicle.' };
+    return { ok: false, reason: 'mobile.session.enterCrewCode' };
   }
 
   const session: CrewSession = {

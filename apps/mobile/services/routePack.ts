@@ -2,6 +2,8 @@
  * The route a driver is following, and how much of it can be trusted offline.
  */
 
+import { message, type Message } from './i18n';
+
 export type RoutePackFreshness =
   | 'confirmed_current'
   | 'cached_offline'
@@ -102,24 +104,24 @@ export function formatDistance(metres: number): string {
  * An ETA is a range. A single number would read as a promise about road whose
  * state nobody has observed.
  */
-export function formatEtaRange(range: [number, number] | null): string | null {
+export function formatEtaRange(range: [number, number] | null): Message | null {
   if (!range) return null;
   const [fast, slow] = range;
   const minutes = (seconds: number) => Math.max(1, Math.round(seconds / 60));
   const low = minutes(fast);
   const high = minutes(slow);
-  if (low === high) return `${low} min`;
-  return `${low}–${high} min`;
+  if (low === high) return message('mobile.units.minutes', { count: low });
+  return message('mobile.units.minutesRange', { low, high });
 }
 
-export function formatAge(seconds: number | null): string {
-  if (seconds === null) return 'never';
-  if (seconds < 60) return 'just now';
+export function formatAge(seconds: number | null): Message {
+  if (seconds === null) return 'mobile.age.never';
+  if (seconds < 60) return 'freshness.justNow';
   const minutes = Math.round(seconds / 60);
-  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 60) return message('freshness.minutesAgo', { count: minutes });
   const hours = Math.round(minutes / 60);
-  if (hours < 24) return `${hours} h ago`;
-  return `${Math.round(hours / 24)} d ago`;
+  if (hours < 24) return message('freshness.hoursAgo', { count: hours });
+  return message('freshness.daysAgo', { count: Math.round(hours / 24) });
 }
 
 export type RouteLine = [number, number][];

@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { MapPin } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 
 /**
  * Fallback for when the device cannot produce a fix, no sky view under a ridge,
@@ -20,6 +21,7 @@ export function ManualPositionEntry({
   onSubmit: (position: { latitude: number; longitude: number }) => void;
   onCancel: () => void;
 }) {
+  const t = useT();
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -29,11 +31,11 @@ export function ManualPositionEntry({
     const lon = Number(longitude.trim());
 
     if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
-      setError('Latitude must be a number between -90 and 90.');
+      setError('mobile.manual.badLatitude');
       return;
     }
     if (!Number.isFinite(lon) || lon < -180 || lon > 180) {
-      setError('Longitude must be a number between -180 and 180.');
+      setError('mobile.manual.badLongitude');
       return;
     }
 
@@ -45,15 +47,13 @@ export function ManualPositionEntry({
     <View style={styles.container}>
       <View style={styles.headRow}>
         <MapPin size={15} color={Theme.colors.caution} />
-        <Text style={styles.title}>Enter the position by hand</Text>
+        <Text style={styles.title}>{t('mobile.manual.title')}</Text>
       </View>
-      <Text style={styles.body}>
-        This will be marked as a hand-entered pin, not a device fix.
-      </Text>
+      <Text style={styles.body}>{t('mobile.manual.body')}</Text>
 
       <View style={styles.fieldRow}>
         <View style={styles.field}>
-          <Text style={styles.label}>Latitude</Text>
+          <Text style={styles.label}>{t('mobile.manual.latitude')}</Text>
           <TextInput
             style={styles.input}
             value={latitude}
@@ -61,11 +61,11 @@ export function ManualPositionEntry({
             placeholder="25.5788"
             placeholderTextColor={Theme.colors.textDim}
             keyboardType="numbers-and-punctuation"
-            accessibilityLabel="Latitude"
+            accessibilityLabel={t('mobile.manual.latitude')}
           />
         </View>
         <View style={styles.field}>
-          <Text style={styles.label}>Longitude</Text>
+          <Text style={styles.label}>{t('mobile.manual.longitude')}</Text>
           <TextInput
             style={styles.input}
             value={longitude}
@@ -73,12 +73,12 @@ export function ManualPositionEntry({
             placeholder="91.8933"
             placeholderTextColor={Theme.colors.textDim}
             keyboardType="numbers-and-punctuation"
-            accessibilityLabel="Longitude"
+            accessibilityLabel={t('mobile.manual.longitude')}
           />
         </View>
       </View>
 
-      {error && <Text style={styles.error}>{error}</Text>}
+      {error && <Text style={styles.error}>{t(error)}</Text>}
 
       <View style={styles.actions}>
         <TouchableOpacity
@@ -86,14 +86,14 @@ export function ManualPositionEntry({
           onPress={onCancel}
           accessibilityRole="button"
         >
-          <Text style={styles.cancelText}>Cancel</Text>
+          <Text style={styles.cancelText}>{t('confirm.cancel')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.submit}
           onPress={handleSubmit}
           accessibilityRole="button"
         >
-          <Text style={styles.submitText}>Use this position</Text>
+          <Text style={styles.submitText}>{t('mobile.manual.use')}</Text>
         </TouchableOpacity>
       </View>
     </View>

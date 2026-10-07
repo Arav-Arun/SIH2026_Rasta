@@ -1,3 +1,5 @@
+import type { Message } from '../services/i18n';
+
 export type RiskTier = 'low' | 'moderate' | 'high' | 'critical';
 export type HazardCategory =
   | 'landslide'
@@ -132,8 +134,8 @@ export interface CaptureDeliveryReceipt {
   controlRoomDb: boolean;
   /** How far the photo got. Null when no photo was taken. */
   evidence: EvidenceStatus | null;
-  /** Human-readable reason when a leg did not complete. */
-  notes: string[];
+  /** Why a leg did not complete, as a message the screen translates. */
+  notes: Message[];
 }
 
 export interface ObservationCapture {

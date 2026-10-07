@@ -21,6 +21,7 @@ import {
 import { Theme } from '../../constants/theme';
 import { MinimalCard } from '../../components/ui/MinimalCard';
 import { RouteLineMap } from '../../components/driver/RouteLineMap';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 import {
   acknowledgeRevision,
@@ -40,6 +41,7 @@ import {
 /** The route this driver is following. */
 export default function RoutesScreen() {
   const crew = useCrew();
+  const t = useT();
   const [view, setView] = useState<DriverRouteView | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -87,7 +89,7 @@ export default function RoutesScreen() {
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={Theme.colors.brand} />
-        <Text style={styles.emptyBody}>Reading the route on this device…</Text>
+        <Text style={styles.emptyBody}>{t('mobile.routes.reading')}</Text>
       </View>
     );
   }
@@ -124,8 +126,8 @@ export default function RoutesScreen() {
           <CloudOff size={16} color={Theme.colors.caution} />
           <Text style={styles.offlineText}>
             {view.pack
-              ? `Showing the route saved on this device. ${view.offlineReason}`
-              : view.offlineReason}
+              ? t('mobile.routes.showingSaved', { reason: view.offlineReason })
+              : t(view.offlineReason)}
           </Text>
         </View>
       )}
@@ -146,13 +148,17 @@ export default function RoutesScreen() {
 
       {view.trip && (
         <MinimalCard>
-          <Text style={styles.sectionLabel}>This trip</Text>
+          <Text style={styles.sectionLabel}>{t('mobile.routes.thisTrip')}</Text>
           <Text style={styles.reference}>
             {view.trip.consignment_reference ?? view.trip.consignment_id}
           </Text>
           <Text style={styles.meta}>
-            {view.trip.vehicle_registration ?? 'Vehicle not named'},{' '}
-            {view.trip.status.replace(/_/g, ' ')}
+            {t('mobile.routes.vehicleStatus', {
+              vehicle:
+                view.trip.vehicle_registration ??
+                t('mobile.routes.vehicleUnnamed'),
+              status: t(`mobile.trips.status.${view.trip.status}`),
+            })}
           </Text>
         </MinimalCard>
       )}
@@ -160,36 +166,14 @@ export default function RoutesScreen() {
   );
 }
 
-const FRESHNESS_TEXT: Record<
-  RoutePackFreshness,
-  { label: string; body: string; tone: 'good' | 'warn' | 'bad' }
-> = {
-  confirmed_current: {
-    label: 'Confirmed with the control room',
-    body: 'This is the route the control room has approved.',
-    tone: 'good',
-  },
-  cached_unverified: {
-    label: 'Saved on this device, not just confirmed',
-    body: 'Pull down to check with the control room that it still stands.',
-    tone: 'warn',
-  },
-  cached_offline: {
-    label: 'Saved on this device',
-    body: 'The control room cannot be reached, so this may have changed since.',
-    tone: 'warn',
-  },
-  replaced: {
-    label: 'Replaced by the control room',
-    body: 'Do not follow this route. Contact the control room for the new one.',
-    tone: 'bad',
-  },
-  withdrawn: {
-    label: 'Withdrawn by the control room',
-    body: 'This route was rejected. Contact the control room before setting off.',
-    tone: 'bad',
-  },
-  none: { label: 'No route', body: '', tone: 'warn' },
+/** How far to trust the saved route; the words are mobile.routes.fresh.<state>. */
+const FRESHNESS_TONE: Record<RoutePackFreshness, 'good' | 'warn' | 'bad'> = {
+  confirmed_current: 'good',
+  cached_unverified: 'warn',
+  cached_offline: 'warn',
+  replaced: 'bad',
+  withdrawn: 'bad',
+  none: 'warn',
 };
 
 function RouteCard({
@@ -199,16 +183,17 @@ function RouteCard({
   pack: RoutePack;
   freshness: RoutePackFreshness;
 }) {
-  const state = FRESHNESS_TEXT[freshness];
+  const t = useT();
+  const tone = FRESHNESS_TONE[freshness];
   const eta = formatEtaRange(pack.eta_range_seconds);
-  const verifiedAge = formatAge(secondsSince(pack.verified_at, new Date()));
+  const verifiedAge = t(formatAge(secondsSince(pack.verified_at, new Date())));
 
   return (
     <MinimalCard>
       <View style={styles.cardHead}>
-        <Text style={styles.sectionLabel}>Approved route</Text>
-        <Text style={[styles.badge, styles[`badge_${state.tone}`]]}>
-          {state.label}
+        <Text style={styles.sectionLabel}>{t('mobile.routes.approved')}</Text>
+        <Text style={[styles.badge, styles[`badge_${tone}`]]}>
+          {t(`mobile.routes.fresh.${freshness}.label`)}
         </Text>
       </View>
 
@@ -217,17 +202,21 @@ function RouteCard({
           <Text style={styles.figureValue}>
             {formatDistance(pack.distance_m)}
           </Text>
-          <Text style={styles.figureLabel}>Distance</Text>
+          <Text style={styles.figureLabel}>{t('mobile.routes.distance')}</Text>
         </View>
         <View style={styles.figure}>
           {/* An ETA is a range. A single number would read as a promise about
               road whose state nobody has observed. */}
-          <Text style={styles.figureValue}>{eta ?? 'Not estimated'}</Text>
-          <Text style={styles.figureLabel}>Time on the road</Text>
+          <Text style={styles.figureValue}>
+            {eta ? t(eta) : t('mobile.routes.notEstimated')}
+          </Text>
+          <Text style={styles.figureLabel}>
+            {t('mobile.routes.timeOnRoad')}
+          </Text>
         </View>
         <View style={styles.figure}>
           <Text style={styles.figureValue}>{pack.segment_ids.length}</Text>
-          <Text style={styles.figureLabel}>Road sections</Text>
+          <Text style={styles.figureLabel}>{t('mobile.routes.sections')}</Text>
         </View>
       </View>
 
@@ -237,8 +226,14 @@ function RouteCard({
         <RouteLineMap geometry={pack.geometry} />
       </View>
 
-      <Text style={styles.stateBody}>{state.body}</Text>
-      <Text style={styles.meta}>Last confirmed {verifiedAge}</Text>
+      {freshness === 'none' ? null : (
+        <Text style={styles.stateBody}>
+          {t(`mobile.routes.fresh.${freshness}.body`)}
+        </Text>
+      )}
+      <Text style={styles.meta}>
+        {t('mobile.routes.lastConfirmed', { when: verifiedAge })}
+      </Text>
 
       {pack.recommendation && (
         <View style={styles.reasonBox}>
@@ -252,25 +247,25 @@ function RouteCard({
           <Caveat
             tone="good"
             icon={<CheckCircle2 size={14} color={Theme.colors.passable} />}
-            text={`Avoids ${pack.avoided_closures} confirmed ${
-              pack.avoided_closures === 1 ? 'closure' : 'closures'
-            }.`}
+            text={t('mobile.routes.avoids', { count: pack.avoided_closures })}
           />
         )}
         {pack.unknown_constraints > 0 && (
           <Caveat
             tone="warn"
             icon={<ShieldQuestion size={14} color={Theme.colors.caution} />}
-            text={`${pack.unknown_constraints} limit${
-              pack.unknown_constraints === 1 ? '' : 's'
-            } on this route are unverified. Check them on the ground.`}
+            text={t('mobile.routes.unverifiedLimits', {
+              count: pack.unknown_constraints,
+            })}
           />
         )}
         {pack.segments_without_a_risk_score > 0 && (
           <Caveat
             tone="warn"
             icon={<ShieldQuestion size={14} color={Theme.colors.caution} />}
-            text={`${pack.segments_without_a_risk_score} sections have no risk score recorded. That is unknown, not safe.`}
+            text={t('mobile.routes.noRiskScore', {
+              count: pack.segments_without_a_risk_score,
+            })}
           />
         )}
       </View>
@@ -306,55 +301,45 @@ function RevisionNotice({
   busy: boolean;
   onAccept: () => void;
 }) {
+  const t = useT();
   const eta = formatEtaRange(incoming.eta_range_seconds);
   return (
     <View style={styles.revisionBox}>
       <View style={styles.revisionHead}>
         <AlertTriangle size={16} color={Theme.colors.caution} />
         <Text style={styles.revisionTitle}>
-          The control room changed your route
+          {t('mobile.routes.changedTitle')}
         </Text>
       </View>
       <Text style={styles.revisionBody}>
-        You are still shown the route you were following. The new one is{' '}
-        {formatDistance(incoming.distance_m)}
-        {eta ? ` and about ${eta}` : ''}
+        {eta
+          ? t('mobile.routes.changedBodyEta', {
+              distance: formatDistance(incoming.distance_m),
+              eta: t(eta),
+            })
+          : t('mobile.routes.changedBody', {
+              distance: formatDistance(incoming.distance_m),
+            })}
         {incoming.unknown_constraints > 0
-          ? `, with ${incoming.unknown_constraints} unverified limit${
-              incoming.unknown_constraints === 1 ? '' : 's'
-            }`
+          ? ` ${t('mobile.routes.changedLimits', {
+              count: incoming.unknown_constraints,
+            })}`
           : ''}
-        .
       </Text>
       <TouchableOpacity
         style={[styles.action, busy && styles.actionBusy]}
         disabled={busy}
         onPress={onAccept}
         accessibilityRole="button"
-        accessibilityLabel="Acknowledge the new route and follow it"
+        accessibilityLabel={t('mobile.routes.acknowledgeLabel')}
       >
         <Text style={styles.actionText}>
-          {busy ? 'Saving…' : 'I have read the new route'}
+          {busy ? t('mobile.routes.saving') : t('mobile.routes.readNew')}
         </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const ABSENCE_TEXT: Record<string, { title: string; body: string }> = {
-  no_trip: {
-    title: 'No trip assigned',
-    body: 'A route appears once the control room assigns you a load and approves a route for it.',
-  },
-  no_route_plan: {
-    title: 'No approved route yet',
-    body: 'You have a trip, but the control room has not approved a route for it. You may be dispatched without one; ask them before setting off.',
-  },
-  plan_unreadable: {
-    title: 'The route could not be read',
-    body: 'The control room has a plan for this trip but no chosen route on it. Ask them to approve one.',
-  },
-};
 
 function AbsenceCard({
   absence,
@@ -363,16 +348,19 @@ function AbsenceCard({
   absence: DriverRouteView['absence'];
   localOnly: boolean;
 }) {
-  const text = ABSENCE_TEXT[absence ?? 'no_trip'];
+  const t = useT();
+  const kind = absence ?? 'no_trip';
   return (
     <MinimalCard>
       <View style={styles.empty}>
         <MapPin size={22} color={Theme.colors.textDim} />
-        <Text style={styles.emptyTitle}>{text.title}</Text>
+        <Text style={styles.emptyTitle}>
+          {t(`mobile.routes.absence.${kind}.title`)}
+        </Text>
         <Text style={styles.emptyBody}>
           {localOnly
-            ? 'Sign in with your district account to receive trips and routes.'
-            : text.body}
+            ? t('mobile.routes.signInForRoutes')
+            : t(`mobile.routes.absence.${kind}.body`)}
         </Text>
       </View>
     </MinimalCard>

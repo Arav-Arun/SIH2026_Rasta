@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Check, Clock, Info, X } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 import { CaptureDeliveryReceipt } from '../../types';
 
 interface Props {
@@ -15,41 +16,33 @@ interface Leg {
   detail: string;
 }
 
-const EVIDENCE_DETAIL: Record<string, string> = {
-  verified: 'Checked by the control room and accepted',
-  uploaded: 'Uploaded, but the control room has not checked it yet',
-  rejected: 'The control room rejected it. Retake the photo',
-  failed: 'Upload did not complete',
-  not_sent: 'Not sent',
-  none: 'No photo was taken',
-};
-
 /** States, per destination, whether the capture actually arrived. */
 export function DeliveryReceiptCard({ receipt, onDismiss }: Props) {
+  const t = useT();
   const legs: Leg[] = [
     {
       key: 'localOutbox',
-      label: 'Saved on this device',
+      label: t('mobile.receipt.savedLabel'),
       done: receipt.localOutbox,
-      detail: 'Held in the outbox so it survives a dead zone',
+      detail: t('mobile.receipt.savedDetail'),
     },
     {
       key: 'controlRoomDb',
-      label: 'Filed with the control room',
+      label: t('mobile.receipt.filedLabel'),
       done: receipt.controlRoomDb,
       detail: receipt.controlRoomDb
-        ? 'Waiting in the dispatcher verification queue'
-        : 'Not yet. It stays in the outbox until it is accepted',
+        ? t('mobile.receipt.filedDetail')
+        : t('mobile.receipt.notFiledDetail'),
     },
     ...(receipt.evidence !== null
       ? [
           {
             key: 'evidence',
-            label: 'Photo accepted as evidence',
+            label: t('mobile.receipt.evidenceLabel'),
             // Only a verified photo is evidence. Bytes sitting in the bucket
             // that nobody has checked must not read as a completed step.
             done: receipt.evidence === 'verified',
-            detail: EVIDENCE_DETAIL[receipt.evidence] ?? receipt.evidence,
+            detail: t(`mobile.evidence.status.${receipt.evidence}`),
           },
         ]
       : []),
@@ -66,19 +59,21 @@ export function DeliveryReceiptCard({ receipt, onDismiss }: Props) {
       <View style={styles.head}>
         <View style={styles.headText}>
           <Text style={styles.title}>
-            {allDone ? 'Report received' : 'Report saved on this phone'}
+            {allDone
+              ? t('mobile.receipt.received')
+              : t('mobile.receipt.savedOnPhone')}
           </Text>
           <Text style={styles.subtitle}>
             {allDone
-              ? 'The control room has it. Its review status is below.'
-              : 'It is sent when there is a connection.'}
+              ? t('mobile.receipt.receivedDetail')
+              : t('mobile.receipt.sentLater')}
           </Text>
         </View>
         <TouchableOpacity
           onPress={onDismiss}
           hitSlop={12}
           accessibilityRole="button"
-          accessibilityLabel="Dismiss the delivery receipt"
+          accessibilityLabel={t('mobile.receipt.dismiss')}
         >
           <X size={18} color={Theme.colors.textMuted} />
         </TouchableOpacity>
@@ -113,10 +108,10 @@ export function DeliveryReceiptCard({ receipt, onDismiss }: Props) {
 
       {receipt.notes.length > 0 && (
         <View style={styles.notes}>
-          {receipt.notes.map((note) => (
-            <View key={note} style={styles.noteRow}>
+          {receipt.notes.map((note, index) => (
+            <View key={index} style={styles.noteRow}>
               <Info size={12} color={Theme.colors.textMuted} />
-              <Text style={styles.noteText}>{note}</Text>
+              <Text style={styles.noteText}>{t(note)}</Text>
             </View>
           ))}
         </View>

@@ -34,7 +34,7 @@ export async function readPhotoForUpload(
     if (!response.ok) {
       return {
         ok: false,
-        reason: `Could not read the photo (${response.status}).`,
+        reason: 'mobile.evidence.unreadable',
       };
     }
 
@@ -59,8 +59,7 @@ export async function readPhotoForUpload(
   } catch (err) {
     return {
       ok: false,
-      reason:
-        err instanceof Error ? err.message : 'The photo could not be read.',
+      reason: err instanceof Error ? err.message : 'mobile.evidence.unreadable',
     };
   }
 }

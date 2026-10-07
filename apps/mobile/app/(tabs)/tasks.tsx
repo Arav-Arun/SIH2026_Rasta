@@ -16,6 +16,7 @@ import {
   MapPin,
 } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 import { MinimalCard } from '../../components/ui/MinimalCard';
 import {
@@ -28,6 +29,7 @@ import { newUuid } from '../../services/ids';
 /** The inspections a dispatcher has assigned to this officer. */
 export default function TasksScreen() {
   const crew = useCrew();
+  const t = useT();
   const router = useRouter();
 
   const [tasks, setTasks] = useState<InspectionSummary[] | null>(null);
@@ -73,11 +75,8 @@ export default function TasksScreen() {
     return (
       <View style={styles.centered}>
         <ClipboardList size={26} color={Theme.colors.textDim} />
-        <Text style={styles.emptyTitle}>No assigned tasks</Text>
-        <Text style={styles.emptyBody}>
-          Local-only session. Sign in with your district account to receive
-          inspections from a dispatcher.
-        </Text>
+        <Text style={styles.emptyTitle}>{t('mobile.tasks.noneTitle')}</Text>
+        <Text style={styles.emptyBody}>{t('mobile.tasks.localBody')}</Text>
       </View>
     );
   }
@@ -100,9 +99,9 @@ export default function TasksScreen() {
     >
       {error && (
         <View style={styles.errorBox}>
-          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.errorText}>{t(error)}</Text>
           <TouchableOpacity onPress={load} accessibilityRole="button">
-            <Text style={styles.errorAction}>Try again</Text>
+            <Text style={styles.errorAction}>{t('mobile.home.retry')}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -116,10 +115,10 @@ export default function TasksScreen() {
       {tasks?.length === 0 && (
         <MinimalCard style={styles.empty}>
           <CheckCircle2 size={22} color={Theme.colors.passable} />
-          <Text style={styles.emptyTitle}>Nothing assigned</Text>
-          <Text style={styles.emptyBody}>
-            When a dispatcher assigns you an inspection it appears here.
+          <Text style={styles.emptyTitle}>
+            {t('mobile.tasks.nothingAssigned')}
           </Text>
+          <Text style={styles.emptyBody}>{t('mobile.tasks.nothingBody')}</Text>
         </MinimalCard>
       )}
 
@@ -130,12 +129,16 @@ export default function TasksScreen() {
         return (
           <MinimalCard key={task.id} style={styles.card}>
             <View style={styles.cardHead}>
-              <Text style={styles.status}>{STATUS_LABEL[task.status]}</Text>
+              <Text style={styles.status}>
+                {t(`mobile.tasks.status.${task.status}`)}
+              </Text>
               {task.due_at && (
                 <View style={styles.dueRow}>
                   <Clock size={12} color={Theme.colors.textMuted} />
                   <Text style={styles.due}>
-                    Due {new Date(task.due_at).toLocaleString()}
+                    {t('mobile.tasks.due', {
+                      when: new Date(task.due_at).toLocaleString(),
+                    })}
                   </Text>
                 </View>
               )}
@@ -143,12 +146,17 @@ export default function TasksScreen() {
 
             <Text style={styles.target}>
               {task.target_label ??
-                `${task.target_type} ${task.target_id.slice(0, 8)}`}
+                t('mobile.tasks.targetFallback', {
+                  target: t(`mobile.tasks.target.${task.target_type}`),
+                  id: task.target_id.slice(0, 8),
+                })}
             </Text>
             <View style={styles.targetTypeRow}>
               <MapPin size={12} color={Theme.colors.textMuted} />
               <Text style={styles.targetType}>
-                Inspect this {task.target_type}
+                {t('mobile.tasks.inspectThis', {
+                  target: t(`mobile.tasks.target.${task.target_type}`),
+                })}
               </Text>
             </View>
 
@@ -166,7 +174,7 @@ export default function TasksScreen() {
                 {busy ? (
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
-                  <Text style={styles.actionText}>{next.label}</Text>
+                  <Text style={styles.actionText}>{t(next.label)}</Text>
                 )}
               </TouchableOpacity>
             )}
@@ -178,7 +186,7 @@ export default function TasksScreen() {
                 accessibilityRole="button"
               >
                 <Text style={styles.secondaryActionText}>
-                  Photograph what you found
+                  {t('mobile.tasks.photograph')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -189,16 +197,6 @@ export default function TasksScreen() {
   );
 }
 
-const STATUS_LABEL: Record<InspectionSummary['status'], string> = {
-  assigned: 'Assigned to you',
-  accepted: 'Accepted',
-  in_progress: 'In progress',
-  submitted: 'Submitted for review',
-  reviewed: 'Reviewed',
-  cancelled: 'Cancelled',
-  overdue: 'Overdue',
-};
-
 /** The one transition this officer may make next, or none. */
 function nextAction(
   status: InspectionSummary['status'],
@@ -206,11 +204,11 @@ function nextAction(
   switch (status) {
     case 'assigned':
     case 'overdue':
-      return { action: 'accept', label: 'Accept this task' };
+      return { action: 'accept', label: 'mobile.tasks.accept' };
     case 'accepted':
-      return { action: 'start', label: 'Start' };
+      return { action: 'start', label: 'mobile.tasks.start' };
     case 'in_progress':
-      return { action: 'complete', label: 'Submit for review' };
+      return { action: 'complete', label: 'mobile.tasks.submit' };
     default:
       return null;
   }

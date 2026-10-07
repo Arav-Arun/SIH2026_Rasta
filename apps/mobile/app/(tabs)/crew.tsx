@@ -16,6 +16,7 @@ import {
 } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
 import { HazardReport } from '../../types';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 import {
   getAllHazards,
@@ -29,6 +30,7 @@ import { MinimalCard } from '../../components/ui/MinimalCard';
  */
 export default function CrewScreen() {
   const crew = useCrew();
+  const t = useT();
   const [reports, setReports] = useState<HazardReport[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -61,23 +63,25 @@ export default function CrewScreen() {
       }
     >
       <MinimalCard style={styles.crewCard}>
-        <Text style={styles.crewLabel}>Crew code</Text>
+        <Text style={styles.crewLabel}>{t('mobile.crew.crewCode')}</Text>
         <Text style={styles.crewCode}>{crew.crewCode}</Text>
         <Text style={styles.crewHint}>
           {isObserver
-            ? 'Reports you file are tagged with this code on this phone. They go to the control room, which decides what reaches drivers.'
-            : 'Reports your observer files go to the control room first. If it confirms a problem on your trip, you are alerted on Home.'}
+            ? t('mobile.crewTab.hintObserver')
+            : t('mobile.crewTab.hintDriver')}
         </Text>
       </MinimalCard>
 
       {reports.length === 0 ? (
         <MinimalCard style={styles.empty}>
           <CircleSlash size={22} color={Theme.colors.textDim} />
-          <Text style={styles.emptyTitle}>Nothing yet</Text>
+          <Text style={styles.emptyTitle}>
+            {t('mobile.crewTab.nothingYet')}
+          </Text>
           <Text style={styles.emptyBody}>
             {isObserver
-              ? 'Reports you file will be listed here with what became of each.'
-              : "Reports filed from this phone are listed here. Your observer's reports stay on their phone and go to the control room."}
+              ? t('mobile.crewTab.emptyObserver')
+              : t('mobile.crewTab.emptyDriver')}
           </Text>
         </MinimalCard>
       ) : (
@@ -95,13 +99,15 @@ export default function CrewScreen() {
                 ]}
               >
                 <Text style={styles.severityPillText}>
-                  {report.severity.toUpperCase()}
+                  {t(`mobile.severity.${report.severity}`).toUpperCase()}
                 </Text>
               </View>
               <Text style={styles.corridorTag}>{report.corridorCode}</Text>
             </View>
 
-            <Text style={styles.reportTitle}>{report.categoryLabel}</Text>
+            <Text style={styles.reportTitle}>
+              {t(`mobile.category.${report.category}`)}
+            </Text>
             <Text style={styles.reportLocation}>{report.locationName}</Text>
 
             {report.photoUri && (
@@ -123,14 +129,14 @@ export default function CrewScreen() {
                   <Navigation size={12} color={Theme.colors.textMuted} />
                 )}
                 <Text style={styles.metaText}>
-                  {report.reporterName ?? 'Unattributed'}
                   {report.reporterRole
-                    ? `, ${
-                        report.reporterRole === 'observer'
-                          ? 'observer'
-                          : 'driver'
-                      }`
-                    : ''}
+                    ? t('mobile.crewTab.byRole', {
+                        name:
+                          report.reporterName ??
+                          t('mobile.crewTab.unattributed'),
+                        role: t(`mobile.seat.${report.reporterRole}`),
+                      })
+                    : (report.reporterName ?? t('mobile.crewTab.unattributed'))}
                 </Text>
               </View>
 
@@ -147,7 +153,9 @@ export default function CrewScreen() {
                 <View style={styles.metaRow}>
                   <Crosshair size={12} color={Theme.colors.textMuted} />
                   <Text style={styles.metaText}>
-                    ±{report.accuracyMeters} m GPS accuracy
+                    {t('mobile.crewTab.accuracy', {
+                      metres: report.accuracyMeters,
+                    })}
                   </Text>
                 </View>
               )}
@@ -169,7 +177,7 @@ export default function CrewScreen() {
                     : styles.syncTextQueued,
                 ]}
               >
-                {deliveryLine(report)}
+                {t(deliveryLine(report))}
               </Text>
             </View>
           </MinimalCard>
@@ -182,21 +190,25 @@ export default function CrewScreen() {
 /** What became of a report, from what the API said, never assumed. */
 function deliveryLine(report: HazardReport): string {
   if (report.controlRoomIncidentId) {
-    const photo =
-      report.evidenceStatus === 'verified'
-        ? ', photo verified'
-        : report.evidenceStatus === 'not_sent' ||
-            report.evidenceStatus === 'uploaded'
-          ? ', photo still sending'
-          : report.evidenceStatus === 'rejected' ||
-              report.evidenceStatus === 'failed'
-            ? ', photo not accepted'
-            : '';
-    return `Filed with the control room${photo}`;
+    if (report.evidenceStatus === 'verified') {
+      return 'mobile.crewTab.filedPhotoVerified';
+    }
+    if (
+      report.evidenceStatus === 'not_sent' ||
+      report.evidenceStatus === 'uploaded'
+    ) {
+      return 'mobile.crewTab.filedPhotoSending';
+    }
+    if (
+      report.evidenceStatus === 'rejected' ||
+      report.evidenceStatus === 'failed'
+    ) {
+      return 'mobile.crewTab.filedPhotoRejected';
+    }
+    return 'mobile.crewTab.filed';
   }
-  if (report.syncStatus === 'failed')
-    return 'Refused by the control room. See Outbox';
-  return 'On this phone, not sent yet';
+  if (report.syncStatus === 'failed') return 'mobile.crewTab.refused';
+  return 'mobile.crewTab.notSent';
 }
 
 const styles = StyleSheet.create({

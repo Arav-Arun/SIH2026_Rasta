@@ -24,10 +24,12 @@ import { describeQueue } from '../../services/telemetryQueue';
 import { formatAge, secondsSince } from '../../services/routePack';
 
 /** What the tracker is doing, and what it cannot do. */
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 
 export function TrackerPanel({ compact = false }: { compact?: boolean }) {
   const crew = useCrew();
+  const t = useT();
   const [snapshot, setSnapshot] = useState<TrackerSnapshot | null>(null);
   const [trip, setTrip] = useState<Trip | null>(null);
   const [busy, setBusy] = useState(false);
@@ -80,23 +82,21 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
   return (
     <MinimalCard>
       <View style={styles.head}>
-        <Text style={styles.label}>Position reporting</Text>
+        <Text style={styles.label}>{t('mobile.tracker.heading')}</Text>
         <View style={styles.stateRow}>
           <Radio
             size={13}
             color={running ? Theme.colors.passable : Theme.colors.textDim}
           />
           <Text style={[styles.state, running && styles.stateOn]}>
-            {running ? 'On' : 'Off'}
+            {running ? t('mobile.tracker.on') : t('mobile.tracker.off')}
           </Text>
         </View>
       </View>
 
       {!trackable && (
         <Text style={styles.body}>
-          {trip
-            ? 'This trip has not started, so it is not reporting positions. Start the trip first.'
-            : 'No trip is running, so there is nothing to report positions for.'}
+          {trip ? t('mobile.tracker.notStarted') : t('mobile.tracker.noTrip')}
         </Text>
       )}
 
@@ -104,8 +104,9 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
         <View style={styles.warnBox} accessibilityRole="alert">
           <ShieldAlert size={14} color={Theme.colors.blocked} />
           <Text style={styles.warnText}>
-            {snapshot.message} Open the system settings for this app and allow
-            location, then switch reporting on again.
+            {t('mobile.tracker.permissionHelp', {
+              message: snapshot.message ?? '',
+            })}
           </Text>
         </View>
       )}
@@ -113,7 +114,7 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
       {snapshot.state === 'error' && snapshot.message && (
         <View style={styles.warnBox} accessibilityRole="alert">
           <AlertTriangle size={14} color={Theme.colors.blocked} />
-          <Text style={styles.warnText}>{snapshot.message}</Text>
+          <Text style={styles.warnText}>{t(snapshot.message)}</Text>
         </View>
       )}
 
@@ -121,15 +122,7 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
           location permission, not after. */}
       {!running && trackable && (
         <View style={styles.noteBox}>
-          <Text style={styles.noteText}>
-            While reporting is on, this phone records its position for this trip
-            about every 15 seconds as the vehicle moves, and sends it to the
-            control room so dispatchers can see where the load is and reroute it
-            around closures. The district's dispatchers and state coordinators
-            can see it. It stops when you press Stop, when you record the
-            delivery, or when you sign out. The pilot keeps position history for
-            30 days after a trip ends.
-          </Text>
+          <Text style={styles.noteText}>{t('mobile.tracker.consent')}</Text>
         </View>
       )}
 
@@ -137,8 +130,7 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
       {running && (
         <View style={styles.noteBox}>
           <Text style={styles.noteText}>
-            This build reports only while the app is open and in front. Locking
-            the phone stops reporting until you open it again.
+            {t('mobile.tracker.foregroundOnly')}
           </Text>
         </View>
       )}
@@ -146,30 +138,32 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
       <View style={styles.figures}>
         <View style={styles.figure}>
           <Text style={styles.figureValue}>{stats.queued}</Text>
-          <Text style={styles.figureLabel}>Waiting</Text>
+          <Text style={styles.figureLabel}>{t('mobile.tracker.waiting')}</Text>
         </View>
         <View style={styles.figure}>
           <Text style={styles.figureValue}>{stats.uploaded}</Text>
-          <Text style={styles.figureLabel}>Sent</Text>
+          <Text style={styles.figureLabel}>{t('mobile.tracker.sent')}</Text>
         </View>
         <View style={styles.figure}>
           <Text style={styles.figureValue}>{stats.rejected}</Text>
-          <Text style={styles.figureLabel}>Refused</Text>
+          <Text style={styles.figureLabel}>{t('mobile.tracker.refused')}</Text>
         </View>
       </View>
 
       <Text style={styles.meta}>
-        Last fix {formatAge(secondsSince(snapshot.lastFixAt, new Date()))}, last
-        sent {formatAge(secondsSince(stats.last_upload_at, new Date()))}
+        {t('mobile.tracker.lastFix', {
+          fix: t(formatAge(secondsSince(snapshot.lastFixAt, new Date()))),
+          sent: t(formatAge(secondsSince(stats.last_upload_at, new Date()))),
+        })}
       </Text>
 
       {!compact && (
         <>
-          <Text style={styles.meta}>{describeQueue(stats)}</Text>
+          <Text style={styles.meta}>{describeQueue(stats, t)}</Text>
           {Object.entries(stats.rejected_by_reason).length > 0 && (
             <View style={styles.reasons}>
               <Text style={styles.reasonsLabel}>
-                Refused by the control room
+                {t('mobile.tracker.refusedBy')}
               </Text>
               {Object.entries(stats.rejected_by_reason).map(
                 ([reason, count]) => (
@@ -182,7 +176,9 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
           )}
           {Object.entries(stats.discarded_by_reason).length > 0 && (
             <View style={styles.reasons}>
-              <Text style={styles.reasonsLabel}>Dropped on this phone</Text>
+              <Text style={styles.reasonsLabel}>
+                {t('mobile.tracker.dropped')}
+              </Text>
               {Object.entries(stats.discarded_by_reason).map(
                 ([reason, count]) => (
                   <Text key={reason} style={styles.reasonLine}>
@@ -193,7 +189,7 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
             </View>
           )}
           {stats.last_error && (
-            <Text style={styles.errorLine}>{stats.last_error}</Text>
+            <Text style={styles.errorLine}>{t(stats.last_error)}</Text>
           )}
         </>
       )}
@@ -205,12 +201,14 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
           onPress={toggle}
           accessibilityRole="button"
           accessibilityLabel={
-            running ? 'Stop reporting positions' : 'Start reporting positions'
+            running
+              ? t('mobile.tracker.stopLabel')
+              : t('mobile.tracker.startLabel')
           }
         >
           <Activity size={14} color="#FFFFFF" />
           <Text style={styles.actionText}>
-            {running ? 'Stop' : 'Start reporting'}
+            {running ? t('mobile.tracker.stop') : t('mobile.tracker.start')}
           </Text>
         </TouchableOpacity>
 
@@ -220,10 +218,12 @@ export function TrackerPanel({ compact = false }: { compact?: boolean }) {
             disabled={busy}
             onPress={send}
             accessibilityRole="button"
-            accessibilityLabel="Send waiting positions now"
+            accessibilityLabel={t('mobile.tracker.sendNowLabel')}
           >
             <CloudUpload size={14} color={Theme.colors.brand} />
-            <Text style={styles.secondaryText}>Send now</Text>
+            <Text style={styles.secondaryText}>
+              {t('mobile.tracker.sendNow')}
+            </Text>
           </TouchableOpacity>
         )}
       </View>

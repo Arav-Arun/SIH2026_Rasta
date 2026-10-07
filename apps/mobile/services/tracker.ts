@@ -269,8 +269,7 @@ export async function startTracking(tripId: string): Promise<void> {
   if (!permission.granted) {
     publish({
       state: 'permission_denied',
-      message:
-        'Location permission was refused. Without it this trip cannot report where it is.',
+      message: 'mobile.tracker.permissionRefused',
     });
     return;
   }

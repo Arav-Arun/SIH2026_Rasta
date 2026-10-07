@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Linking,
@@ -26,6 +26,8 @@ import {
   getMe,
 } from '../../services/rastaApi';
 import { flushSos, queueSos, type SosDelivery } from '../../services/sosQueue';
+import { useT } from '../../contexts/LocaleContext';
+import { message as say, translate, type Message } from '../../services/i18n';
 
 type SosState = 'standby' | 'counting_down' | 'dispatched';
 
@@ -34,20 +36,16 @@ type ControlRoomState = SosDelivery | 'sending';
 /** How often a saved SOS is retried while this screen is open. */
 const RETRY_MS = 20_000;
 
-function controlRoomText(state: ControlRoomState): string {
-  if (state === 'sending') return 'Alerting the control room…';
+function controlRoomText(state: ControlRoomState): Message {
+  if (state === 'sending') return 'mobile.sos.alerting';
   if (state.state === 'sent') {
-    if (state.recipients === 0) {
-      return 'The control room has the alert, but nobody is assigned to this district to receive it.';
-    }
-    return state.recipients === 1
-      ? 'Control room alerted: 1 person notified.'
-      : `Control room alerted: ${state.recipients} people notified.`;
+    if (state.recipients === 0) return 'mobile.sos.nobodyAssigned';
+    return say('mobile.sos.alerted', { count: state.recipients });
   }
   if (state.state === 'waiting') {
-    return `Saved on this phone. The control room is alerted as soon as it can be reached. ${state.reason}`;
+    return say('mobile.sos.waiting', { reason: state.reason });
   }
-  return `The control room could not take the alert: ${state.reason} The message to 112 is unaffected.`;
+  return say('mobile.sos.refusedAlert', { reason: state.reason });
 }
 
 /** Time to cancel an accidental tap before the message opens. */
@@ -55,16 +53,10 @@ const COUNTDOWN_SECONDS = 5;
 
 /** Only numbers published nationally are listed. */
 const HELPLINES = [
-  { number: '112', name: 'Emergency response (police, fire, ambulance)' },
-  { number: '108', name: 'Ambulance' },
-  { number: '1070', name: 'State disaster helpline' },
+  { number: '112', name: 'mobile.sos.helpline.emergency' },
+  { number: '108', name: 'mobile.sos.helpline.ambulance' },
+  { number: '1070', name: 'mobile.sos.helpline.disaster' },
 ] as const;
-
-const FACILITY_STATUS: Record<ConnectivityFacility['status'], string> = {
-  reachable: 'Reachable',
-  isolated: 'No route',
-  unknown_coverage: 'Unknown',
-};
 
 function haptic(kind: 'light' | 'medium' | 'heavy' | 'warning' | 'success') {
   if (Platform.OS === 'web') return;
@@ -88,6 +80,7 @@ function haptic(kind: 'light' | 'medium' | 'heavy' | 'warning' | 'success') {
 }
 
 export default function EmergencySosScreen() {
+  const t = useT();
   const [facilities, setFacilities] = useState<ConnectivityFacility[] | null>(
     null,
   );
@@ -138,9 +131,7 @@ export default function EmergencySosScreen() {
       }
       const district = me.data.districts[0];
       if (!district) {
-        setFacilityRefusal(
-          'This account has no district scope, so no facility list applies.',
-        );
+        setFacilityRefusal('mobile.sos.noDistrict');
         return;
       }
       const summary = await getConnectivitySummary(district.id);
@@ -157,6 +148,56 @@ export default function EmergencySosScreen() {
     };
   }, []);
 
+  /** Compose the message a responder will read, from what is actually known. */
+  const openMessage = useCallback(
+    async (alertControlRoom = true) => {
+      haptic('warning');
+      setSosState('dispatched');
+      setMessage(t('mobile.sos.locating'));
+
+      const pressedAt = new Date().toISOString();
+      const gps = await captureGpsFix();
+      const lines = ['RASTA SOS', `TIME: ${new Date().toISOString()}`];
+      if (gps.ok) {
+        lines.push(
+          `POSITION: ${gps.fix.latitude.toFixed(5)}, ${gps.fix.longitude.toFixed(5)}`,
+          gps.fix.accuracyMeters != null
+            ? `ACCURACY: ${Math.round(gps.fix.accuracyMeters)} m`
+            : 'ACCURACY: not reported',
+          `FIX TAKEN: ${gps.fix.takenAt}`,
+        );
+      } else {
+        lines.push(
+          'POSITION: NOT AVAILABLE ON THIS DEVICE',
+          // The message is for responders, so it stays in English.
+          `REASON: ${translate('en', gps.reason)}`,
+          'Describe your location in this message before sending.',
+        );
+      }
+      const body = lines.join('\n');
+      setMessage(body);
+
+      // Opened in the phone's messaging app, not sent silently: the person keeps
+      // the last word on what goes to an emergency number, and can add what the
+      // device cannot know.
+      Linking.openURL(`sms:112?body=${encodeURIComponent(body)}`).catch(() => {
+        Alert.alert(t('mobile.sos.messageReady'), body);
+      });
+
+      // The control room hears at the same time, from the same fix. Opening the
+      // message again does not raise a second alert.
+      if (!alertControlRoom) return;
+      setControlRoom('sending');
+      void queueSos({
+        captured_at: pressedAt,
+        latitude: gps.ok ? gps.fix.latitude : null,
+        longitude: gps.ok ? gps.fix.longitude : null,
+        accuracy_m: gps.ok ? (gps.fix.accuracyMeters ?? null) : null,
+      }).then(setControlRoom);
+    },
+    [t],
+  );
+
   // One tick per second; at zero the message opens.
   useEffect(() => {
     if (sosState !== 'counting_down') return;
@@ -169,7 +210,7 @@ export default function EmergencySosScreen() {
       setCountdown((value) => value - 1);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [sosState, countdown]);
+  }, [sosState, countdown, openMessage]);
 
   function arm() {
     haptic('heavy');
@@ -183,7 +224,7 @@ export default function EmergencySosScreen() {
     haptic('success');
     setSosState('standby');
     setCountdown(COUNTDOWN_SECONDS);
-    setNote('Cancelled. Nothing was sent.');
+    setNote('mobile.sos.cancelled');
   }
 
   function clear() {
@@ -193,62 +234,13 @@ export default function EmergencySosScreen() {
     setNote(null);
   }
 
-  /** Compose the message a responder will read, from what is actually known. */
-  async function openMessage(alertControlRoom = true) {
-    haptic('warning');
-    setSosState('dispatched');
-    setMessage('Getting this phone’s position…');
-
-    const pressedAt = new Date().toISOString();
-    const gps = await captureGpsFix();
-    const lines = ['RASTA SOS', `TIME: ${new Date().toISOString()}`];
-    if (gps.ok) {
-      lines.push(
-        `POSITION: ${gps.fix.latitude.toFixed(5)}, ${gps.fix.longitude.toFixed(5)}`,
-        gps.fix.accuracyMeters != null
-          ? `ACCURACY: ${Math.round(gps.fix.accuracyMeters)} m`
-          : 'ACCURACY: not reported',
-        `FIX TAKEN: ${gps.fix.takenAt}`,
-      );
-    } else {
-      lines.push(
-        'POSITION: NOT AVAILABLE ON THIS DEVICE',
-        `REASON: ${gps.reason}`,
-        'Describe your location in this message before sending.',
-      );
-    }
-    const body = lines.join('\n');
-    setMessage(body);
-
-    // Opened in the phone's messaging app, not sent silently: the person keeps
-    // the last word on what goes to an emergency number, and can add what the
-    // device cannot know.
-    Linking.openURL(`sms:112?body=${encodeURIComponent(body)}`).catch(() => {
-      Alert.alert('Message ready to send', body);
-    });
-
-    // The control room hears at the same time, from the same fix. Opening the
-    // message again does not raise a second alert.
-    if (!alertControlRoom) return;
-    setControlRoom('sending');
-    void queueSos({
-      captured_at: pressedAt,
-      latitude: gps.ok ? gps.fix.latitude : null,
-      longitude: gps.ok ? gps.fix.longitude : null,
-      accuracy_m: gps.ok ? (gps.fix.accuracyMeters ?? null) : null,
-    }).then(setControlRoom);
-  }
-
   const counting = sosState === 'counting_down';
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <MinimalCard>
-        <Text style={styles.cardTitle}>Send an SOS message</Text>
-        <Text style={styles.cardBody}>
-          Opens a text message to 112 with this phone&apos;s position. You check
-          it and send it. The control room is alerted at the same time.
-        </Text>
+        <Text style={styles.cardTitle}>{t('mobile.sos.title')}</Text>
+        <Text style={styles.cardBody}>{t('mobile.sos.body')}</Text>
 
         <View style={styles.buttonArea}>
           <TouchableOpacity
@@ -258,19 +250,21 @@ export default function EmergencySosScreen() {
             accessibilityRole="button"
             accessibilityLabel={
               counting
-                ? `Cancel. The message opens in ${countdown} seconds.`
-                : 'Start an SOS message'
+                ? t('mobile.sos.cancelLabel', { count: countdown })
+                : t('mobile.sos.startLabel')
             }
           >
             {counting ? (
               <>
                 <Text style={styles.countdown}>{countdown}</Text>
-                <Text style={styles.sosHint}>Tap to cancel</Text>
+                <Text style={styles.sosHint}>
+                  {t('mobile.sos.tapToCancel')}
+                </Text>
               </>
             ) : (
               <>
                 <Siren size={32} color="#FFFFFF" />
-                <Text style={styles.sosLabel}>SOS</Text>
+                <Text style={styles.sosLabel}>{t('mobile.tabs.sos')}</Text>
               </>
             )}
           </TouchableOpacity>
@@ -283,28 +277,27 @@ export default function EmergencySosScreen() {
             accessibilityRole="button"
           >
             <XCircle size={16} color={Theme.colors.text} />
-            <Text style={styles.cancelText}>Cancel</Text>
+            <Text style={styles.cancelText}>{t('confirm.cancel')}</Text>
           </TouchableOpacity>
         ) : null}
 
         {note && sosState === 'standby' ? (
           <View style={styles.noteRow}>
             <CheckCircle2 size={14} color={Theme.colors.passable} />
-            <Text style={styles.noteText}>{note}</Text>
+            <Text style={styles.noteText}>{t(note)}</Text>
           </View>
         ) : null}
 
         {sosState === 'dispatched' && message ? (
           <View style={styles.message}>
-            <Text style={styles.messageHeading}>Message for 112</Text>
-            <Text style={styles.messageBody}>{message}</Text>
-            <Text style={styles.caveat}>
-              This phone opened the message for you to send. It cannot confirm
-              that anyone received it.
+            <Text style={styles.messageHeading}>
+              {t('mobile.sos.messageHeading')}
             </Text>
+            <Text style={styles.messageBody}>{message}</Text>
+            <Text style={styles.caveat}>{t('mobile.sos.cannotConfirm')}</Text>
             {controlRoom ? (
               <Text style={styles.caveat} accessibilityLiveRegion="polite">
-                {controlRoomText(controlRoom)}
+                {t(controlRoomText(controlRoom))}
               </Text>
             ) : null}
             <View style={styles.messageActions}>
@@ -314,31 +307,35 @@ export default function EmergencySosScreen() {
                 accessibilityRole="button"
               >
                 <RotateCcw size={14} color={Theme.colors.brand} />
-                <Text style={styles.secondaryText}>Open again</Text>
+                <Text style={styles.secondaryText}>
+                  {t('mobile.sos.openAgain')}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.secondaryButton}
                 onPress={clear}
                 accessibilityRole="button"
               >
-                <Text style={styles.secondaryText}>Done</Text>
+                <Text style={styles.secondaryText}>
+                  {t('mobile.common.done')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
         ) : null}
       </MinimalCard>
 
-      <Text style={styles.sectionTitle}>Helplines</Text>
+      <Text style={styles.sectionTitle}>{t('mobile.sos.helplines')}</Text>
       {HELPLINES.map((line) => (
         <MinimalCard key={line.number} style={styles.row}>
-          <Text style={styles.rowName}>{line.name}</Text>
+          <Text style={styles.rowName}>{t(line.name)}</Text>
           <TouchableOpacity
             style={styles.callButton}
             onPress={() =>
               Linking.openURL(`tel:${line.number}`).catch(() => {})
             }
             accessibilityRole="button"
-            accessibilityLabel={`Call ${line.number}`}
+            accessibilityLabel={t('mobile.sos.call', { number: line.number })}
           >
             <Phone size={14} color="#FFFFFF" />
             <Text style={styles.callText}>{line.number}</Text>
@@ -346,18 +343,16 @@ export default function EmergencySosScreen() {
         </MinimalCard>
       ))}
 
-      <Text style={styles.sectionTitle}>Facilities in this district</Text>
+      <Text style={styles.sectionTitle}>{t('mobile.sos.facilities')}</Text>
       {facilityRefusal ? (
         <MinimalCard>
-          <Text style={styles.rowName}>No facility list</Text>
-          <Text style={styles.rowDetail}>{facilityRefusal}</Text>
+          <Text style={styles.rowName}>{t('mobile.sos.noFacilityList')}</Text>
+          <Text style={styles.rowDetail}>{t(facilityRefusal)}</Text>
         </MinimalCard>
       ) : null}
       {facilities?.length === 0 ? (
         <MinimalCard>
-          <Text style={styles.rowDetail}>
-            No facilities on record for this district.
-          </Text>
+          <Text style={styles.rowDetail}>{t('mobile.sos.noFacilities')}</Text>
         </MinimalCard>
       ) : null}
       {(facilities ?? []).map((facility) => (
@@ -372,14 +367,19 @@ export default function EmergencySosScreen() {
                 facility.status === 'isolated' && styles.statusBlocked,
               ]}
             >
-              {FACILITY_STATUS[facility.status]}
+              {t(`mobile.sos.facility.${facility.status}`)}
             </Text>
           </View>
           <Text style={styles.rowDetail}>
-            {facility.type.replace(/_/g, ' ')}
             {facility.location
-              ? `, ${facility.location.latitude.toFixed(4)}, ${facility.location.longitude.toFixed(4)}`
-              : ', no location on record'}
+              ? t('mobile.sos.facilityAt', {
+                  type: facility.type.replace(/_/g, ' '),
+                  latitude: facility.location.latitude.toFixed(4),
+                  longitude: facility.location.longitude.toFixed(4),
+                })
+              : t('mobile.sos.facilityNoLocation', {
+                  type: facility.type.replace(/_/g, ' '),
+                })}
           </Text>
         </MinimalCard>
       ))}

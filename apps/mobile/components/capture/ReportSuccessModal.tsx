@@ -1,6 +1,7 @@
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CheckCircle2, Clock3 } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 import { CaptureDeliveryReceipt } from '../../types';
 
 interface Props {
@@ -21,6 +22,7 @@ export function ReportSuccessModal({
   onDismiss,
   onGoHome,
 }: Props) {
+  const t = useT();
   if (!visible) return null;
 
   const sent = Boolean(receipt?.controlRoomDb);
@@ -40,21 +42,21 @@ export function ReportSuccessModal({
             color={sent ? Theme.colors.passable : Theme.colors.caution}
           />
           <Text style={styles.title}>
-            {sent ? 'Report sent' : 'Report saved on this phone'}
+            {sent ? t('mobile.receipt.sent') : t('mobile.receipt.savedOnPhone')}
           </Text>
           <Text style={styles.body}>
             {sent
-              ? 'The control room has it. A dispatcher will review it.'
-              : 'It is sent when there is a connection.'}
+              ? t('mobile.receipt.sentDetail')
+              : t('mobile.receipt.sentLater')}
           </Text>
 
           <View style={styles.summary}>
             <View style={styles.row}>
-              <Text style={styles.label}>Hazard</Text>
+              <Text style={styles.label}>{t('mobile.receipt.hazard')}</Text>
               <Text style={styles.value}>{categoryLabel}</Text>
             </View>
             <View style={[styles.row, styles.lastRow]}>
-              <Text style={styles.label}>Corridor</Text>
+              <Text style={styles.label}>{t('mobile.receipt.corridor')}</Text>
               <Text style={styles.value}>{corridorCode}</Text>
             </View>
           </View>
@@ -69,7 +71,9 @@ export function ReportSuccessModal({
                 }}
                 accessibilityRole="button"
               >
-                <Text style={styles.secondaryText}>Home</Text>
+                <Text style={styles.secondaryText}>
+                  {t('mobile.common.home')}
+                </Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
@@ -77,7 +81,7 @@ export function ReportSuccessModal({
               onPress={onDismiss}
               accessibilityRole="button"
             >
-              <Text style={styles.primaryText}>Done</Text>
+              <Text style={styles.primaryText}>{t('mobile.common.done')}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 import { API_BASE_URL } from '../../services/rastaApi';
 import { linesFromGeometry, type RouteLine } from '../../services/routePack';
 
@@ -24,11 +25,8 @@ const OSM_ATTRIBUTION = '© OpenStreetMap contributors';
 /** The page's own address. */
 const PAGE_BASE_URL = `${API_BASE_URL.replace(/\/+$/, '')}/`;
 
-/** Shown in place of the map when Leaflet could not be fetched (no network). */
-const OFFLINE_NOTE =
-  'The map needs a network connection. The route is listed above, road by road.';
-
-function html(lines: RouteLine[]): string {
+/** `offlineNote` is shown in place of the map when Leaflet cannot be fetched. */
+function html(lines: RouteLine[], offlineNote: string): string {
   // GeoJSON is [lng, lat]; Leaflet wants [lat, lng].
   const latLngs = lines.map((line) => line.map(([lng, lat]) => [lat, lng]));
   return `<!doctype html>
@@ -40,7 +38,7 @@ function html(lines: RouteLine[]): string {
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   if (typeof L === 'undefined') {
-    document.body.innerHTML = '<p style="font:14px/1.4 sans-serif;color:${Theme.colors.textMuted};padding:16px;margin:0">' + ${JSON.stringify(OFFLINE_NOTE)} + '</p>';
+    document.body.innerHTML = '<p style="font:14px/1.4 sans-serif;color:${Theme.colors.textMuted};padding:16px;margin:0">' + ${JSON.stringify(offlineNote)} + '</p>';
     throw new Error('leaflet unavailable');
   }
   var lines = ${JSON.stringify(latLngs)};
@@ -62,16 +60,17 @@ function html(lines: RouteLine[]): string {
 }
 
 export function RouteLineMap({ geometry }: { geometry: unknown }) {
+  const t = useT();
   const lines = useMemo(() => linesFromGeometry(geometry), [geometry]);
   if (lines.length === 0) return null;
 
-  const source = html(lines);
+  const source = html(lines, t('mobile.map.offline'));
 
   if (Platform.OS === 'web') {
     return (
       <View style={styles.frame}>
         <iframe
-          title="Approved route"
+          title={t('mobile.map.title')}
           srcDoc={source}
           style={{ border: 'none', width: '100%', height: '100%' }}
         />
@@ -82,10 +81,7 @@ export function RouteLineMap({ geometry }: { geometry: unknown }) {
   if (!NativeWebView) {
     return (
       <View style={[styles.frame, styles.fallback]}>
-        <Text style={styles.fallbackText}>
-          The map cannot be drawn on this device. The road sections and
-          distances above are the route.
-        </Text>
+        <Text style={styles.fallbackText}>{t('mobile.map.unavailable')}</Text>
       </View>
     );
   }

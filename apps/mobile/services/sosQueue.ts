@@ -77,7 +77,7 @@ export async function queueSos(body: SosRequestBody): Promise<SosDelivery> {
   return (
     (await flushSos()) ?? {
       state: 'waiting',
-      reason: 'It is saved on this phone.',
+      reason: 'mobile.sos.savedOnPhone',
     }
   );
 }

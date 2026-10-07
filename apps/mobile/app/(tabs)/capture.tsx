@@ -23,6 +23,7 @@ import {
 } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
 import { CaptureDeliveryReceipt, HazardCategory, RiskTier } from '../../types';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 import {
   GpsFix,
@@ -42,13 +43,13 @@ import {
   saveDraft,
 } from '../../services/reportDraft';
 
-const CATEGORIES: { id: HazardCategory; label: string; icon: LucideIcon }[] = [
-  { id: 'landslide', label: 'Landslide / slurry', icon: Mountain },
-  { id: 'boulder_fall', label: 'Boulder fall', icon: AlertTriangle },
-  { id: 'bridge_overwash', label: 'Bridge overwash', icon: Waves },
-  { id: 'road_crack', label: 'Road sunk / cracked', icon: Hammer },
-  { id: 'flash_flood', label: 'Flash flood', icon: Waves },
-  { id: 'heavy_jam', label: 'Blocked by traffic', icon: AlertTriangle },
+const CATEGORIES: { id: HazardCategory; icon: LucideIcon }[] = [
+  { id: 'landslide', icon: Mountain },
+  { id: 'boulder_fall', icon: AlertTriangle },
+  { id: 'bridge_overwash', icon: Waves },
+  { id: 'road_crack', icon: Hammer },
+  { id: 'flash_flood', icon: Waves },
+  { id: 'heavy_jam', icon: AlertTriangle },
 ];
 
 const CORRIDORS = ['NH-6', 'NH-10', 'NH-29', 'NH-27'];
@@ -56,6 +57,7 @@ const CORRIDORS = ['NH-6', 'NH-10', 'NH-29', 'NH-27'];
 export default function CaptureScreen() {
   const router = useRouter();
   const crew = useCrew();
+  const t = useT();
   const scrollRef = useRef<ScrollView>(null);
 
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -199,14 +201,14 @@ export default function CaptureScreen() {
     setReceipt(null);
     setSendError(null);
     try {
-      const label =
-        CATEGORIES.find((c) => c.id === category)?.label ?? 'Road disruption';
+      const label = t(`mobile.category.${category}`);
 
       const { receipt: delivery } = await publishObservation(
         {
           category,
           categoryLabel: label,
           corridorCode: corridor,
+          // Read by the control room, so it stays in English.
           locationName: landmark.trim() || `${corridor}, landmark not given`,
           severity,
           notes: notes.trim() || undefined,
@@ -237,9 +239,7 @@ export default function CaptureScreen() {
     } catch (err) {
       // Nothing was saved: the draft stays, so nothing typed is lost.
       setSendError(
-        err instanceof Error
-          ? err.message
-          : 'The report could not be saved on this phone.',
+        err instanceof Error ? err.message : 'mobile.report.saveFailed',
       );
     } finally {
       setSending(false);
@@ -255,9 +255,7 @@ export default function CaptureScreen() {
       <ReportSuccessModal
         visible={showSuccessModal}
         receipt={receipt}
-        categoryLabel={
-          CATEGORIES.find((c) => c.id === category)?.label ?? 'Road disruption'
-        }
+        categoryLabel={t(`mobile.category.${category}`)}
         corridorCode={corridor}
         onDismiss={() => {
           setShowSuccessModal(false);
@@ -274,7 +272,7 @@ export default function CaptureScreen() {
         {crew.mode === 'local_only' && (
           <View style={styles.localBanner}>
             <Text style={styles.localBannerText}>
-              Local only. Captures stay on this phone.
+              {t('mobile.captureTab.localBanner')}
             </Text>
           </View>
         )}
@@ -282,7 +280,7 @@ export default function CaptureScreen() {
         {draftRestored && !receipt && (
           <View style={styles.draftBanner}>
             <Text style={styles.draftBannerText}>
-              Unfinished report restored from this device.
+              {t('mobile.captureTab.draftRestored')}
             </Text>
             <TouchableOpacity
               onPress={async () => {
@@ -296,7 +294,9 @@ export default function CaptureScreen() {
               }}
               accessibilityRole="button"
             >
-              <Text style={styles.draftBannerAction}>Start over</Text>
+              <Text style={styles.draftBannerAction}>
+                {t('mobile.captureTab.startOver')}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -309,7 +309,7 @@ export default function CaptureScreen() {
         )}
 
         {/* 1. Photo. The whole report hangs off this, so it leads. */}
-        <Text style={styles.stepLabel}>Photo</Text>
+        <Text style={styles.stepLabel}>{t('mobile.captureTab.photo')}</Text>
 
         {photoUri ? (
           <View style={styles.photoPreviewWrap}>
@@ -321,7 +321,9 @@ export default function CaptureScreen() {
                 accessibilityRole="button"
               >
                 <RefreshCw size={14} color={Theme.colors.text} />
-                <Text style={styles.photoActionText}>Retake</Text>
+                <Text style={styles.photoActionText}>
+                  {t('mobile.report.retake')}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.photoActionBtn}
@@ -335,7 +337,7 @@ export default function CaptureScreen() {
                     { color: Theme.colors.blocked },
                   ]}
                 >
-                  Remove
+                  {t('mobile.captureTab.remove')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -345,43 +347,54 @@ export default function CaptureScreen() {
             style={styles.cameraTile}
             onPress={takePhoto}
             accessibilityRole="button"
-            accessibilityLabel="Open the camera to photograph the disruption"
+            accessibilityLabel={t('mobile.captureTab.cameraLabel')}
           >
             <View style={styles.cameraIconPlate}>
               <Camera size={26} color="#FFFFFF" />
             </View>
-            <Text style={styles.cameraTileTitle}>Take a photo</Text>
+            <Text style={styles.cameraTileTitle}>
+              {t('mobile.report.takeLabel')}
+            </Text>
             <Text style={styles.cameraTileSub}>
-              Required. This is what the control room verifies.
+              {t('mobile.captureTab.photoRequired')}
             </Text>
           </TouchableOpacity>
         )}
 
-        {photoError && <Text style={styles.inlineError}>{photoError}</Text>}
+        {photoError && <Text style={styles.inlineError}>{t(photoError)}</Text>}
 
         {/* 2. Position */}
-        <Text style={styles.stepLabel}>Position</Text>
+        <Text style={styles.stepLabel}>{t('mobile.captureTab.position')}</Text>
         <MinimalCard style={styles.gpsCard}>
           {fix ? (
             <>
               <View style={styles.gpsRow}>
                 <Crosshair size={15} color={Theme.colors.telemetry} />
                 <Text style={styles.gpsCoords}>
-                  {fix.latitude.toFixed(5)}°N, {fix.longitude.toFixed(5)}°E
+                  {t('mobile.captureTab.coordinates', {
+                    latitude: fix.latitude.toFixed(5),
+                    longitude: fix.longitude.toFixed(5),
+                  })}
                 </Text>
               </View>
               <Text style={styles.gpsMeta}>
                 {fix.accuracyMeters !== undefined
-                  ? `±${fix.accuracyMeters} m accuracy`
-                  : 'Accuracy not reported by the device'}
+                  ? t('mobile.captureTab.accuracy', {
+                      metres: fix.accuracyMeters,
+                    })
+                  : t('mobile.captureTab.noAccuracy')}
                 {fix.altitudeMeters !== undefined
-                  ? `, ${fix.altitudeMeters} m altitude`
+                  ? `, ${t('mobile.captureTab.altitude', {
+                      metres: fix.altitudeMeters,
+                    })}`
                   : ''}
               </Text>
               <Text style={styles.gpsMeta}>
                 {positionSource === 'manual_pin'
-                  ? 'Entered by hand, not a device fix'
-                  : `Fix taken ${new Date(fix.takenAt).toLocaleTimeString()}`}
+                  ? t('mobile.captureTab.byHand')
+                  : t('mobile.captureTab.fixTaken', {
+                      time: new Date(fix.takenAt).toLocaleTimeString(),
+                    })}
               </Text>
               <TouchableOpacity
                 style={styles.gpsRefresh}
@@ -389,13 +402,15 @@ export default function CaptureScreen() {
                 accessibilityRole="button"
               >
                 <RefreshCw size={13} color={Theme.colors.telemetry} />
-                <Text style={styles.gpsRefreshText}>Take a new fix</Text>
+                <Text style={styles.gpsRefreshText}>
+                  {t('mobile.captureTab.newFix')}
+                </Text>
               </TouchableOpacity>
             </>
           ) : (
             <>
               <Text style={styles.gpsEmpty}>
-                {gpsError ?? 'No position attached yet.'}
+                {t(gpsError ?? 'mobile.captureTab.noPosition')}
               </Text>
               <TouchableOpacity
                 style={styles.gpsButton}
@@ -408,7 +423,9 @@ export default function CaptureScreen() {
                 ) : (
                   <>
                     <Crosshair size={15} color="#FFFFFF" />
-                    <Text style={styles.gpsButtonText}>Get GPS fix</Text>
+                    <Text style={styles.gpsButtonText}>
+                      {t('mobile.captureTab.getFix')}
+                    </Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -420,7 +437,7 @@ export default function CaptureScreen() {
                   accessibilityRole="button"
                 >
                   <Text style={styles.manualLinkText}>
-                    Enter the position by hand instead
+                    {t('mobile.captureTab.byHandInstead')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -436,7 +453,7 @@ export default function CaptureScreen() {
         </MinimalCard>
 
         {/* 3. What it is */}
-        <Text style={styles.stepLabel}>What is blocking the road</Text>
+        <Text style={styles.stepLabel}>{t('mobile.captureTab.what')}</Text>
         <View style={styles.categoryGrid}>
           {CATEGORIES.map((item) => {
             const Icon = item.icon;
@@ -464,7 +481,7 @@ export default function CaptureScreen() {
                     active && styles.categoryTextActive,
                   ]}
                 >
-                  {item.label}
+                  {t(`mobile.category.${item.id}`)}
                 </Text>
               </TouchableOpacity>
             );
@@ -472,7 +489,7 @@ export default function CaptureScreen() {
         </View>
 
         {/* 4. Where */}
-        <Text style={styles.stepLabel}>Where</Text>
+        <Text style={styles.stepLabel}>{t('mobile.captureTab.where')}</Text>
         <View style={styles.corridorRow}>
           {CORRIDORS.map((code) => {
             const active = corridor === code;
@@ -504,12 +521,12 @@ export default function CaptureScreen() {
           style={styles.input}
           value={landmark}
           onChangeText={setLandmark}
-          placeholder="Nearest landmark or km marker"
+          placeholder={t('mobile.captureTab.landmarkPlaceholder')}
           placeholderTextColor={Theme.colors.textDim}
         />
 
         {/* 5. How bad */}
-        <Text style={styles.stepLabel}>How bad</Text>
+        <Text style={styles.stepLabel}>{t('mobile.captureTab.howBad')}</Text>
         <View style={styles.severityRow}>
           {(['moderate', 'high', 'critical'] as RiskTier[]).map((level) => {
             const active = severity === level;
@@ -535,11 +552,7 @@ export default function CaptureScreen() {
                     active && styles.severityTextActive,
                   ]}
                 >
-                  {level === 'moderate'
-                    ? 'Passable slowly'
-                    : level === 'high'
-                      ? 'Barely passable'
-                      : 'Fully blocked'}
+                  {t(`mobile.captureTab.level.${level}`)}
                 </Text>
               </TouchableOpacity>
             );
@@ -550,7 +563,7 @@ export default function CaptureScreen() {
           style={[styles.input, styles.textArea]}
           value={notes}
           onChangeText={setNotes}
-          placeholder="Anything the driver behind you should know (optional)"
+          placeholder={t('mobile.captureTab.notesPlaceholder')}
           placeholderTextColor={Theme.colors.textDim}
           multiline
           numberOfLines={3}
@@ -576,26 +589,27 @@ export default function CaptureScreen() {
                   !canSend && styles.sendButtonTextDisabled,
                 ]}
               >
-                Send disruption report
+                {t('mobile.captureTab.send')}
               </Text>
             </>
           )}
         </TouchableOpacity>
 
-        {!photoUri && <Text style={styles.sendHint}>Add a photo to send.</Text>}
+        {!photoUri && (
+          <Text style={styles.sendHint}>{t('mobile.captureTab.addPhoto')}</Text>
+        )}
         {photoUri && !fix && (
           <View style={styles.noFixWarning}>
             <AlertTriangle size={14} color={Theme.colors.caution} />
             <Text style={styles.noFixWarningText}>
-              Add a position to send: take a GPS fix, or place a pin by hand.
-              The control room cannot accept a report it cannot place.
+              {t('mobile.captureTab.addPosition')}
             </Text>
           </View>
         )}
         {sendError && (
           <View style={styles.noFixWarning} accessibilityRole="alert">
             <AlertTriangle size={14} color={Theme.colors.blocked} />
-            <Text style={styles.noFixWarningText}>{sendError}</Text>
+            <Text style={styles.noFixWarningText}>{t(sendError)}</Text>
           </View>
         )}
       </ScrollView>

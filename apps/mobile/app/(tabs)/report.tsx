@@ -28,6 +28,7 @@ import {
   captureGpsFix,
   publishObservation,
 } from '../../services/capturePipeline';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 import { MinimalCard } from '../../components/ui/MinimalCard';
 import { ReportSuccessModal } from '../../components/capture/ReportSuccessModal';
@@ -35,6 +36,7 @@ import { ReportSuccessModal } from '../../components/capture/ReportSuccessModal'
 export default function ReportScreen() {
   const router = useRouter();
   const crew = useCrew();
+  const t = useT();
   const scrollRef = useRef<ScrollView>(null);
   const [selectedCategory, setSelectedCategory] =
     useState<HazardCategory>('landslide');
@@ -51,14 +53,13 @@ export default function ReportScreen() {
     null,
   );
 
-  const categories: { id: HazardCategory; label: string; icon: LucideIcon }[] =
-    [
-      { id: 'landslide', label: 'Landslide / Slurry', icon: Mountain },
-      { id: 'boulder_fall', label: 'Boulder Fall', icon: AlertTriangle },
-      { id: 'bridge_overwash', label: 'Bridge Overwash', icon: Waves },
-      { id: 'road_crack', label: 'Road Sunk / Crack', icon: Hammer },
-      { id: 'flash_flood', label: 'Flash Flood', icon: Waves },
-    ];
+  const categories: { id: HazardCategory; icon: LucideIcon }[] = [
+    { id: 'landslide', icon: Mountain },
+    { id: 'boulder_fall', icon: AlertTriangle },
+    { id: 'bridge_overwash', icon: Waves },
+    { id: 'road_crack', icon: Hammer },
+    { id: 'flash_flood', icon: Waves },
+  ];
 
   const corridors = ['NH-6', 'NH-10', 'NH-29', 'NH-27'];
 
@@ -79,15 +80,12 @@ export default function ReportScreen() {
     setSubmittedAlert(null);
 
     try {
-      const catLabel =
-        categories.find((c) => c.id === selectedCategory)?.label ??
-        'Road hazard';
+      const catLabel = t(`mobile.category.${selectedCategory}`);
       const gps = await captureGpsFix();
       if (!gps.ok) {
         Alert.alert(
-          'No position, so nothing was sent',
-          `${gps.reason}\n\nA report without a location cannot be placed on a road. ` +
-            'Move to where a fix is possible, or allow location access, and try again.',
+          t('mobile.report.noPositionTitle'),
+          t('mobile.report.noPositionBody', { reason: gps.reason }),
         );
         return;
       }
@@ -117,10 +115,12 @@ export default function ReportScreen() {
 
       setSubmittedAlert(
         receipt.controlRoomDb
-          ? 'Sent to the control room. A dispatcher will review it.'
+          ? t('mobile.report.sentAlert')
           : mode === 'dead_zone'
-            ? 'Saved on this phone. Release the hold on the Outbox screen to send it.'
-            : `Saved on this phone. ${receipt.notes[0] ?? ''}`.trim(),
+            ? t('mobile.report.heldAlert')
+            : t('mobile.report.savedAlert', {
+                note: receipt.notes[0] ? t(receipt.notes[0]) : '',
+              }).trim(),
       );
 
       setNotes('');
@@ -131,7 +131,7 @@ export default function ReportScreen() {
         scrollRef.current?.scrollTo({ y: 0, animated: true });
       }, 100);
     } catch {
-      Alert.alert('Error', 'The report could not be saved on this phone.');
+      Alert.alert(t('mobile.report.errorTitle'), t('mobile.report.saveFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -142,9 +142,7 @@ export default function ReportScreen() {
       <ReportSuccessModal
         visible={showSuccessModal}
         receipt={lastReceipt}
-        categoryLabel={
-          categories.find((c) => c.id === selectedCategory)?.label ?? 'Hazard'
-        }
+        categoryLabel={t(`mobile.category.${selectedCategory}`)}
         corridorCode={selectedCorridor}
         onDismiss={() => {
           setShowSuccessModal(false);
@@ -169,12 +167,14 @@ export default function ReportScreen() {
               onPress={() => router.push('/(tabs)')}
               accessibilityRole="button"
             >
-              <Text style={styles.viewOnRadarText}>See your reports</Text>
+              <Text style={styles.viewOnRadarText}>
+                {t('mobile.report.seeReports')}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
 
-        <Text style={styles.sectionTitle}>Hazard</Text>
+        <Text style={styles.sectionTitle}>{t('mobile.receipt.hazard')}</Text>
         <View style={styles.categoryGrid}>
           {categories.map((cat) => {
             const isSelected = selectedCategory === cat.id;
@@ -201,14 +201,14 @@ export default function ReportScreen() {
                     isSelected && styles.categoryTextSelected,
                   ]}
                 >
-                  {cat.label}
+                  {t(`mobile.category.${cat.id}`)}
                 </Text>
               </TouchableOpacity>
             );
           })}
         </View>
 
-        <Text style={styles.sectionTitle}>Highway corridor</Text>
+        <Text style={styles.sectionTitle}>{t('mobile.report.corridor')}</Text>
         <View style={styles.corridorRow}>
           {corridors.map((c) => (
             <TouchableOpacity
@@ -236,21 +236,21 @@ export default function ReportScreen() {
           <View style={styles.gpsRow}>
             <MapPin size={14} color={Theme.colors.telemetry} />
             <Text style={styles.gpsCoordText}>
-              The position is read from GPS when you send.
+              {t('mobile.report.gpsOnSend')}
             </Text>
           </View>
 
-          <Text style={styles.inputLabel}>Landmark or km marker</Text>
+          <Text style={styles.inputLabel}>{t('mobile.report.landmark')}</Text>
           <TextInput
             style={styles.textInput}
             value={locationName}
             onChangeText={setLocationName}
-            placeholder="e.g. Mile 32, Ratacherra Border"
+            placeholder={t('mobile.report.landmarkPlaceholder')}
             placeholderTextColor={Theme.colors.textDim}
           />
         </MinimalCard>
 
-        <Text style={styles.sectionTitle}>Severity</Text>
+        <Text style={styles.sectionTitle}>{t('mobile.report.severity')}</Text>
         <View style={styles.severityRow}>
           {(['moderate', 'high', 'critical'] as RiskTier[]).map((lvl) => (
             <TouchableOpacity
@@ -272,7 +272,7 @@ export default function ReportScreen() {
                   severity === lvl && styles.severityBtnTextActive,
                 ]}
               >
-                {lvl.toUpperCase()}
+                {t(`mobile.severity.${lvl}`).toUpperCase()}
               </Text>
             </TouchableOpacity>
           ))}
@@ -283,20 +283,24 @@ export default function ReportScreen() {
         <MinimalCard style={styles.photoCard}>
           <View style={styles.photoRow}>
             <View style={styles.photoInfo}>
-              <Text style={styles.photoTitle}>Photo of what you can see</Text>
+              <Text style={styles.photoTitle}>
+                {t('mobile.report.photoTitle')}
+              </Text>
               <Text style={styles.photoSub}>
                 {photoUri
-                  ? 'Attached. It is uploaded with the report and held privately.'
+                  ? t('mobile.report.photoAttached')
                   : photoRefusal
-                    ? photoRefusal
-                    : 'Optional. A reviewer can act faster on a report they can see.'}
+                    ? t(photoRefusal)
+                    : t('mobile.report.photoOptional')}
               </Text>
             </View>
 
             <TouchableOpacity
               accessibilityRole="button"
               accessibilityLabel={
-                photoUri ? 'Take the photo again' : 'Take a photo'
+                photoUri
+                  ? t('mobile.report.retakeLabel')
+                  : t('mobile.report.takeLabel')
               }
               style={[
                 styles.cameraBtn,
@@ -306,18 +310,20 @@ export default function ReportScreen() {
             >
               <Camera size={18} color="#FFF" />
               <Text style={styles.cameraBtnText}>
-                {photoUri ? 'Retake' : 'Capture'}
+                {photoUri
+                  ? t('mobile.report.retake')
+                  : t('mobile.tabs.capture')}
               </Text>
             </TouchableOpacity>
           </View>
         </MinimalCard>
 
-        <Text style={styles.sectionTitle}>Notes (optional)</Text>
+        <Text style={styles.sectionTitle}>{t('mobile.report.notes')}</Text>
         <TextInput
           style={[styles.textInput, styles.textArea]}
           value={notes}
           onChangeText={setNotes}
-          placeholder="e.g. Excavator working, single file traffic moving slowly..."
+          placeholder={t('mobile.report.notesPlaceholder')}
           placeholderTextColor={Theme.colors.textDim}
           multiline
           numberOfLines={3}
@@ -331,7 +337,7 @@ export default function ReportScreen() {
         >
           <Send size={18} color="#FFF" />
           <Text style={styles.submitBtnText}>
-            {submitting ? 'Saving…' : 'Send report'}
+            {submitting ? t('mobile.routes.saving') : t('mobile.report.send')}
           </Text>
         </TouchableOpacity>
       </ScrollView>

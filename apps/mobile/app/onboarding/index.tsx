@@ -4,31 +4,34 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera, MapPinned, WifiOff } from 'lucide-react-native';
 import { BrandMark } from '../../components/ui/BrandMark';
+import { LanguagePicker } from '../../components/ui/LanguagePicker';
+import { useT } from '../../contexts/LocaleContext';
 import { Theme } from '../../constants/theme';
 
 const PANELS = [
   {
     key: 'map',
-    title: 'Know which roads are open',
-    body: 'Open, restricted and closed roads in the pilot area, each shown with where the information came from and how old it is.',
+    title: 'mobile.onboarding.mapTitle',
+    body: 'mobile.onboarding.mapBody',
     icon: MapPinned,
   },
   {
     key: 'capture',
-    title: 'Two seats, two jobs',
-    body: 'The driver drives. The onboard observer photographs what the road is doing, and it goes to the control room as soon as there is signal.',
+    title: 'mobile.onboarding.captureTitle',
+    body: 'mobile.onboarding.captureBody',
     icon: Camera,
   },
   {
     key: 'offline',
-    title: 'Works without signal',
-    body: 'Reports are held on the phone and sent when the network returns. Nothing is lost in a dead zone.',
+    title: 'mobile.onboarding.offlineTitle',
+    body: 'mobile.onboarding.offlineBody',
     icon: WifiOff,
   },
 ];
 
 export default function OnboardingIntro() {
   const router = useRouter();
+  const t = useT();
   const [index, setIndex] = useState(0);
   const panel = PANELS[index];
   const Icon = panel.icon;
@@ -42,9 +45,9 @@ export default function OnboardingIntro() {
           onPress={() => router.push('/onboarding/sign-in')}
           hitSlop={12}
           accessibilityRole="button"
-          accessibilityLabel="Skip the introduction"
+          accessibilityLabel={t('mobile.onboarding.skipLabel')}
         >
-          <Text style={styles.skip}>Skip</Text>
+          <Text style={styles.skip}>{t('mobile.onboarding.skip')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -53,16 +56,21 @@ export default function OnboardingIntro() {
             on every page whatever the length of the text. */}
         <View style={styles.panel}>
           <Icon size={28} color={Theme.colors.brand} />
-          <Text style={styles.title}>{panel.title}</Text>
-          <Text style={styles.text}>{panel.body}</Text>
+          <Text style={styles.title}>{t(panel.title)}</Text>
+          <Text style={styles.text}>{t(panel.body)}</Text>
         </View>
+        {/* Chosen first, so everything after reads in it. */}
+        {index === 0 ? <LanguagePicker /> : null}
       </View>
 
       <View style={styles.footer}>
         <View
           style={styles.dots}
           accessible
-          accessibilityLabel={`Page ${index + 1} of ${PANELS.length}`}
+          accessibilityLabel={t('mobile.onboarding.page', {
+            page: index + 1,
+            total: PANELS.length,
+          })}
         >
           {PANELS.map((item, i) => (
             <View
@@ -80,7 +88,9 @@ export default function OnboardingIntro() {
           accessibilityRole="button"
         >
           <Text style={styles.buttonText}>
-            {isLast ? 'Get started' : 'Next'}
+            {isLast
+              ? t('mobile.onboarding.getStarted')
+              : t('mobile.onboarding.next')}
           </Text>
         </TouchableOpacity>
       </View>

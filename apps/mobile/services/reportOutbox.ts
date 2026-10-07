@@ -186,7 +186,7 @@ export function classifyStorageFailure(error: unknown): UploadOutcome {
   const reason =
     typeof failure.message === 'string' && failure.message
       ? failure.message
-      : 'The photo upload failed.';
+      : 'mobile.evidence.uploadFailed';
   const status =
     typeof failure.status === 'number'
       ? failure.status
@@ -291,9 +291,7 @@ async function fileReport(
     return withFiling(
       { ...report, syncStatus: 'failed' },
       {
-        lastError:
-          'This report has no position, and the control room cannot accept one without it. ' +
-          'Remove it and report again with a GPS fix or a pin.',
+        lastError: 'mobile.outbox.noPosition',
       },
     );
   }
@@ -345,8 +343,7 @@ async function fileReport(
       { ...accepted, evidenceStatus: 'failed' },
       {
         lastError: null,
-        evidenceError:
-          'The report was filed, but the control room issued no upload path for the photo.',
+        evidenceError: 'mobile.outbox.noUploadPath',
       },
     );
   }
@@ -398,17 +395,13 @@ async function sendEvidence(
   if (!filing.uploaded) {
     const read = await deps.readPhoto(report.photoUri as string);
     if (!read.ok) {
-      return giveUp(
-        `The photo is no longer readable on this phone (${read.reason}).`,
-      );
+      return giveUp('mobile.outbox.photoUnreadable');
     }
     if (
       read.photo.sha256 !== declared.sha256 ||
       read.photo.sizeBytes !== declared.sizeBytes
     ) {
-      return giveUp(
-        'The photo on this phone has changed since the report was filed, so it no longer matches what was declared.',
-      );
+      return giveUp('mobile.outbox.photoChanged');
     }
 
     // A renewal whose answer was lost is replayed, and the replayed path may
@@ -419,10 +412,7 @@ async function sendEvidence(
       RENEW_BEFORE_EXPIRY_MS;
       renewals += 1
     ) {
-      if (renewals === 3)
-        return later(
-          'The control room kept issuing upload paths that had already closed.',
-        );
+      if (renewals === 3) return later('mobile.outbox.pathsClosed');
       const renewed = await deps.addAttachment(
         incidentId,
         {
@@ -444,7 +434,7 @@ async function sendEvidence(
     }
 
     if (declared.sizeBytes > target.maxBytes) {
-      return giveUp('The photo is larger than the control room accepts.');
+      return giveUp('mobile.outbox.photoTooLarge');
     }
 
     const written = await deps.uploadPhoto(target.path, read.photo);
@@ -510,7 +500,7 @@ export async function sendReport(
     return await sendEvidence(report, deps);
   } catch (error) {
     const reason =
-      error instanceof Error ? error.message : 'Sending failed unexpectedly.';
+      error instanceof Error ? error.message : 'mobile.outbox.unexpected';
     return report.syncStatus === 'synced'
       ? withFiling(report, { evidenceError: reason })
       : withFiling({ ...report, syncStatus: 'queued' }, { lastError: reason });
@@ -592,10 +582,7 @@ export function migrateLegacyReports(rows: unknown[]): HazardReport[] {
             : 'legacy',
         ),
         photoDecided: true,
-        lastError: filedWithApi
-          ? null
-          : 'Saved by an earlier version of this app, which did not send it to the control room. ' +
-            'Report it again if it still matters.',
+        lastError: filedWithApi ? null : 'mobile.outbox.legacy',
       },
     });
   }

@@ -1101,5 +1101,573 @@
     "deniedBody": "The server-verified role grants do not allow this route. No data or action has been loaded.",
     "returnToWorkspace": "Return to workspace",
     "offlineNotice": "Offline. Your access was last confirmed {when}. Reports are kept on this device and sent when the connection returns."
+  },
+  "mobile": {
+    "tabs": {
+      "capture": "Capture",
+      "captureHeader": "Report a disruption",
+      "radar": "Radar",
+      "routes": "Routes",
+      "load": "Load",
+      "loadHeader": "Your load",
+      "tasks": "Tasks",
+      "tasksHeader": "Assigned inspections",
+      "crew": "Crew",
+      "crewHeaderObserver": "Sent from this cab",
+      "crewHeaderDriver": "From your observer",
+      "outbox": "Outbox",
+      "outboxHeader": "Offline reports",
+      "sos": "SOS",
+      "sosHeader": "Emergency help",
+      "report": "Report",
+      "reportHeader": "Report hazard"
+    },
+    "language": {
+      "label": "Language",
+      "unreviewed": "Machine-drafted, not yet checked by a native speaker. Some text may be wrong or still in English.",
+      "notTranslated": "The app's own text is not translated into this language yet and is shown in English."
+    },
+    "onboarding": {
+      "mapTitle": "Know which roads are open",
+      "mapBody": "Open, restricted and closed roads in the pilot area, each shown with where the information came from and how old it is.",
+      "captureTitle": "Two seats, two jobs",
+      "captureBody": "The driver drives. The onboard observer photographs what the road is doing, and it goes to the control room as soon as there is signal.",
+      "offlineTitle": "Works without signal",
+      "offlineBody": "Reports are held on the phone and sent when the network returns. Nothing is lost in a dead zone.",
+      "skip": "Skip",
+      "skipLabel": "Skip the introduction",
+      "page": "Page {page} of {total}",
+      "getStarted": "Get started",
+      "next": "Next"
+    },
+    "seat": {
+      "driver": "Driver",
+      "observer": "Onboard observer"
+    },
+    "vehicle": {
+      "suv_4x4": "SUV / 4x4",
+      "commercial_6w": "6-wheel truck",
+      "heavy_freight_12w": "12-wheel freight",
+      "car_sedan": "Light vehicle"
+    },
+    "common": {
+      "back": "Go back",
+      "home": "Home",
+      "done": "Done",
+      "close": "Close"
+    },
+    "signIn": {
+      "titleLocal": "Local-only session",
+      "title": "Sign in",
+      "subtitleLocal": "Nothing you capture leaves this phone.",
+      "subtitle": "Use the account your district issued. Your seat comes from it.",
+      "name": "Name shown on your reports",
+      "namePlaceholder": "e.g. R. Lyngdoh",
+      "seat": "Seat",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Your issued password",
+      "crewCode": "Crew code for this vehicle",
+      "crewCodePlaceholder": "e.g. ML-01-AB-1234",
+      "crewCodeHint": "Both seats enter the same code.",
+      "vehicle": "Vehicle",
+      "continue": "Continue",
+      "submit": "Sign in",
+      "signInInstead": "Sign in instead",
+      "tryLocal": "Try it without an account",
+      "localWarning": "Captures will not reach the driver, the control room or the risk model."
+    },
+    "session": {
+      "enterCredentials": "Enter both your email and password.",
+      "notConfigured": "This build has no sign-in service configured (EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY). Use a local-only session, or rebuild with them set.",
+      "enterCrewCode": "Enter the crew code for this vehicle.",
+      "noUser": "Sign-in returned no user. Try again.",
+      "wrongAccount": "This account is not a driver or field officer account. Use the web control room.",
+      "unreachable": "Could not reach the sign-in service.",
+      "enterName": "Enter the name to show on your reports."
+    },
+    "api": {
+      "noSession": "Not signed in, so this cannot be sent to the control room.",
+      "refused": "The control room refused this.",
+      "timeout": "The control room did not answer in time.",
+      "unreachable": "The control room could not be reached."
+    },
+    "capture": {
+      "locationRefused": "Location permission was refused. A disruption report without a position cannot be placed on the map.",
+      "noFix": "The device could not obtain a position fix.",
+      "cameraRefused": "Camera permission was refused. Photo evidence is what lets the control room verify this report.",
+      "noPhoto": "No photo was taken.",
+      "cameraFailed": "The camera could not be opened.",
+      "needsPosition": "A report needs a position (a GPS fix or a pin) before it can be saved.",
+      "held": "Reports are being held on this phone. It will be sent when you release the hold on the Outbox screen.",
+      "localOnly": "Local-only session: this report stays on this device. Sign in to send it to the control room.",
+      "notSentYet": "Not sent yet. It stays in the outbox and is tried again automatically.",
+      "notSentYetBecause": "Not sent yet: {error} It stays in the outbox and is tried again automatically.",
+      "refused": "The control room refused this report.",
+      "refusedBecause": "The control room refused this report: {error}",
+      "riskNotScoredHere": "Risk is scored by the control room, not on this phone, so this report changes no score until a reviewer has seen it."
+    },
+    "evidence": {
+      "unreadable": "Could not read the photo.",
+      "uploadFailed": "The photo upload failed.",
+      "status": {
+        "verified": "Checked by the control room and accepted",
+        "uploaded": "Uploaded, but the control room has not checked it yet",
+        "rejected": "The control room rejected it. Retake the photo",
+        "failed": "Upload did not complete",
+        "not_sent": "Not sent",
+        "none": "No photo was taken"
+      }
+    },
+    "outbox": {
+      "noPosition": "This report has no position, and the control room cannot accept one without it. Remove it and report again with a GPS fix or a pin.",
+      "noUploadPath": "The report was filed, but the control room issued no upload path for the photo.",
+      "photoUnreadable": "The photo is no longer readable on this phone.",
+      "photoChanged": "The photo on this phone has changed since the report was filed, so it no longer matches what was declared.",
+      "pathsClosed": "The control room kept issuing upload paths that had already closed.",
+      "photoTooLarge": "The photo is larger than the control room accepts.",
+      "unexpected": "Sending failed unexpectedly.",
+      "legacy": "Saved by an earlier version of this app, which did not send it to the control room. Report it again if it still matters."
+    },
+    "queue": {
+      "nothingWaiting": "Nothing waiting to send",
+      "waiting": "{count} waiting to send",
+      "sent": "{count} sent",
+      "refused": "{count} refused",
+      "dropped": "{count} dropped for space"
+    },
+    "tracker": {
+      "permissionRefused": "Location permission was refused. Without it this trip cannot report where it is.",
+      "heading": "Position reporting",
+      "on": "On",
+      "off": "Off",
+      "notStarted": "This trip has not started, so it is not reporting positions. Start the trip first.",
+      "noTrip": "No trip is running, so there is nothing to report positions for.",
+      "permissionHelp": "{message} Open the system settings for this app and allow location, then switch reporting on again.",
+      "consent": "While reporting is on, this phone records its position for this trip about every 15 seconds as the vehicle moves, and sends it to the control room so dispatchers can see where the load is and reroute it around closures. The district's dispatchers and state coordinators can see it. It stops when you press Stop, when you record the delivery, or when you sign out. The pilot keeps position history for 30 days after a trip ends.",
+      "foregroundOnly": "This build reports only while the app is open and in front. Locking the phone stops reporting until you open it again.",
+      "waiting": "Waiting",
+      "sent": "Sent",
+      "refused": "Refused",
+      "lastFix": "Last fix {fix}, last sent {sent}",
+      "refusedBy": "Refused by the control room",
+      "dropped": "Dropped on this phone",
+      "stopLabel": "Stop reporting positions",
+      "startLabel": "Start reporting positions",
+      "stop": "Stop",
+      "start": "Start reporting",
+      "sendNowLabel": "Send waiting positions now",
+      "sendNow": "Send now"
+    },
+    "sos": {
+      "savedOnPhone": "It is saved on this phone.",
+      "alerting": "Alerting the control room…",
+      "nobodyAssigned": "The control room has the alert, but nobody is assigned to this district to receive it.",
+      "alerted": "{count, plural, one {Control room alerted: # person notified.} other {Control room alerted: # people notified.}}",
+      "waiting": "Saved on this phone. The control room is alerted as soon as it can be reached. {reason}",
+      "refusedAlert": "The control room could not take the alert: {reason} The message to 112 is unaffected.",
+      "helpline": {
+        "emergency": "Emergency response (police, fire, ambulance)",
+        "ambulance": "Ambulance",
+        "disaster": "State disaster helpline"
+      },
+      "facility": {
+        "reachable": "Reachable",
+        "isolated": "No route",
+        "unknown_coverage": "Unknown"
+      },
+      "noDistrict": "This account has no district scope, so no facility list applies.",
+      "cancelled": "Cancelled. Nothing was sent.",
+      "locating": "Getting this phone’s position…",
+      "messageReady": "Message ready to send",
+      "title": "Send an SOS message",
+      "body": "Opens a text message to 112 with this phone's position. You check it and send it. The control room is alerted at the same time.",
+      "cancelLabel": "Cancel. The message opens in {count} seconds.",
+      "startLabel": "Start an SOS message",
+      "tapToCancel": "Tap to cancel",
+      "messageHeading": "Message for 112",
+      "cannotConfirm": "This phone opened the message for you to send. It cannot confirm that anyone received it.",
+      "openAgain": "Open again",
+      "helplines": "Helplines",
+      "call": "Call {number}",
+      "facilities": "Facilities in this district",
+      "noFacilityList": "No facility list",
+      "noFacilities": "No facilities on record for this district.",
+      "facilityAt": "{type}, {latitude}, {longitude}",
+      "facilityNoLocation": "{type}, no location on record"
+    },
+    "quantity": {
+      "invalid": "Enter a number, up to three decimals.",
+      "moreThanLoaded": "More than the {quantity} {unit} loaded."
+    },
+    "receipt": {
+      "savedLabel": "Saved on this device",
+      "savedDetail": "Held in the outbox so it survives a dead zone",
+      "filedLabel": "Filed with the control room",
+      "filedDetail": "Waiting in the dispatcher verification queue",
+      "notFiledDetail": "Not yet. It stays in the outbox until it is accepted",
+      "evidenceLabel": "Photo accepted as evidence",
+      "received": "Report received",
+      "savedOnPhone": "Report saved on this phone",
+      "receivedDetail": "The control room has it. Its review status is below.",
+      "sentLater": "It is sent when there is a connection.",
+      "dismiss": "Dismiss the delivery receipt",
+      "sent": "Report sent",
+      "sentDetail": "The control room has it. A dispatcher will review it.",
+      "hazard": "Hazard",
+      "corridor": "Corridor"
+    },
+    "age": {
+      "never": "never"
+    },
+    "manual": {
+      "badLatitude": "Latitude must be a number between -90 and 90.",
+      "badLongitude": "Longitude must be a number between -180 and 180.",
+      "title": "Enter the position by hand",
+      "body": "This will be marked as a hand-entered pin, not a device fix.",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "use": "Use this position"
+    },
+    "crew": {
+      "badgeLabel": "Signed in as {name}, {seat}. Open crew options.",
+      "observerShort": "Observer",
+      "sessionTitle": "Crew session",
+      "name": "Name",
+      "seat": "Seat",
+      "crewCode": "Crew code",
+      "session": "Session",
+      "localOnly": "Local-only",
+      "signedIn": "Signed in",
+      "localNote": "Captures stay on this phone. They do not reach the driver, the control room or the risk model.",
+      "reports": "{count, plural, one {# report} other {# reports}}",
+      "positions": "{count, plural, one {# trip position} other {# trip positions}}",
+      "listAnd": "{first} and {second}",
+      "unsentTitle": "Not everything has been sent",
+      "unsentBody": "{items} on this phone {count, plural, one {has} other {have}} not reached the control room. Signing out stops tracking and deletes {count, plural, one {it} other {them}} from this phone.",
+      "staySignedIn": "Stay signed in",
+      "deleteAndSignOut": "Delete and sign out",
+      "signOut": "Sign out"
+    },
+    "map": {
+      "offline": "The map needs a network connection. The route is listed above, road by road.",
+      "title": "Approved route",
+      "unavailable": "The map cannot be drawn on this device. The road sections and distances above are the route."
+    },
+    "notFound": {
+      "title": "Not found",
+      "body": "This screen does not exist.",
+      "home": "Go to the home screen"
+    },
+    "quick": {
+      "reportTitle": "Report a hazard",
+      "reportSubtitle": "Add a photo and location, even offline",
+      "routeTitle": "Your route",
+      "routeSubtitle": "The route the control room approved",
+      "helpTitle": "Get emergency help",
+      "helpSubtitle": "Find support or send an SOS",
+      "heading": "For the road"
+    },
+    "delivery": {
+      "status": {
+        "delivered": "Everything loaded arrived.",
+        "partially_delivered": "Some of the load is short.",
+        "failed": "Nothing arrived."
+      },
+      "notYourTrip": "That trip is not assigned to you.",
+      "title": "Record what arrived",
+      "destination": "Destination",
+      "hint": "Enter what the storekeeper counted. A line left at zero says nothing arrived for that item.",
+      "loaded": "Loaded {quantity} {unit}",
+      "quantityLabel": "Quantity of {commodity} received",
+      "all": "All",
+      "short": "Short of what was loaded",
+      "receivedBy": "Who received it",
+      "receivedByPlaceholder": "Name or post, e.g. PHC storekeeper",
+      "notes": "Notes",
+      "optional": "Optional",
+      "everyLine": "Enter a quantity for every line.",
+      "submit": "Record receipt"
+    },
+    "home": {
+      "state": {
+        "refused": "refused",
+        "filedPhotoSending": "filed, photo sending",
+        "filed": "filed",
+        "notSent": "not sent yet"
+      },
+      "detail": {
+        "newRouteFor": "{reference}: a new route has to be approved before you continue.",
+        "newRoute": "A new route has to be approved before you continue.",
+        "noRouteTo": "No route found to {name}.",
+        "segments": "{count, plural, one {# road segment affected.} other {# road segments affected.}}"
+      },
+      "title": "Report what you can see",
+      "localNotice": "Local-only session. Reports stay on this phone. Sign in with your district account to receive alerts and send reports.",
+      "offlineTitle": "No connection to the control room",
+      "nothingShown": "Nothing is shown",
+      "keptOnPhone": "Reports you file are kept on this phone and sent when a connection returns.",
+      "retryLabel": "Try to reach the control room again",
+      "retry": "Try again",
+      "alertsHeading": "Alerts for you",
+      "unread": "{unread} unread of {total}",
+      "loadingAlerts": "Loading alerts…",
+      "noAlerts": "No alerts",
+      "expired": "Past its validity window. Kept visible so a stale inbox looks stale.",
+      "acknowledgedAgo": "You acknowledged this {when}",
+      "acknowledgeLabel": "Acknowledge {title}",
+      "sending": "Sending…",
+      "yourReports": "Your reports",
+      "waiting": "{count} waiting to send",
+      "filed": "{count} filed",
+      "noReports": "No reports from this phone yet.",
+      "savedWhileHeld": "Saved while reports were being held."
+    },
+    "category": {
+      "landslide": "Landslide / slurry",
+      "boulder_fall": "Boulder fall",
+      "bridge_overwash": "Bridge overwash",
+      "road_crack": "Road sunk / cracked",
+      "flash_flood": "Flash flood",
+      "heavy_jam": "Blocked by traffic"
+    },
+    "severity": {
+      "low": "Low",
+      "moderate": "Moderate",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "crewTab": {
+      "hintObserver": "Reports you file are tagged with this code on this phone. They go to the control room, which decides what reaches drivers.",
+      "hintDriver": "Reports your observer files go to the control room first. If it confirms a problem on your trip, you are alerted on Home.",
+      "nothingYet": "Nothing yet",
+      "emptyObserver": "Reports you file will be listed here with what became of each.",
+      "emptyDriver": "Reports filed from this phone are listed here. Your observer's reports stay on their phone and go to the control room.",
+      "unattributed": "Unattributed",
+      "byRole": "{name}, {role}",
+      "accuracy": "±{metres} m GPS accuracy",
+      "filed": "Filed with the control room",
+      "filedPhotoVerified": "Filed with the control room, photo verified",
+      "filedPhotoSending": "Filed with the control room, photo still sending",
+      "filedPhotoRejected": "Filed with the control room, photo not accepted",
+      "refused": "Refused by the control room. See Outbox",
+      "notSent": "On this phone, not sent yet"
+    },
+    "tasks": {
+      "noneTitle": "No assigned tasks",
+      "localBody": "Local-only session. Sign in with your district account to receive inspections from a dispatcher.",
+      "nothingAssigned": "Nothing assigned",
+      "nothingBody": "When a dispatcher assigns you an inspection it appears here.",
+      "due": "Due {when}",
+      "target": {
+        "incident": "reported incident",
+        "segment": "road section",
+        "bridge": "bridge",
+        "facility": "facility"
+      },
+      "targetFallback": "{target} {id}",
+      "inspectThis": "Inspect this {target}",
+      "photograph": "Photograph what you found",
+      "status": {
+        "assigned": "Assigned to you",
+        "accepted": "Accepted",
+        "in_progress": "In progress",
+        "submitted": "Submitted for review",
+        "reviewed": "Reviewed",
+        "cancelled": "Cancelled",
+        "overdue": "Overdue"
+      },
+      "accept": "Accept this task",
+      "start": "Start",
+      "submit": "Submit for review"
+    },
+    "trips": {
+      "noLoad": "No load assigned",
+      "signInForLoads": "Sign in with your district account to receive loads.",
+      "noLoadBody": "When a dispatcher assigns you a vehicle and a consignment it appears here.",
+      "finished": "Finished",
+      "consignment": "Consignment",
+      "origin": "Origin",
+      "quantity": "{quantity} {unit}",
+      "start": "Start trip",
+      "pause": "Pause",
+      "resume": "Resume",
+      "waitingHandover": "Waiting for the control room to hand this trip over.",
+      "receiptRecorded": "Receipt recorded",
+      "status": {
+        "planned": "Being planned",
+        "awaiting_driver": "Ready for you",
+        "active": "Running",
+        "paused": "Paused",
+        "completed": "Completed",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      }
+    },
+    "outboxTab": {
+      "photo": {
+        "verified": "Photo verified by the control room",
+        "uploaded": "Photo uploaded; the control room has not checked it yet",
+        "not_sent": "Photo still to be sent",
+        "rejected": "Photo not accepted by the control room",
+        "failed": "Photo not sent",
+        "none": "No photo"
+      },
+      "accepted": "{count} accepted by the control room",
+      "stillWaiting": "{count} still waiting",
+      "refusedCount": "{count} refused",
+      "sent": "Outbox sent",
+      "notFullySent": "Outbox not fully sent",
+      "removeTitle": "Remove this report from the phone?",
+      "removeKept": "The control room keeps its copy. Only this phone forgets it.",
+      "removeLost": "It has not reached the control room, so it will be lost.",
+      "keep": "Keep",
+      "remove": "Remove",
+      "sendingReports": "Sending reports",
+      "onHold": "On hold",
+      "sending": "Sending",
+      "heldText": "New reports stay on this phone until you release the hold.",
+      "sendingText": "Reports are sent as soon as they are saved. Anything that could not go is retried every minute while the app is open.",
+      "release": "Release the hold and send",
+      "hold": "Hold reports on this phone",
+      "waitingHeading": "Waiting to send ({count})",
+      "nothingWaiting": "Nothing waiting",
+      "photoWaiting": "Photo waiting",
+      "notSent": "Not sent",
+      "photoOnly": "The report is filed with the control room; its photo is still to be sent.",
+      "attempts": "{count, plural, one {# attempt} other {# attempts}}",
+      "notTried": "Not tried yet",
+      "refusedHeading": "Refused by the control room ({count})",
+      "refusedBadge": "Refused",
+      "notAccepted": "The control room did not accept this report.",
+      "removeFromPhone": "Remove from this phone",
+      "acceptedHeading": "Accepted by the control room ({count})",
+      "filedBadge": "Filed",
+      "reference": "Reference {id}"
+    },
+    "units": {
+      "minutes": "{count} min",
+      "minutesRange": "{low}–{high} min"
+    },
+    "routes": {
+      "reading": "Reading the route on this device…",
+      "showingSaved": "Showing the route saved on this device. {reason}",
+      "thisTrip": "This trip",
+      "vehicleUnnamed": "Vehicle not named",
+      "vehicleStatus": "{vehicle}, {status}",
+      "fresh": {
+        "confirmed_current": {
+          "label": "Confirmed with the control room",
+          "body": "This is the route the control room has approved."
+        },
+        "cached_unverified": {
+          "label": "Saved on this device, not just confirmed",
+          "body": "Pull down to check with the control room that it still stands."
+        },
+        "cached_offline": {
+          "label": "Saved on this device",
+          "body": "The control room cannot be reached, so this may have changed since."
+        },
+        "replaced": {
+          "label": "Replaced by the control room",
+          "body": "Do not follow this route. Contact the control room for the new one."
+        },
+        "withdrawn": {
+          "label": "Withdrawn by the control room",
+          "body": "This route was rejected. Contact the control room before setting off."
+        },
+        "none": {
+          "label": "No route"
+        }
+      },
+      "approved": "Approved route",
+      "distance": "Distance",
+      "notEstimated": "Not estimated",
+      "timeOnRoad": "Time on the road",
+      "sections": "Road sections",
+      "lastConfirmed": "Last confirmed {when}",
+      "avoids": "{count, plural, one {Avoids # confirmed closure.} other {Avoids # confirmed closures.}}",
+      "unverifiedLimits": "{count, plural, one {# limit on this route is unverified. Check it on the ground.} other {# limits on this route are unverified. Check them on the ground.}}",
+      "noRiskScore": "{count, plural, one {# section has no risk score recorded. That is unknown, not safe.} other {# sections have no risk score recorded. That is unknown, not safe.}}",
+      "changedTitle": "The control room changed your route",
+      "changedBody": "You are still shown the route you were following. The new one is {distance}.",
+      "changedBodyEta": "You are still shown the route you were following. The new one is {distance} and about {eta}.",
+      "changedLimits": "{count, plural, one {It has # unverified limit.} other {It has # unverified limits.}}",
+      "acknowledgeLabel": "Acknowledge the new route and follow it",
+      "saving": "Saving…",
+      "readNew": "I have read the new route",
+      "absence": {
+        "no_trip": {
+          "title": "No trip assigned",
+          "body": "A route appears once the control room assigns you a load and approves a route for it."
+        },
+        "no_route_plan": {
+          "title": "No approved route yet",
+          "body": "You have a trip, but the control room has not approved a route for it. You may be dispatched without one; ask them before setting off."
+        },
+        "plan_unreadable": {
+          "title": "The route could not be read",
+          "body": "The control room has a plan for this trip but no chosen route on it. Ask them to approve one."
+        }
+      },
+      "signInForRoutes": "Sign in with your district account to receive trips and routes."
+    },
+    "report": {
+      "noPositionTitle": "No position, so nothing was sent",
+      "noPositionBody": "{reason}\n\nA report without a location cannot be placed on a road. Move to where a fix is possible, or allow location access, and try again.",
+      "sentAlert": "Sent to the control room. A dispatcher will review it.",
+      "heldAlert": "Saved on this phone. Release the hold on the Outbox screen to send it.",
+      "savedAlert": "Saved on this phone. {note}",
+      "errorTitle": "Not saved",
+      "saveFailed": "The report could not be saved on this phone.",
+      "seeReports": "See your reports",
+      "corridor": "Highway corridor",
+      "gpsOnSend": "The position is read from GPS when you send.",
+      "landmark": "Landmark or km marker",
+      "landmarkPlaceholder": "e.g. Mile 32, Ratacherra Border",
+      "severity": "Severity",
+      "photoTitle": "Photo of what you can see",
+      "photoAttached": "Attached. It is uploaded with the report and held privately.",
+      "photoOptional": "Optional. A reviewer can act faster on a report they can see.",
+      "retakeLabel": "Take the photo again",
+      "takeLabel": "Take a photo",
+      "retake": "Retake",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "e.g. Excavator working, single file traffic moving slowly...",
+      "send": "Send report"
+    },
+    "captureTab": {
+      "localBanner": "Local only. Captures stay on this phone.",
+      "draftRestored": "Unfinished report restored from this device.",
+      "startOver": "Start over",
+      "photo": "Photo",
+      "remove": "Remove",
+      "cameraLabel": "Open the camera to photograph the disruption",
+      "photoRequired": "Required. This is what the control room verifies.",
+      "position": "Position",
+      "coordinates": "{latitude}°N, {longitude}°E",
+      "accuracy": "±{metres} m accuracy",
+      "noAccuracy": "Accuracy not reported by the device",
+      "altitude": "{metres} m altitude",
+      "byHand": "Entered by hand, not a device fix",
+      "fixTaken": "Fix taken {time}",
+      "newFix": "Take a new fix",
+      "noPosition": "No position attached yet.",
+      "getFix": "Get GPS fix",
+      "byHandInstead": "Enter the position by hand instead",
+      "what": "What is blocking the road",
+      "where": "Where",
+      "landmarkPlaceholder": "Nearest landmark or km marker",
+      "howBad": "How bad",
+      "level": {
+        "moderate": "Passable slowly",
+        "high": "Barely passable",
+        "critical": "Fully blocked"
+      },
+      "notesPlaceholder": "Anything the driver behind you should know (optional)",
+      "send": "Send disruption report",
+      "addPhoto": "Add a photo to send.",
+      "addPosition": "Add a position to send: take a GPS fix, or place a pin by hand. The control room cannot accept a report it cannot place."
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { message, type Message } from './i18n';
 import type { ConsignmentItem } from './rastaApi';
 
 /** Quantities cross the wire as decimal strings and stay that way. */
@@ -13,7 +14,7 @@ export function formatQuantity(value: string | null | undefined): string {
 /** What the driver typed, validated against the line it fulfils. */
 type QuantityInput =
   | { kind: 'empty' }
-  | { kind: 'invalid'; reason: string }
+  | { kind: 'invalid'; reason: Message }
   | { kind: 'ok'; value: string };
 
 export function parseQuantity(
@@ -23,12 +24,15 @@ export function parseQuantity(
   const text = raw.trim();
   if (text === '') return { kind: 'empty' };
   if (!/^\d+(\.\d{1,3})?$/.test(text)) {
-    return { kind: 'invalid', reason: 'Enter a number, up to three decimals.' };
+    return { kind: 'invalid', reason: 'mobile.quantity.invalid' };
   }
   if (compareQuantity(text, item.quantity) > 0) {
     return {
       kind: 'invalid',
-      reason: `More than the ${formatQuantity(item.quantity)} ${item.unit} loaded.`,
+      reason: message('mobile.quantity.moreThanLoaded', {
+        quantity: formatQuantity(item.quantity),
+        unit: item.unit,
+      }),
     };
   }
   return { kind: 'ok', value: text };
@@ -87,10 +91,10 @@ export function receiptLines(
 export function firstProblem(
   items: ConsignmentItem[],
   entered: Record<string, string>,
-): string | null {
+): Message | null {
   for (const item of items) {
     const parsed = parseQuantity(entered[item.id] ?? '', item);
-    if (parsed.kind === 'invalid') return `${item.commodity}: ${parsed.reason}`;
+    if (parsed.kind === 'invalid') return parsed.reason;
   }
   return null;
 }

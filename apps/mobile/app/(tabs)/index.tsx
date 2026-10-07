@@ -18,6 +18,7 @@ import {
 import { Theme } from '../../constants/theme';
 import { HazardReport } from '../../types';
 import { MinimalCard } from '../../components/ui/MinimalCard';
+import { useT } from '../../contexts/LocaleContext';
 import { useCrew } from '../../contexts/SessionContext';
 import { QuickActionGrid } from '../../components/ui/QuickActionGrid';
 import {
@@ -26,17 +27,19 @@ import {
 } from '../../services/offlineStorage';
 import { pendingWork } from '../../services/reportOutbox';
 import { newUuid } from '../../services/ids';
+import { message, type Message } from '../../services/i18n';
+import { formatAge } from '../../services/routePack';
 
 /** A report's state in words, from what the API said. */
 function reportState(report: HazardReport): string {
-  if (report.syncStatus === 'failed') return 'refused';
+  if (report.syncStatus === 'failed') return 'mobile.home.state.refused';
   if (report.controlRoomIncidentId) {
     return report.evidenceStatus === 'not_sent' ||
       report.evidenceStatus === 'uploaded'
-      ? 'filed, photo sending'
-      : 'filed';
+      ? 'mobile.home.state.filedPhotoSending'
+      : 'mobile.home.state.filed';
   }
-  return 'not sent yet';
+  return 'mobile.home.state.notSent';
 }
 import {
   AlertRecord,
@@ -73,59 +76,48 @@ const SEVERITY_STYLE = {
   },
 } as const;
 
-/** The server sends a translation key; until the catalogues cover every alert
- *  type, fall back to the key's own last segment rather than to an empty line. */
-const ALERT_TITLES: Record<string, string> = {
-  road_closed: 'Road closed',
-  road_restricted: 'Road restricted',
-  trip_route_invalidated: 'Your route was withdrawn',
-  facility_isolated: 'Facility cut off',
-  sos: 'SOS from the field',
-  road_slow_traffic: 'Vehicles nearly stopped: inspection suggested',
-};
-
-function titleFor(alert: AlertRecord): string {
-  return (
-    ALERT_TITLES[alert.type] ??
-    alert.type.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())
-  );
+/** The server names the title by key, as the web inbox does; a type no
+ *  catalogue knows yet reads as its own words rather than as a key. */
+function titleFor(alert: AlertRecord, t: (key: string) => string): string {
+  const key = alert.title_key || `alert.${alert.type}`;
+  const title = t(key);
+  return title === key
+    ? alert.type.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())
+    : title;
 }
 
-function sinceLabel(iso: string, now: number): string {
-  const seconds = Math.max(
-    0,
-    Math.round((now - new Date(iso).getTime()) / 1000),
+function sinceLabel(iso: string, now: number): Message {
+  return formatAge(
+    Math.max(0, Math.round((now - new Date(iso).getTime()) / 1000)),
   );
-  if (seconds < 90) return `${seconds}s ago`;
-  const minutes = Math.round(seconds / 60);
-  if (minutes < 90) return `${minutes} min ago`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 36) return `${hours} h ago`;
-  return `${Math.round(hours / 24)} d ago`;
 }
 
 /** The part of an alert's payload worth a line on a phone. */
-function detailFor(alert: AlertRecord): string | null {
+function detailFor(alert: AlertRecord): Message | null {
   const payload = alert.payload ?? {};
   const segments = payload.segment_ids;
   if (alert.type === 'trip_route_invalidated') {
     const reference = payload.consignment_reference;
-    return payload.route_replaced_automatically === false
-      ? `${typeof reference === 'string' ? `${reference}: ` : ''}a new route has to be approved before you continue.`
-      : null;
+    if (payload.route_replaced_automatically !== false) return null;
+    return typeof reference === 'string'
+      ? message('mobile.home.detail.newRouteFor', { reference })
+      : 'mobile.home.detail.newRoute';
   }
   if (alert.type === 'facility_isolated') {
     const name = payload.facility_name ?? payload.facility_id;
-    return typeof name === 'string' ? `No route found to ${name}.` : null;
+    return typeof name === 'string'
+      ? message('mobile.home.detail.noRouteTo', { name })
+      : null;
   }
   if (Array.isArray(segments)) {
-    return `${segments.length} road ${segments.length === 1 ? 'segment' : 'segments'} affected.`;
+    return message('mobile.home.detail.segments', { count: segments.length });
   }
   return null;
 }
 
 export default function FieldHomeScreen() {
   const crew = useCrew();
+  const t = useT();
   const isLocal = crew.mode === 'local_only';
   const [state, setState] = useState<LoadState>({ kind: 'loading' });
   const [mine, setMine] = useState<HazardReport[]>([]);
@@ -214,15 +206,14 @@ export default function FieldHomeScreen() {
       >
         <View style={styles.intro}>
           <Text style={styles.title}>
-            {district ? district.name : 'Report what you can see'}
+            {district ? district.name : t('mobile.home.title')}
           </Text>
         </View>
 
         {isLocal ? (
           <MinimalCard style={styles.noticeCard}>
             <Text style={styles.noticeBody}>
-              Local-only session. Reports stay on this phone. Sign in with your
-              district account to receive alerts and send reports.
+              {t('mobile.home.localNotice')}
             </Text>
           </MinimalCard>
         ) : null}
@@ -237,23 +228,22 @@ export default function FieldHomeScreen() {
               )}
               <Text style={styles.noticeTitle}>
                 {state.offline
-                  ? 'No connection to the control room'
-                  : 'Nothing is shown'}
+                  ? t('mobile.home.offlineTitle')
+                  : t('mobile.home.nothingShown')}
               </Text>
             </View>
-            <Text style={styles.noticeBody}>{state.reason}</Text>
+            <Text style={styles.noticeBody}>{t(state.reason)}</Text>
             <Text style={styles.noticeBody}>
-              Reports you file are kept on this phone and sent when a connection
-              returns.
+              {t('mobile.home.keptOnPhone')}
             </Text>
             <TouchableOpacity
               accessibilityRole="button"
-              accessibilityLabel="Try to reach the control room again"
+              accessibilityLabel={t('mobile.home.retryLabel')}
               style={styles.retry}
               onPress={() => void load()}
             >
               <RefreshCw size={14} color={Theme.colors.telemetry} />
-              <Text style={styles.retryText}>Try again</Text>
+              <Text style={styles.retryText}>{t('mobile.home.retry')}</Text>
             </TouchableOpacity>
           </MinimalCard>
         ) : null}
@@ -262,10 +252,15 @@ export default function FieldHomeScreen() {
 
         {state.kind === 'ready' || (state.kind === 'loading' && !isLocal) ? (
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Alerts for you</Text>
+            <Text style={styles.sectionTitle}>
+              {t('mobile.home.alertsHeading')}
+            </Text>
             {state.kind === 'ready' ? (
               <Text style={styles.sectionCount}>
-                {unacknowledged.length} unread of {state.alerts.length}
+                {t('mobile.home.unread', {
+                  unread: unacknowledged.length,
+                  total: state.alerts.length,
+                })}
               </Text>
             ) : null}
           </View>
@@ -273,7 +268,9 @@ export default function FieldHomeScreen() {
 
         {state.kind === 'loading' && !isLocal ? (
           <MinimalCard style={styles.emptyCard}>
-            <Text style={styles.emptyBody}>Loading alerts…</Text>
+            <Text style={styles.emptyBody}>
+              {t('mobile.home.loadingAlerts')}
+            </Text>
           </MinimalCard>
         ) : null}
 
@@ -281,7 +278,9 @@ export default function FieldHomeScreen() {
           <MinimalCard style={styles.emptyCard}>
             <View style={styles.noticeRow}>
               <Inbox size={18} color={Theme.colors.textMuted} />
-              <Text style={styles.noticeTitle}>No alerts</Text>
+              <Text style={styles.noticeTitle}>
+                {t('mobile.home.noAlerts')}
+              </Text>
             </View>
           </MinimalCard>
         ) : null}
@@ -304,40 +303,42 @@ export default function FieldHomeScreen() {
                       ]}
                     >
                       <Text style={[styles.severityText, { color: tone.fg }]}>
-                        {alert.severity.toUpperCase()}
+                        {t(`alerts.severity.${alert.severity}`).toUpperCase()}
                       </Text>
                     </View>
                     <Text style={styles.alertAge}>
-                      {sinceLabel(alert.valid_from, now)}
+                      {t(sinceLabel(alert.valid_from, now))}
                     </Text>
                   </View>
-                  <Text style={styles.alertTitle}>{titleFor(alert)}</Text>
+                  <Text style={styles.alertTitle}>{titleFor(alert, t)}</Text>
                   {detail ? (
-                    <Text style={styles.alertDetail}>{detail}</Text>
+                    <Text style={styles.alertDetail}>{t(detail)}</Text>
                   ) : null}
                   {!alert.valid_now ? (
                     <Text style={styles.alertExpired}>
-                      Past its validity window. Kept visible so a stale inbox
-                      looks stale.
+                      {t('mobile.home.expired')}
                     </Text>
                   ) : null}
                   {alert.acknowledged_at ? (
                     <Text style={styles.alertAcked}>
-                      You acknowledged this{' '}
-                      {sinceLabel(alert.acknowledged_at, now)}
+                      {t('mobile.home.acknowledgedAgo', {
+                        when: t(sinceLabel(alert.acknowledged_at, now)),
+                      })}
                     </Text>
                   ) : (
                     <TouchableOpacity
                       accessibilityRole="button"
-                      accessibilityLabel={`Acknowledge ${titleFor(alert)}`}
+                      accessibilityLabel={t('mobile.home.acknowledgeLabel', {
+                        title: titleFor(alert, t),
+                      })}
                       style={styles.ackButton}
                       disabled={acknowledging === alert.id}
                       onPress={() => void acknowledge(alert)}
                     >
                       <Text style={styles.ackButtonText}>
                         {acknowledging === alert.id
-                          ? 'Sending…'
-                          : 'Acknowledge'}
+                          ? t('mobile.home.sending')
+                          : t('alerts.acknowledge')}
                       </Text>
                     </TouchableOpacity>
                   )}
@@ -347,28 +348,28 @@ export default function FieldHomeScreen() {
           : null}
 
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Your reports</Text>
+          <Text style={styles.sectionTitle}>
+            {t('mobile.home.yourReports')}
+          </Text>
           <Text style={styles.sectionCount}>
             {queued.length
-              ? `${queued.length} waiting to send`
-              : `${mine.length} filed`}
+              ? t('mobile.home.waiting', { count: queued.length })
+              : t('mobile.home.filed', { count: mine.length })}
           </Text>
         </View>
 
         {mine.length === 0 ? (
           <MinimalCard style={styles.emptyCard}>
-            <Text style={styles.emptyBody}>
-              No reports from this phone yet.
-            </Text>
+            <Text style={styles.emptyBody}>{t('mobile.home.noReports')}</Text>
           </MinimalCard>
         ) : (
           mine.slice(0, 8).map((report) => (
             <MinimalCard key={report.id} style={styles.reportCard}>
               <View style={styles.alertTop}>
                 <Text style={styles.reportCategory}>
-                  {report.categoryLabel}
+                  {t(`mobile.category.${report.category}`)}
                 </Text>
-                <Text style={styles.alertAge}>{reportState(report)}</Text>
+                <Text style={styles.alertAge}>{t(reportState(report))}</Text>
               </View>
               <View style={styles.noticeRow}>
                 <MapPin size={13} color={Theme.colors.textMuted} />
@@ -376,7 +377,7 @@ export default function FieldHomeScreen() {
               </View>
               {report.offlineRecorded ? (
                 <Text style={styles.reportOffline}>
-                  Saved while reports were being held.
+                  {t('mobile.home.savedWhileHeld')}
                 </Text>
               ) : null}
             </MinimalCard>

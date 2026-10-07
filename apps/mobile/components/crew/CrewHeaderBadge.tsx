@@ -9,12 +9,10 @@ import {
 } from 'react-native';
 import { Camera, LogOut, Navigation, X } from 'lucide-react-native';
 import { Theme } from '../../constants/theme';
+import { useT } from '../../contexts/LocaleContext';
 import { useSession } from '../../contexts/SessionContext';
+import { LanguagePicker } from '../ui/LanguagePicker';
 import { unsentOnThisPhone } from '../../services/session';
-
-function plural(count: number, one: string, many: string): string {
-  return `${count} ${count === 1 ? one : many}`;
-}
 
 /**
  * Always-visible statement of who is signed in, in which seat, and whether the
@@ -22,6 +20,7 @@ function plural(count: number, one: string, many: string): string {
  */
 export function CrewHeaderBadge() {
   const { session, signOut } = useSession();
+  const t = useT();
   const [open, setOpen] = useState(false);
 
   if (!session) return null;
@@ -36,16 +35,21 @@ export function CrewHeaderBadge() {
         style={[styles.badge, isLocal && styles.badgeLocal]}
         onPress={() => setOpen(true)}
         accessibilityRole="button"
-        accessibilityLabel={`Signed in as ${session.displayName}, ${
-          isObserver ? 'observer' : 'driver'
-        }. Open crew options.`}
+        accessibilityLabel={t('mobile.crew.badgeLabel', {
+          name: session.displayName,
+          seat: isObserver
+            ? t('mobile.seat.observer')
+            : t('mobile.seat.driver'),
+        })}
       >
         <RoleIcon
           size={13}
           color={isLocal ? Theme.colors.caution : Theme.colors.brand}
         />
         <Text style={[styles.badgeText, isLocal && styles.badgeTextLocal]}>
-          {isObserver ? 'Observer' : 'Driver'}
+          {isObserver
+            ? t('mobile.crew.observerShort')
+            : t('mobile.seat.driver')}
         </Text>
       </TouchableOpacity>
 
@@ -58,51 +62,58 @@ export function CrewHeaderBadge() {
         <View style={styles.backdrop}>
           <View style={styles.sheet}>
             <View style={styles.sheetHead}>
-              <Text style={styles.sheetTitle}>Crew session</Text>
+              <Text style={styles.sheetTitle}>
+                {t('mobile.crew.sessionTitle')}
+              </Text>
               <TouchableOpacity
                 onPress={() => setOpen(false)}
                 hitSlop={12}
                 accessibilityRole="button"
-                accessibilityLabel="Close"
+                accessibilityLabel={t('mobile.common.close')}
               >
                 <X size={19} color={Theme.colors.textMuted} />
               </TouchableOpacity>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailKey}>Name</Text>
+              <Text style={styles.detailKey}>{t('mobile.crew.name')}</Text>
               <Text style={styles.detailValue}>{session.displayName}</Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.detailKey}>Seat</Text>
+              <Text style={styles.detailKey}>{t('mobile.crew.seat')}</Text>
               <Text style={styles.detailValue}>
-                {isObserver ? 'Onboard observer' : 'Driver'}
+                {isObserver
+                  ? t('mobile.seat.observer')
+                  : t('mobile.seat.driver')}
               </Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.detailKey}>Crew code</Text>
+              <Text style={styles.detailKey}>{t('mobile.crew.crewCode')}</Text>
               <Text style={[styles.detailValue, styles.mono]}>
                 {session.crewCode}
               </Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.detailKey}>Session</Text>
+              <Text style={styles.detailKey}>{t('mobile.crew.session')}</Text>
               <Text
                 style={[
                   styles.detailValue,
                   isLocal ? styles.valueCaution : styles.valueOk,
                 ]}
               >
-                {isLocal ? 'Local-only' : 'Signed in'}
+                {isLocal
+                  ? t('mobile.crew.localOnly')
+                  : t('mobile.crew.signedIn')}
               </Text>
             </View>
 
             {isLocal && (
-              <Text style={styles.localNote}>
-                Captures stay on this phone. They do not reach the driver, the
-                control room or the risk model.
-              </Text>
+              <Text style={styles.localNote}>{t('mobile.crew.localNote')}</Text>
             )}
+
+            <View style={styles.language}>
+              <LanguagePicker />
+            </View>
 
             <TouchableOpacity
               style={styles.signOutButton}
@@ -115,31 +126,31 @@ export function CrewHeaderBadge() {
                   await signOut();
                   return;
                 }
-                const lost = [
+                const parts = [
                   unsent.reports
-                    ? plural(unsent.reports, 'report', 'reports')
+                    ? t('mobile.crew.reports', { count: unsent.reports })
                     : null,
                   unsent.positions
-                    ? plural(
-                        unsent.positions,
-                        'trip position',
-                        'trip positions',
-                      )
+                    ? t('mobile.crew.positions', { count: unsent.positions })
                     : null,
-                ]
-                  .filter(Boolean)
-                  .join(' and ');
+                ].filter((part): part is string => part !== null);
+                const items =
+                  parts.length === 2
+                    ? t('mobile.crew.listAnd', {
+                        first: parts[0],
+                        second: parts[1],
+                      })
+                    : parts[0];
                 Alert.alert(
-                  'Not everything has been sent',
-                  `${lost} on this phone ${
-                    unsent.reports + unsent.positions === 1 ? 'has' : 'have'
-                  } not reached the control room. Signing out stops tracking and deletes ${
-                    unsent.reports + unsent.positions === 1 ? 'it' : 'them'
-                  } from this phone.`,
+                  t('mobile.crew.unsentTitle'),
+                  t('mobile.crew.unsentBody', {
+                    items,
+                    count: unsent.reports + unsent.positions,
+                  }),
                   [
-                    { text: 'Stay signed in', style: 'cancel' },
+                    { text: t('mobile.crew.staySignedIn'), style: 'cancel' },
                     {
-                      text: 'Delete and sign out',
+                      text: t('mobile.crew.deleteAndSignOut'),
                       style: 'destructive',
                       onPress: () => void signOut(),
                     },
@@ -149,7 +160,7 @@ export function CrewHeaderBadge() {
               accessibilityRole="button"
             >
               <LogOut size={15} color={Theme.colors.blocked} />
-              <Text style={styles.signOutText}>Sign out</Text>
+              <Text style={styles.signOutText}>{t('mobile.crew.signOut')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -159,6 +170,7 @@ export function CrewHeaderBadge() {
 }
 
 const styles = StyleSheet.create({
+  language: { marginTop: Theme.spacing.lg },
   badge: {
     flexDirection: 'row',
     alignItems: 'center',

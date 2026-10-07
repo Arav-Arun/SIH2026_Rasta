@@ -166,17 +166,24 @@ export function countDiscard(stats: QueueStats, reason: string): QueueStats {
 }
 
 /** The one line a driver reads: what is waiting, and what was refused. */
-export function describeQueue(stats: QueueStats): string {
+export function describeQueue(
+  stats: QueueStats,
+  t: (key: string, values?: Record<string, number>) => string,
+): string {
   const parts: string[] = [];
   parts.push(
     stats.queued === 0
-      ? 'Nothing waiting to send'
-      : `${stats.queued} waiting to send`,
+      ? t('mobile.queue.nothingWaiting')
+      : t('mobile.queue.waiting', { count: stats.queued }),
   );
-  if (stats.uploaded > 0) parts.push(`${stats.uploaded} sent`);
-  if (stats.rejected > 0) parts.push(`${stats.rejected} refused`);
+  if (stats.uploaded > 0) {
+    parts.push(t('mobile.queue.sent', { count: stats.uploaded }));
+  }
+  if (stats.rejected > 0) {
+    parts.push(t('mobile.queue.refused', { count: stats.rejected }));
+  }
   if (stats.dropped_for_space > 0) {
-    parts.push(`${stats.dropped_for_space} dropped for space`);
+    parts.push(t('mobile.queue.dropped', { count: stats.dropped_for_space }));
   }
   return parts.join(', ');
 }
