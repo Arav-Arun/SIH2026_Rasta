@@ -7,6 +7,8 @@ on:
     branches: [main]
     paths:
       - 'apps/mobile/**'
+      # The app ships the web client's language catalogues.
+      - 'apps/client/i18n/**'
       - 'package-lock.json'
       - '.github/workflows/android-apk.yml'
   workflow_dispatch:
