@@ -204,7 +204,7 @@ Screenshots/    Screenshots used in this README
 ## Data sources and attribution
 
 - Road and facility data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),
-  available under the Open Database License. See [data/OSM-NOTICE.md](data/OSM-NOTICE.md).
+  available under the Open Database License. See [data/README.md](data/README.md).
 - Terrain slope uses SRTM elevation data, packaged as Tilezen terrain tiles: United States
   3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S.
   Geological Survey. See `data/manifests/terrain_shillong_srtm.json`.

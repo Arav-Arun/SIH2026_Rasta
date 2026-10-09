@@ -12,7 +12,6 @@ import {
   InvalidTransitionError,
   blockedMutations,
   canTransition,
-  discardAccepted,
   enqueueMutation,
   getMutation,
   listMutations,
@@ -135,18 +134,6 @@ describe('durability', () => {
     await transitionMutation(mutation.mutationId, 'uploading');
     const later = Date.now() + 61_000;
     expect(await requeueInterruptedUploads(PROFILE, undefined, later)).toBe(1);
-  });
-
-  it('will not discard anything the server may not have', async () => {
-    const mutation = await queueIncident();
-    await expect(discardAccepted(mutation.mutationId)).rejects.toThrow(
-      /not accepted/,
-    );
-
-    await transitionMutation(mutation.mutationId, 'uploading');
-    await transitionMutation(mutation.mutationId, 'accepted');
-    await discardAccepted(mutation.mutationId);
-    expect(await getMutation(mutation.mutationId)).toBeNull();
   });
 });
 

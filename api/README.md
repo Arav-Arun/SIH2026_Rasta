@@ -46,8 +46,10 @@ api/.venv/bin/python -m pip install -e './api[dev]'
 cd api && .venv/bin/python -m pytest
 ```
 
-The unit tests need no database. They cover the risk score, routing, source
-parsing, alert de-duplication, receipts, telemetry rules and the API's
-request and error handling, and they check that `contracts/openapi.json`
-matches what the API serves. GitHub runs them with lint and type checks on
-every push (`.github/workflows/verify.yml`).
+Most tests need no database; those that do are skipped without
+`DATABASE_URL`. They cover the risk score, routing, source parsing, alert
+de-duplication, receipts, telemetry rules and the API's request and error
+handling, and they check that `contracts/openapi.json` matches what the API
+serves. On every push GitHub runs them with lint and format checks, then again
+against a local Supabase database, where no test may be skipped
+(`.github/workflows/verify.yml`).

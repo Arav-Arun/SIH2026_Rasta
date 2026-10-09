@@ -2,8 +2,7 @@
 
 RASTA's road risk score today is `baseline-v1`, a documented weighting of forecast
 rainfall, official warnings, terrain slope and confirmed incidents
-(`api/app/risk_engine.py`). Its weights were not fitted to outcomes; nothing has been
-trained on real labels yet.
+(`api/app/risk_engine.py`). Its weights were not fitted to outcomes.
 
 This folder is the pipeline that decides, with held-out evidence, whether a trained model
 should replace or inform it. It never ships a model by itself: a model is used only if it

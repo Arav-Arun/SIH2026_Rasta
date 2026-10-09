@@ -5,7 +5,7 @@
     "nativeLabel": "हिन्दी",
     "reviewed": false,
     "reviewedBy": null,
-    "notes": "Drafted from the English catalogue, largely with Sarvam Translate (machine/hi.json lists those strings), and not reviewed by a native speaker. Do not claim support for this language until reviewed is true.",
+    "notes": "Drafted from the English catalogue, largely with Sarvam Translate, and not reviewed by a native speaker. Do not claim support for this language until reviewed is true.",
     "script": "Deva",
     "dir": "ltr",
     "machine": {

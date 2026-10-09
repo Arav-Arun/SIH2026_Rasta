@@ -203,22 +203,6 @@ export async function retryMutation(
   return transitionMutation(mutationId, 'queued', { error: null });
 }
 
-/**
- * Removes an accepted mutation once its result is no longer needed on screen.
- */
-export async function discardAccepted(mutationId: string): Promise<void> {
-  const db = getOfflineDatabase();
-  if (!db) return;
-  const row = await db.outbox.get(mutationId);
-  if (!row) return;
-  if (row.state !== 'accepted') {
-    throw new Error(
-      `Refusing to discard ${mutationId}: it is ${row.state}, not accepted.`,
-    );
-  }
-  await db.outbox.delete(mutationId);
-}
-
 interface OutboxCounts {
   queued: number;
   uploading: number;
