@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CloudOff, LoaderCircle, LockKeyhole, ShieldAlert } from 'lucide-react';
 
 import { useAuth } from '@/components/auth/auth-provider';
+import { OfflineNoticeContext } from '@/components/auth/offline-notice';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -127,19 +128,21 @@ export function RouteAccessGate({
   }
 
   if (bootstrapStatus === 'offline') {
+    const notice = (
+      <output
+        data-offline-identity
+        className="flex items-center gap-2 border-b border-[#FCD34D] bg-[#FFFBEB] px-4 py-2 text-sm text-[#92400E] md:px-6"
+      >
+        <CloudOff className="size-4 shrink-0" aria-hidden />
+        {t('gate.offlineNotice', {
+          when: offlineSince ? formatTime.time(offlineSince) : '-',
+        })}
+      </output>
+    );
     return (
-      <>
-        <output
-          data-offline-identity
-          className="flex items-center gap-2 border-b border-[#FCD34D] bg-[#FFFBEB] px-4 py-2 text-sm text-[#92400E]"
-        >
-          <CloudOff className="size-4 shrink-0" aria-hidden />
-          {t('gate.offlineNotice', {
-            when: offlineSince ? formatTime.time(offlineSince) : '-',
-          })}
-        </output>
+      <OfflineNoticeContext.Provider value={notice}>
         {children}
-      </>
+      </OfflineNoticeContext.Provider>
     );
   }
 

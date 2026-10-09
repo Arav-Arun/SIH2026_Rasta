@@ -68,6 +68,9 @@ function failureStatus(error: unknown): IdentityBootstrapStatus {
   return 'error';
 }
 
+/** How often a device working offline asks the server again. */
+const OFFLINE_RECHECK_MS = 30_000;
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>('loading');
   const [session, setSession] = useState<Session | null>(null);
@@ -166,12 +169,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [bootstrapForSession]);
 
-  // Back online: ask the server again rather than keep the stored answer.
+  // While working offline, keep asking the server rather than keep the stored
+  // answer: when the browser comes back online, when the tab is looked at again,
+  // and every half minute, since a server that restarted fires no browser event.
   useEffect(() => {
     if (bootstrapStatus !== 'offline') return;
-    const onOnline = () => void bootstrapForSession(session);
-    window.addEventListener('online', onOnline);
-    return () => window.removeEventListener('online', onOnline);
+    const retry = () => void bootstrapForSession(session);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') retry();
+    };
+    const timer = window.setInterval(retry, OFFLINE_RECHECK_MS);
+    window.addEventListener('online', retry);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('online', retry);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, [bootstrapForSession, bootstrapStatus, session]);
 
   const signInWithPassword = useCallback(

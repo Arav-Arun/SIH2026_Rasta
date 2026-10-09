@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '@/components/auth/auth-provider';
+import { useOfflineNotice } from '@/components/auth/offline-notice';
 import { decideRouteAccess } from '@/lib/auth/policy';
 import type { WorkspaceIdentity } from '@/lib/auth/policy';
 import { LanguageSwitcher } from '@/components/i18n/language-switcher';
@@ -103,6 +104,7 @@ export function CommandShell({
   const TitleTag = ownHeading ? 'p' : 'h1';
   const { t, dir } = useLocale();
   const { workspace } = useAuth();
+  const offlineNotice = useOfflineNotice();
 
   const identity = workspace?.identity ?? null;
   const allowedNavigation = useMemo(
@@ -205,6 +207,7 @@ export function CommandShell({
       </Sidebar>
 
       <SidebarInset className={fill ? 'flex min-h-svh flex-col' : undefined}>
+        {offlineNotice}
         <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b bg-white px-4 py-2 md:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <SidebarTrigger
