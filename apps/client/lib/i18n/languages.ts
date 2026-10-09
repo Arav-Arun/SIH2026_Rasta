@@ -1,6 +1,6 @@
 import registry from '@/i18n/languages.json';
 
-/** A language the product knows how to offer, whether or not its catalogue exists yet. */
+/** A language the product offers. */
 type LanguageInfo = {
   /** BCP-47 tag used for `lang`, `Intl` and the catalogue file name. */
   code: string;

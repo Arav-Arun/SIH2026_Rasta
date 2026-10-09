@@ -1613,11 +1613,6 @@
       "output_sha256": "18a818b2f0aa12d4a4277188498e0822102614873b638a362df0132f1f293019",
       "translated_at": "2026-10-07T19:38:46+00:00"
     },
-    "mobile.language.notTranslated": {
-      "source_sha256": "073678d83d0ffd68a5b1c52137172f2738be1f67ac1fd1536f9d3eabd56dfb08",
-      "output_sha256": "bb39b61f82a298ad744d9a6a8247560547a183ae1c819f909cc3e7d47ca4279f",
-      "translated_at": "2026-10-07T19:38:46+00:00"
-    },
     "mobile.language.unreviewed": {
       "source_sha256": "db6abecc608b1954b5c0a37c1f021bccb9ede67d0f619eb5077bf2e79f3d174b",
       "output_sha256": "08e55b6c150e5d05400ee0dead3dbd4e02f7d224ea4806c867552f38dafeab2a",

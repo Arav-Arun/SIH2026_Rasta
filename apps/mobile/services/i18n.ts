@@ -1,11 +1,10 @@
 /**
  * The app's languages, from the web client's catalogues (apps/client/i18n).
  *
- * English is the source and the fallback. The others ship are the languages of
- * the North-East that have a catalogue, plus Hindi: each is a machine draft
- * until a native speaker reviews it, which the picker says. A key a catalogue
- * lacks shows in English; a key missing everywhere shows as the key itself, so
- * a gap is visible rather than blank.
+ * English is the source and the fallback. The others are the web client's
+ * complete catalogues: Assamese, Bengali, Bodo and Hindi. Each is a machine
+ * draft until a native speaker reviews it, which the picker says. A key missing
+ * everywhere shows as the key itself, so a gap is visible rather than blank.
  *
  * The formatter is the web client's, ported: `{name}` placeholders and ICU
  * plurals (`{count, plural, one {# road} other {# roads}}`).
@@ -16,10 +15,8 @@ import as from '../../client/i18n/as.json';
 import bn from '../../client/i18n/bn.json';
 import brx from '../../client/i18n/brx.json';
 import hi from '../../client/i18n/hi.json';
-import mni from '../../client/i18n/mni.json';
-import ne from '../../client/i18n/ne.json';
 
-export type Locale = 'en' | 'as' | 'bn' | 'brx' | 'hi' | 'mni' | 'ne';
+export type Locale = 'en' | 'as' | 'bn' | 'brx' | 'hi';
 export type MessageValues = Record<string, string | number>;
 
 export type CatalogueMeta = {
@@ -31,18 +28,10 @@ export type CatalogueMeta = {
 
 type Catalogue = { _meta: CatalogueMeta } & Record<string, unknown>;
 
-const SOURCES: Record<Locale, unknown> = { en, as, bn, brx, hi, mni, ne };
+const SOURCES: Record<Locale, unknown> = { en, as, bn, brx, hi };
 
 /** In the order the picker shows them: English, then by English name. */
-export const LOCALES: readonly Locale[] = [
-  'en',
-  'as',
-  'bn',
-  'brx',
-  'hi',
-  'mni',
-  'ne',
-];
+export const LOCALES: readonly Locale[] = ['en', 'as', 'bn', 'brx', 'hi'];
 
 export const DEFAULT_LOCALE: Locale = 'en';
 
@@ -75,11 +64,6 @@ function flat(locale: Locale): Flat {
 
 export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (LOCALES as string[]).includes(value);
-}
-
-/** Whether this language's catalogue has any of the app's own text yet. */
-export function hasAppStrings(locale: Locale): boolean {
-  return Object.keys(flat(locale)).some((key) => key.startsWith('mobile.'));
 }
 
 export function catalogueMeta(locale: Locale): CatalogueMeta {

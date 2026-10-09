@@ -1618,11 +1618,6 @@
       "output_sha256": "360090ad87ed9d0db502d4bbbee9428afac7ac938e9b216ab369fb0d00bbaa71",
       "translated_at": "2026-10-07T19:36:03+00:00"
     },
-    "mobile.language.notTranslated": {
-      "source_sha256": "073678d83d0ffd68a5b1c52137172f2738be1f67ac1fd1536f9d3eabd56dfb08",
-      "output_sha256": "baadc5e606cf307981516304167b0be0a2e3a7f90b5915d277895dc0a5c390be",
-      "translated_at": "2026-10-07T19:36:03+00:00"
-    },
     "mobile.language.unreviewed": {
       "source_sha256": "db6abecc608b1954b5c0a37c1f021bccb9ede67d0f619eb5077bf2e79f3d174b",
       "output_sha256": "1ece1b7bee03e65270b93dda3f69e0e257486eaf24861102fa8fd4a6046f3247",

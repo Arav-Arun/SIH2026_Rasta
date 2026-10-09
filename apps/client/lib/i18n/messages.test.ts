@@ -40,14 +40,6 @@ function catalogueFiles(): string[] {
 }
 
 /**
- * Strings added after the last translation run. They show in English in every
- * other language until the catalogues are next regenerated. Narrow this pattern
- * as they are translated; nothing outside it may be missing.
- */
-const PENDING_TRANSLATION =
-  /^(newConsignment\.|map\.risk(Why|Caveats|Model|NotScored|Shadow)|status\.risk\.(critical|unknown)$|alert\.|alerts\.evidence\.(reporter|position|positionNoAccuracy|noPosition|pressedAt|note|openMap|notDispatch|slowTraffic|notClosed)$|alerts\.inspect$|alerts\.push\.test(Title|Body)$|fieldHome\.sos\.|outbox\.type\.sos\.raise$|health\.(outcomes|schedule)\.|health\.suggested$|health\.trainedModel\.|supplyGaps\.|admin\.|mobile\.)/;
-
-/**
  * The argument names a message uses. A plural branch is text, not an argument,
  * so `one {has}` is dropped first: its word is translated like any other.
  */
@@ -110,22 +102,8 @@ describe('language registry', () => {
     const codes = LANGUAGES.map((language) => language.code);
     expect(codes[0]).toBe('en');
     expect(new Set(codes).size).toBe(codes.length);
-    // English plus the 22 languages of the Eighth Schedule.
-    expect(codes).toHaveLength(23);
-    expect(codes).toEqual(
-      expect.arrayContaining([
-        'en',
-        'as',
-        'bn',
-        'brx',
-        'doi',
-        'gu',
-        'hi',
-        'mni',
-        'ne',
-        'ur',
-      ]),
-    );
+    // English plus the languages whose catalogues are complete.
+    expect(codes).toEqual(['en', 'as', 'bn', 'brx', 'hi']);
     for (const language of LANGUAGES) {
       expect(language.native.trim(), language.code).not.toBe('');
       expect(language.sarvam, language.code).toMatch(/^[a-z]{2,3}-IN$/);
@@ -168,12 +146,9 @@ describe('catalogues', () => {
     expect(empty).toEqual([]);
   });
 
-  it('every catalogue covers every English key but the pending ones, and adds none of its own', () => {
+  it('every catalogue covers every English key and adds none of its own', () => {
     for (const code of catalogueFiles()) {
-      const unexpected = missingKeys(code).filter(
-        (key) => !PENDING_TRANSLATION.test(key),
-      );
-      expect(unexpected, `${code} missing`).toEqual([]);
+      expect(missingKeys(code), `${code} missing`).toEqual([]);
       expect(orphanKeys(code), `${code} orphan`).toEqual([]);
     }
   });
@@ -229,8 +204,8 @@ describe('lookup and fallback', () => {
     // A fresh copy of the module has loaded nothing yet.
     vi.resetModules();
     const fresh = await import('./messages');
-    expect(fresh.loadedCatalogue('ur')).toBeNull();
-    expect(fresh.translate('ur', 'status.passability.closed')).toBe('Closed');
+    expect(fresh.loadedCatalogue('bn')).toBeNull();
+    expect(fresh.translate('bn', 'status.passability.closed')).toBe('Closed');
   });
 
   it('translates with values in the requested locale', () => {

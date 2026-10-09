@@ -70,7 +70,7 @@ Mapped to the problem statement's requirements (a) to (h).
 | **(e) Automated alerts** | Alerts for road closures and restrictions, withdrawn routes, isolated facilities, stale vehicle positions and delivery shortfalls, with acknowledgement and web push. Where tracked vehicles have nearly stopped on a road, dispatchers are asked to send an inspection; that never closes the road by itself. An SOS from the Android app or the web field app opens a message to 112 and also alerts the district's dispatchers with the phone's position, queued on the device if there is no signal; the control-room alert does not dispatch emergency services. |
 | **(f) Geo-tagged field reports** | Photo, location, accuracy and time captured on the phone or in the browser, stored privately and verified with a SHA-256 checksum. |
 | **(g) Central dashboards** | District connectivity overview, deliveries and supply gaps (unmet requests ranked by deadline risk, and receipts that came up short; there is no stock data, so no stockout prediction), fleet positions, incidents, inspections, alerts and data health. |
-| **(h) Multilingual and offline** | The control room and offline web app in English and all 22 Eighth Schedule languages. Reports, GPS positions, approved routes and map data packs work offline and sync on reconnect. |
+| **(h) Multilingual and offline** | The control room, offline web app and Android app in English, Hindi, Assamese, Bengali and Bodo. Reports, GPS positions, approved routes and map data packs work offline and sync on reconnect. |
 
 Across the platform:
 - **Integrations:** IMD and SACHET source adapters, OpenStreetMap import, and a
@@ -183,10 +183,9 @@ flowchart LR
   CAP feed for Meghalaya, and each one is matched to roads by its polygon. IMD's
   rainfall API only answers whitelisted addresses, so rainfall comes from a recorded
   IMD-format sample, labelled as recorded on screen.
-- **Languages:** the web interface is available in English and all 22 Eighth
-  Schedule languages, including Assamese, Bengali, Bodo, Manipuri and Nepali. The
-  translations are machine-drafted with Sarvam Translate and await native-speaker
-  review.
+- **Languages:** the web interface and the Android app are available in English,
+  Hindi, Assamese, Bengali and Bodo. The translations are machine-drafted, mostly
+  with Sarvam Translate, and await native-speaker review.
 
 ## Repository layout
 

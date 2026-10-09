@@ -1126,8 +1126,7 @@
     },
     "language": {
       "label": "Language",
-      "unreviewed": "Machine-drafted, not yet checked by a native speaker. Some text may be wrong or still in English.",
-      "notTranslated": "The app's own text is not translated into this language yet and is shown in English."
+      "unreviewed": "Machine-drafted, not yet checked by a native speaker. Some text may be wrong or still in English."
     },
     "onboarding": {
       "mapTitle": "Know which roads are open",

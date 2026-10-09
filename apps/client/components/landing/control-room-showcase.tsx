@@ -67,7 +67,7 @@ const SCREENS = [
     src: '/landing/web-overview-hindi.webp',
     address: 'rasta / overview',
     caption:
-      'The same control room in Hindi, one of 22 scheduled languages it supports.',
+      'The same control room in Hindi, one of the four Indian languages it supports.',
   },
 ] as const;
 

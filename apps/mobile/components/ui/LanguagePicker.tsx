@@ -2,11 +2,11 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Theme } from '../../constants/theme';
 import { useLocale } from '../../contexts/LocaleContext';
-import { catalogueMeta, hasAppStrings, LOCALES } from '../../services/i18n';
+import { catalogueMeta, LOCALES } from '../../services/i18n';
 
 /**
  * The app's languages by their own names. A machine draft says so: until a
- * native speaker has reviewed it, some text may be wrong or still in English.
+ * native speaker has reviewed it, some text may be wrong.
  */
 export function LanguagePicker() {
   const { locale, setLocale, t } = useLocale();
@@ -37,11 +37,7 @@ export function LanguagePicker() {
         })}
       </View>
       {reviewed ? null : (
-        <Text style={styles.note}>
-          {hasAppStrings(locale)
-            ? t('mobile.language.unreviewed')
-            : t('mobile.language.notTranslated')}
-        </Text>
+        <Text style={styles.note}>{t('mobile.language.unreviewed')}</Text>
       )}
     </View>
   );

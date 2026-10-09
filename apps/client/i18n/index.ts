@@ -1,30 +1,10 @@
-// Generated from the language registry. Do not edit by hand.
-//
 // The catalogues offered in this build, each loaded only when chosen, so a
 // visitor downloads one language rather than all of them. English is not
-// listed: it is the fallback and ships with the app. A catalogue still
-// mostly in English is left out until a run completes it.
+// listed: it is the fallback and ships with the app. A language is listed
+// only when its catalogue has every English string.
 export const CATALOGUE_LOADERS: Record<string, () => Promise<{ default: unknown }>> = {
   as: () => import('./as.json'),
   bn: () => import('./bn.json'),
   brx: () => import('./brx.json'),
-  doi: () => import('./doi.json'),
-  gu: () => import('./gu.json'),
   hi: () => import('./hi.json'),
-  kn: () => import('./kn.json'),
-  kok: () => import('./kok.json'),
-  ks: () => import('./ks.json'),
-  mai: () => import('./mai.json'),
-  ml: () => import('./ml.json'),
-  mni: () => import('./mni.json'),
-  mr: () => import('./mr.json'),
-  ne: () => import('./ne.json'),
-  or: () => import('./or.json'),
-  pa: () => import('./pa.json'),
-  sa: () => import('./sa.json'),
-  sat: () => import('./sat.json'),
-  sd: () => import('./sd.json'),
-  ta: () => import('./ta.json'),
-  te: () => import('./te.json'),
-  ur: () => import('./ur.json'),
 };

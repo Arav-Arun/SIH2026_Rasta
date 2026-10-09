@@ -125,7 +125,7 @@ const FEATURES: ReadonlyArray<{
   {
     requirement: 'h',
     title: 'Languages and offline',
-    text: 'The control room and offline web app speak English and all 22 scheduled languages. Reports and routes keep working without network.',
+    text: 'The control room and offline web app speak English, Hindi, Assamese, Bengali and Bodo. Reports and routes keep working without network.',
     icon: Languages,
   },
 ];
@@ -176,7 +176,7 @@ const FAQS = [
   },
   {
     q: 'Which languages are supported?',
-    a: 'The control room and the offline web app are available in English and all 22 languages of the Eighth Schedule, including Assamese, Bengali, Bodo, Manipuri and Nepali.',
+    a: 'The control room, the offline web app and the Android app are available in English, Hindi, Assamese, Bengali and Bodo. The translations are machine-drafted and await review by native speakers.',
   },
   {
     q: 'How do officials get access?',

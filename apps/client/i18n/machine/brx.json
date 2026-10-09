@@ -3043,11 +3043,6 @@
       "output_sha256": "0ae2127245aa3edf6ae84e36a3215eb5efb2d3d876c3d96ce4ac18c4d313fc0b",
       "translated_at": "2026-10-07T19:38:53+00:00"
     },
-    "mobile.language.notTranslated": {
-      "source_sha256": "073678d83d0ffd68a5b1c52137172f2738be1f67ac1fd1536f9d3eabd56dfb08",
-      "output_sha256": "b95b78f4de39cb11a9b695acf2eb42f9bc4fd12e8ab0b374f2f542935c9dcd18",
-      "translated_at": "2026-10-07T19:38:53+00:00"
-    },
     "mobile.language.unreviewed": {
       "source_sha256": "db6abecc608b1954b5c0a37c1f021bccb9ede67d0f619eb5077bf2e79f3d174b",
       "output_sha256": "88da9147fcb3febed11fdd59f7bd4560244866fb15958f1b2b3dcbc9c287cd5b",

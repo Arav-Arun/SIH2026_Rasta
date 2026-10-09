@@ -5,24 +5,6 @@
     {"code": "as", "sarvam": "as-IN", "english": "Assamese", "native": "অসমীয়া", "dir": "ltr"},
     {"code": "bn", "sarvam": "bn-IN", "english": "Bengali", "native": "বাংলা", "dir": "ltr"},
     {"code": "brx", "sarvam": "brx-IN", "english": "Bodo", "native": "बर’", "dir": "ltr"},
-    {"code": "doi", "sarvam": "doi-IN", "english": "Dogri", "native": "डोगरी", "dir": "ltr"},
-    {"code": "gu", "sarvam": "gu-IN", "english": "Gujarati", "native": "ગુજરાતી", "dir": "ltr"},
-    {"code": "hi", "sarvam": "hi-IN", "english": "Hindi", "native": "हिन्दी", "dir": "ltr"},
-    {"code": "kn", "sarvam": "kn-IN", "english": "Kannada", "native": "ಕನ್ನಡ", "dir": "ltr"},
-    {"code": "ks", "sarvam": "ks-IN", "english": "Kashmiri", "native": "کٲشُر", "dir": "rtl"},
-    {"code": "kok", "sarvam": "kok-IN", "english": "Konkani", "native": "कोंकणी", "dir": "ltr"},
-    {"code": "mai", "sarvam": "mai-IN", "english": "Maithili", "native": "मैथिली", "dir": "ltr"},
-    {"code": "ml", "sarvam": "ml-IN", "english": "Malayalam", "native": "മലയാളം", "dir": "ltr"},
-    {"code": "mni", "sarvam": "mni-IN", "english": "Manipuri", "native": "মৈতৈলোন্", "dir": "ltr"},
-    {"code": "mr", "sarvam": "mr-IN", "english": "Marathi", "native": "मराठी", "dir": "ltr"},
-    {"code": "ne", "sarvam": "ne-IN", "english": "Nepali", "native": "नेपाली", "dir": "ltr"},
-    {"code": "or", "sarvam": "od-IN", "english": "Odia", "native": "ଓଡ଼ିଆ", "dir": "ltr"},
-    {"code": "pa", "sarvam": "pa-IN", "english": "Punjabi", "native": "ਪੰਜਾਬੀ", "dir": "ltr"},
-    {"code": "sa", "sarvam": "sa-IN", "english": "Sanskrit", "native": "संस्कृतम्", "dir": "ltr"},
-    {"code": "sat", "sarvam": "sat-IN", "english": "Santali", "native": "ᱥᱟᱱᱛᱟᱲᱤ", "dir": "ltr"},
-    {"code": "sd", "sarvam": "sd-IN", "english": "Sindhi", "native": "सिन्धी", "dir": "ltr"},
-    {"code": "ta", "sarvam": "ta-IN", "english": "Tamil", "native": "தமிழ்", "dir": "ltr"},
-    {"code": "te", "sarvam": "te-IN", "english": "Telugu", "native": "తెలుగు", "dir": "ltr"},
-    {"code": "ur", "sarvam": "ur-IN", "english": "Urdu", "native": "اردو", "dir": "rtl"}
+    {"code": "hi", "sarvam": "hi-IN", "english": "Hindi", "native": "हिन्दी", "dir": "ltr"}
   ]
 }
