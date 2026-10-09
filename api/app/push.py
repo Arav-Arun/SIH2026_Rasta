@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import re
@@ -165,6 +166,40 @@ class UnconfiguredSender:
         return "skipped", "not_configured", None
 
 
+def load_vapid_key(private_key: str, public_key: str) -> Any:
+    """The VAPID signing key, from the forms a dashboard or a key tool leaves it in.
+
+    Accepts a PEM key with real or escaped (``\\n``) line breaks, the PEM body
+    without its BEGIN and END lines, or the 32-byte base64url key that most VAPID
+    tools print. Raises ValueError when it is none of these, or when it does not
+    belong to the configured public key.
+    """
+
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import ec
+
+    text = private_key.strip().replace("\\n", "\n")
+    if "BEGIN" not in text:
+        compact = re.sub(r"\s+", "", text)
+        raw = base64.urlsafe_b64decode(compact + "=" * (-len(compact) % 4))
+        if len(raw) == 32:
+            key = ec.derive_private_key(int.from_bytes(raw, "big"), ec.SECP256R1())
+        else:
+            key = serialization.load_der_private_key(raw, password=None)
+    else:
+        key = serialization.load_pem_private_key(text.encode(), password=None)
+    if not isinstance(key, ec.EllipticCurvePrivateKey) or key.curve.name != "secp256r1":
+        raise ValueError("The VAPID private key is not a P-256 key.")
+    derived = base64.urlsafe_b64encode(
+        key.public_key().public_bytes(
+            serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
+        )
+    ).rstrip(b"=")
+    if derived.decode() != public_key.strip().rstrip("="):
+        raise ValueError("The VAPID private key does not match the public key.")
+    return key
+
+
 class WebPushSender:
     """Web Push with VAPID authentication (RFC 8292)."""
 
@@ -185,6 +220,9 @@ class WebPushSender:
     def configured(self) -> bool:
         return bool(self._private_key_pem and self._public_key and self._subject)
 
+    def _signing_key(self) -> Any:
+        return load_vapid_key(self._private_key_pem, self._public_key)
+
     def _vapid_header(self, endpoint: str) -> str:
         from urllib.parse import urlsplit
 
@@ -198,16 +236,21 @@ class WebPushSender:
                 "exp": int(time.time()) + 12 * 3600,
                 "sub": self._subject,
             },
-            self._private_key_pem,
+            self._signing_key(),
             algorithm="ES256",
         )
-        return f"vapid t={token}, k={self._public_key}"
+        return f"vapid t={token}, k={self._public_key.rstrip('=')}"
 
     def send(
         self, *, endpoint: str, keys: dict[str, str], message: PushMessage
     ) -> tuple[AttemptStatus, str | None, int | None]:
         if not self.configured():
             return "skipped", "not_configured", None
+        try:
+            self._signing_key()
+        except Exception:
+            # Named, so the operator knows to re-enter the key, not to debug the network.
+            return "failed", "vapid_key_unusable", None
         try:
             request = urllib.request.Request(
                 endpoint,

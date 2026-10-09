@@ -12,12 +12,14 @@ import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import jwt
+import pytest
 from app.push import (
     PushMessage,
     UnconfiguredSender,
     WebPushSender,
     build_sender,
     endpoint_allowed,
+    load_vapid_key,
     parse_extra_hosts,
     send_one,
 )
@@ -236,3 +238,41 @@ def test_an_unreachable_push_service_is_a_failed_attempt() -> None:
     )
     assert (status, http) == ("failed", None)
     assert code is not None and code.startswith("send_failed_")
+
+
+def test_the_private_key_is_read_in_every_form_a_dashboard_or_tool_leaves_it() -> None:
+    pem, public, public_key = _vapid_keys()
+    private = serialization.load_pem_private_key(pem.encode(), password=None)
+    scalar = private.private_numbers().private_value.to_bytes(32, "big")
+    forms = {
+        "PEM": pem,
+        "line breaks as spaces": pem.replace("\n", " "),
+        "escaped line breaks": pem.replace("\n", "\\n"),
+        "body without BEGIN and END": "".join(pem.strip().splitlines()[1:-1]),
+        "raw base64url": base64.urlsafe_b64encode(scalar).rstrip(b"=").decode(),
+    }
+    for name, form in forms.items():
+        key = load_vapid_key(form, public)
+        assert key.public_key().public_numbers() == public_key.public_numbers(), name
+
+
+def test_a_private_key_from_another_pair_is_refused() -> None:
+    pem, _, _ = _vapid_keys()
+    _, other_public, _ = _vapid_keys()
+    with pytest.raises(ValueError, match="does not match"):
+        load_vapid_key(pem, other_public)
+
+
+def test_an_unusable_key_is_named_and_nothing_is_sent() -> None:
+    _, public, _ = _vapid_keys()
+    with _StubPushService(201) as service:
+        sender = WebPushSender(
+            "not a key", public, "mailto:ops@example.test", ("127.0.0.1",)
+        )
+        outcome = send_one(
+            sender,
+            {"platform": "web", "endpoint": f"{service.url}/push/abc", "keys": {}},
+            MESSAGE,
+        )
+    assert outcome == ("failed", "vapid_key_unusable", None)
+    assert service.requests == []
