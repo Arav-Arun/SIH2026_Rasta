@@ -12,6 +12,7 @@ import {
   currentSubscription,
   disablePush,
   enablePush,
+  expectTestPush,
   pushSupport,
   type PushSupport,
 } from '@/lib/pwa/push';
@@ -91,6 +92,10 @@ export function PushCard() {
     setBusy(true);
     setMessage(null);
     try {
+      await expectTestPush({
+        title: t('alerts.push.testTitle'),
+        body: t('alerts.push.testBody'),
+      });
       const result: PushTestResponse = await sendTestPush({ accessToken });
       setMessage(
         result.sent > 0

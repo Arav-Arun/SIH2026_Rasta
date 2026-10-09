@@ -65,6 +65,15 @@ async function sendCopy(copy: NotificationCopy): Promise<void> {
   worker?.active?.postMessage({ type: 'rasta:push-copy', ...copy });
 }
 
+/**
+ * Tell the worker the next push is a test, so it says so rather than pointing
+ * at an inbox the test adds nothing to.
+ */
+export async function expectTestPush(copy: NotificationCopy): Promise<void> {
+  const worker = await registration();
+  worker?.active?.postMessage({ type: 'rasta:push-test', ...copy });
+}
+
 type EnableOutcome =
   | { kind: 'subscribed' }
   | { kind: 'denied' }

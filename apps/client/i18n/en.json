@@ -808,6 +808,8 @@
       "test": "Send a test notification",
       "testResult": "Test sent to {sent} of {attempted} registrations.",
       "testNothing": "Nothing was sent: {reasons}.",
+      "testTitle": "RASTA: test notification",
+      "testBody": "Notifications work on this device. A test adds nothing to the alert inbox.",
       "failed": "This browser could not register for notifications: {reason}",
       "notificationTitle": "RASTA: new alert",
       "notificationBody": "Open the alert inbox to read it."

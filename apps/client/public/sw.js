@@ -17,6 +17,9 @@ const SHELL_URLS = [
 
 /** Where the worker keeps the notification wording the page last gave it. */
 const PUSH_COPY_URL = '/__rasta/push-copy';
+/** Set when the page asks for a test push; the next push within the window is that test. */
+const PUSH_TEST_URL = '/__rasta/push-test';
+const PUSH_TEST_WINDOW_MS = 2 * 60 * 1000;
 const DEFAULT_PUSH_COPY = {
   title: 'RASTA: new alert',
   body: 'Open the alert inbox to read it.',
@@ -128,6 +131,25 @@ self.addEventListener('message', (event) => {
           cache.put(
             PUSH_COPY_URL,
             new Response(JSON.stringify(copy), {
+              headers: { 'content-type': 'application/json' },
+            }),
+          ),
+        ),
+      );
+    }
+  }
+  if (event.data?.type === 'rasta:push-test') {
+    const test = {
+      title: String(event.data.title ?? ''),
+      body: String(event.data.body ?? ''),
+      until: Date.now() + PUSH_TEST_WINDOW_MS,
+    };
+    if (test.title && test.body) {
+      event.waitUntil(
+        caches.open(SHELL_CACHE).then((cache) =>
+          cache.put(
+            PUSH_TEST_URL,
+            new Response(JSON.stringify(test), {
               headers: { 'content-type': 'application/json' },
             }),
           ),
@@ -258,6 +280,20 @@ function safeDeepLink(value) {
   }
 }
 
+/** The test note, if one is waiting and still fresh; reading it uses it up. */
+async function takeTestCopy() {
+  try {
+    const cache = await caches.open(SHELL_CACHE);
+    const hit = await cache.match(PUSH_TEST_URL);
+    if (!hit) return null;
+    await cache.delete(PUSH_TEST_URL);
+    const test = await hit.json();
+    return test?.until > Date.now() ? test : null;
+  } catch {
+    return null;
+  }
+}
+
 async function notificationCopy() {
   try {
     const cache = await caches.open(SHELL_CACHE);
@@ -284,11 +320,12 @@ self.addEventListener('push', (event) => {
       } catch {
         data = {};
       }
-      const copy = await notificationCopy();
+      const test = await takeTestCopy();
+      const copy = test ?? (await notificationCopy());
       await self.registration.showNotification(copy.title, {
         body: copy.body,
         // One notification however many alerts arrived: the inbox has them all.
-        tag: 'rasta-alert',
+        tag: test ? 'rasta-test' : 'rasta-alert',
         renotify: true,
         icon: '/icons/icon-192.png',
         badge: '/icons/icon-192.png',
