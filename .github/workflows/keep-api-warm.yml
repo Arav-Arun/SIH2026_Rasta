@@ -16,19 +16,19 @@ jobs:
   ping:
     if: vars.EXPO_PUBLIC_API_URL != ''
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       # A failed run is the uptime alert: GitHub notifies whoever last edited this
       # file. Each run also records how long the API took to answer, so cold
       # starts and hosted latency are visible over time in the run summaries.
       # While Render wakes the service it can answer 502 for a while, so retries
-      # are spaced 10 seconds apart for up to two minutes before the run fails.
+      # are spaced 10 seconds apart for up to five minutes before the run fails.
       - name: Request the health check and record how long it took
         env:
           API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
         run: |
           timing=$(curl --fail --silent --show-error --max-time 90 \
-            --retry 12 --retry-delay 10 --retry-max-time 120 \
+            --retry 30 --retry-delay 10 --retry-max-time 300 \
             --output /dev/null --write-out '%{http_code} %{time_total}' "${API_URL%/}/health")
           read -r status seconds <<< "$timing"
           echo "Health check answered $status in ${seconds}s"
