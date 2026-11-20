@@ -36,6 +36,7 @@ from app.identity import (
 )
 from app.incidents import IncidentRepository, build_incident_repository
 from app.inspections import InspectionRepository, build_inspection_repository
+from app.keep_awake import keep_awake_for
 from app.logistics import build_logistics_repository
 from app.middleware import (
     BodySizeLimitMiddleware,
@@ -161,9 +162,14 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     schedule = schedule_for(app.state.settings)
     if schedule is not None:
         schedule.start()
+    keep_awake = keep_awake_for(app.state.settings)
+    if keep_awake is not None:
+        keep_awake.start()
     try:
         yield
     finally:
+        if keep_awake is not None:
+            await keep_awake.stop()
         if schedule is not None:
             await schedule.stop()
         # Pooled connections are closed, not dropped, when the process stops.

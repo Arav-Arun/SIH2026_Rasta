@@ -71,6 +71,11 @@ class Settings(BaseSettings):
     # Re-score every district's roads this often, in minutes (app/risk_schedule.py).
     # 0 leaves it to POST /v1/risk/recompute.
     risk_recompute_minutes: int = 0
+    # Render sets this to the service's public address. Where it is set, the API
+    # requests its own health check every KEEP_AWAKE_MINUTES so a free instance
+    # never sleeps (app/keep_awake.py); 0 turns that off.
+    render_external_url: str = ""
+    keep_awake_minutes: int = 10
     # A trained model exported by ml/ (model_logistic.json) and its SHA-256, both or
     # neither. It runs in shadow beside baseline-v1 (app/risk_model.py).
     risk_model_file: str = ""
@@ -125,6 +130,14 @@ class Settings(BaseSettings):
             raise ValueError(
                 "RISK_RECOMPUTE_MINUTES must be 0 (off) or between 5 and 1440"
             )
+        return value
+
+    @field_validator("keep_awake_minutes")
+    @classmethod
+    def validate_keep_awake_minutes(cls, value: int) -> int:
+        # Render puts a free service to sleep after 15 idle minutes.
+        if not 0 <= value <= 14:
+            raise ValueError("KEEP_AWAKE_MINUTES must be between 0 (off) and 14")
         return value
 
     @field_validator("request_id_header")

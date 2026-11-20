@@ -1,8 +1,9 @@
 name: Deploy web
 
 # Builds the web client and deploys it to Cloudflare Workers, then checks the live
-# site. Runs after a push to main that changes the web client, or by hand from the
-# Actions tab (Deploy web, Run workflow).
+# site. Runs once Verify has passed on a push to main, so a change that fails its
+# checks is never deployed, or by hand from the Actions tab (Deploy web, Run
+# workflow).
 #
 # Repository secrets: CLOUDFLARE_API_TOKEN (a token from the "Edit Cloudflare
 # Workers" template) and CLOUDFLARE_ACCOUNT_ID. Without both, the run stops before
@@ -15,14 +16,10 @@ name: Deploy web
 # EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY). NEXT_PUBLIC_ variables of the same names
 # override them for the web build, and WEB_URL overrides the address checked.
 on:
-  push:
+  workflow_run:
+    workflows: [Verify]
+    types: [completed]
     branches: [main]
-    paths:
-      - 'apps/client/**'
-      - 'contracts/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/deploy-web.yml'
   workflow_dispatch:
 
 permissions:
@@ -35,6 +32,11 @@ concurrency:
 jobs:
   settings:
     name: Check deploy settings
+    # After Verify: only a push to main whose checks passed.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     outputs:
       ready: ${{ steps.check.outputs.ready }}
@@ -64,8 +66,12 @@ jobs:
       NEXT_PUBLIC_ENABLE_SERVICE_WORKER: ${{ vars.NEXT_PUBLIC_ENABLE_SERVICE_WORKER || '1' }}
       NEXT_PUBLIC_DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
       WEB_URL: ${{ vars.WEB_URL || 'https://rasta-client.aravarun.workers.dev' }}
+      # The commit Verify checked, not whatever main has moved on to since.
+      COMMIT: ${{ github.event.workflow_run.head_sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.COMMIT }}
 
       - name: Check build settings
         run: |
@@ -77,7 +83,7 @@ jobs:
             echo "::error::Missing repository variables:$missing (or their EXPO_PUBLIC_ equivalents)."
             exit 1
           fi
-          echo "NEXT_PUBLIC_APP_VERSION=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_APP_VERSION=${COMMIT::7}" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:

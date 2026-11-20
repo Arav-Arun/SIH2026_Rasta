@@ -11,10 +11,14 @@ services:
     # workers keep one answering while the other runs a long request such as a
     # risk recompute; there is no health check path, because a busy worker
     # missing a check would otherwise get the service restarted mid-request.
+    # The API keeps the free instance awake by requesting its own health check
+    # every 10 minutes (api/app/keep_awake.py, KEEP_AWAKE_MINUTES).
     startCommand: >-
       PYTHONPATH=api python -m app.recorded_samples /tmp/rasta-sources
       && exec python -m uvicorn app.main:app --app-dir api --host 0.0.0.0 --port $PORT --workers 2
-    autoDeploy: true
+    # Deploy a push to main only after its GitHub checks (Verify) have passed, so a
+    # broken change never replaces the running API.
+    autoDeployTrigger: checksPass
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.7
