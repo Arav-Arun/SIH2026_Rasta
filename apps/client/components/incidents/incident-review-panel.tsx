@@ -586,7 +586,6 @@ function ReviewOutcome({
       <p className="text-xs text-muted-foreground">
         {t('incidents.outcome.audit', {
           audit: String(result.audit_event_ids.length),
-          outbox: String(result.outbox_event_ids.length),
         })}
       </p>
 

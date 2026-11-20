@@ -222,7 +222,6 @@ class IncidentReviewResponse(BaseModel):
         default=None, description="New network version when routable state changed."
     )
     audit_event_ids: list[str]
-    outbox_event_ids: list[str]
     replayed: bool = False
 
 
@@ -661,30 +660,6 @@ class PostgresIncidentRepository:
         ).fetchone()
         return row["id"]
 
-    @staticmethod
-    def _outbox(
-        connection: psycopg.Connection[Any],
-        *,
-        organization_id: str,
-        event_type: str,
-        aggregate_id: str | None,
-        payload: dict[str, Any],
-    ) -> str:
-        row = connection.execute(
-            """
-            insert into public.event_outbox (organization_id, event_type, aggregate_id, payload)
-            values (%(organization_id)s::uuid, %(event_type)s, %(aggregate_id)s::uuid, %(payload)s)
-            returning id::text as id
-            """,
-            {
-                "organization_id": organization_id,
-                "event_type": event_type,
-                "aggregate_id": aggregate_id,
-                "payload": Jsonb(payload),
-            },
-        ).fetchone()
-        return row["id"]
-
     def _insert_attachment(
         self,
         connection: psycopg.Connection[Any],
@@ -860,19 +835,6 @@ class PostgresIncidentRepository:
                     "proposed_segment_ids": [row["id"] for row in proposed],
                     "attachment_count": len(request.attachments),
                     "idempotency_key": idempotency_key,
-                },
-            )
-            self._outbox(
-                connection,
-                organization_id=scope.organization_id,
-                event_type="incident.submitted",
-                aggregate_id=incident_id,
-                payload={
-                    "incident_id": incident_id,
-                    "district_id": district_id,
-                    "type": request.type,
-                    "reporter_profile_id": scope.profile_id,
-                    "suggested_segment_ids": [row["segment_id"] for row in nearest],
                 },
             )
 
@@ -1281,7 +1243,6 @@ class PostgresIncidentRepository:
             }[decision]
 
             audit_ids: list[str] = []
-            outbox_ids: list[str] = []
             changes: list[SegmentStateChange] = []
             new_version: str | None = None
 
@@ -1438,23 +1399,6 @@ class PostgresIncidentRepository:
                             },
                         )
                     )
-                    outbox_ids.append(
-                        self._outbox(
-                            connection,
-                            organization_id=scope.organization_id,
-                            event_type="segment.state_changed",
-                            aggregate_id=segment["id"],
-                            payload={
-                                "segment_id": segment["id"],
-                                "district_id": row["district_id"],
-                                "incident_id": incident_id,
-                                "previous_passability": current.passability,
-                                "passability": reduced.passability,
-                                "network_version": reduced.network_version,
-                                "reviewed_at": reviewed_at.isoformat(),
-                            },
-                        )
-                    )
                 changes.append(
                     SegmentStateChange(
                         segment_id=segment["id"],
@@ -1524,21 +1468,6 @@ class PostgresIncidentRepository:
                     },
                 ),
             )
-            outbox_ids.insert(
-                0,
-                self._outbox(
-                    connection,
-                    organization_id=scope.organization_id,
-                    event_type="incident.reviewed",
-                    aggregate_id=incident_id,
-                    payload={
-                        "incident_id": incident_id,
-                        "district_id": row["district_id"],
-                        "reporter_profile_id": row.get("reporter_profile_id"),
-                        **review_record,
-                    },
-                ),
-            )
 
             reloaded = self._load_incident(
                 connection,
@@ -1551,7 +1480,6 @@ class PostgresIncidentRepository:
                 segment_changes=changes,
                 network_version=new_version,
                 audit_event_ids=audit_ids,
-                outbox_event_ids=outbox_ids,
             )
             record_ledger(
                 connection,

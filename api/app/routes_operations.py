@@ -26,7 +26,7 @@ from app.risk_model import configured_model, shadow_model
 from app.risk_outcomes import RiskOutcomesResponse, outcome_report
 from app.risk_pipeline import run_pipeline
 from app.scope import WorkspaceScope, require_workspace_scope
-from app.sources import connect
+from app.sources import build_adapters, connect
 
 RESPONSES: dict[int | str, dict[str, Any]] = {
     401: {"model": ErrorEnvelope, "description": "Missing or invalid session."},
@@ -141,9 +141,18 @@ def build_operations_router(prefix: str = "/v1") -> APIRouter:
         scope.require("data_health:read")
 
         settings = request.app.state.settings
+        active_sources = frozenset(
+            adapter.name
+            for adapter, _mode in build_adapters(
+                imd_base_url=settings.imd_api_base_url,
+                cap_base_url=settings.sachet_cap_base_url,
+                fixture_root=settings.resolved_source_fixture_root,
+            )
+        )
         report = await _health(request).report(
             scope=scope,
             app_mode=settings.app_mode,
+            active_sources=active_sources,
             ephemeral_credentials=bool(
                 getattr(request.app.state, "telemetry_token_secret_is_ephemeral", False)
             ),

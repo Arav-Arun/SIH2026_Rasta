@@ -2669,13 +2669,6 @@
             "description": "New network version when routable state changed.",
             "title": "Network Version"
           },
-          "outbox_event_ids": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Outbox Event Ids",
-            "type": "array"
-          },
           "replayed": {
             "default": false,
             "title": "Replayed",
@@ -2692,8 +2685,7 @@
         "required": [
           "incident",
           "segment_changes",
-          "audit_event_ids",
-          "outbox_event_ids"
+          "audit_event_ids"
         ],
         "title": "IncidentReviewResponse",
         "type": "object"
@@ -4026,18 +4018,6 @@
             "title": "Idempotency Ledger Rows",
             "type": "integer"
           },
-          "oldest_unprocessed_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Oldest Unprocessed At"
-          },
           "trips_never_reported": {
             "title": "Trips Never Reported",
             "type": "integer"
@@ -4049,15 +4029,9 @@
           "trips_stale": {
             "title": "Trips Stale",
             "type": "integer"
-          },
-          "unprocessed_outbox": {
-            "title": "Unprocessed Outbox",
-            "type": "integer"
           }
         },
         "required": [
-          "unprocessed_outbox",
-          "oldest_unprocessed_at",
           "idempotency_ledger_rows",
           "trips_reporting",
           "trips_stale",

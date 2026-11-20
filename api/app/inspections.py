@@ -438,25 +438,6 @@ class PostgresInspectionRepository:
                     "due_at": request.due_at.isoformat() if request.due_at else None,
                 },
             )
-            connection.execute(
-                """
-                insert into public.event_outbox (organization_id, event_type, aggregate_id, payload)
-                values (%(org)s::uuid, 'inspection.assigned', %(id)s::uuid, %(payload)s)
-                """,
-                {
-                    "org": scope.organization_id,
-                    "id": inspection_id,
-                    "payload": Jsonb(
-                        {
-                            "inspection_id": inspection_id,
-                            "district_id": district_id,
-                            "assignee_profile_id": request.assignee_profile_id,
-                            "target_type": request.target_type,
-                            "target_id": request.target_id,
-                        }
-                    ),
-                },
-            )
             row = self._load(
                 connection,
                 organization_id=scope.organization_id,

@@ -74,7 +74,6 @@ beforeEach(() => {
     incident: baseIncident({ status: 'confirmed', version: 4 }),
     segment_changes: [],
     audit_event_ids: ['audit-1'],
-    outbox_event_ids: ['outbox-1'],
     network_version: 'osm-shillong.20260923T040500000000Z',
     replayed: false,
   });

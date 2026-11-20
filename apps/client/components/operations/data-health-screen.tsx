@@ -137,10 +137,6 @@ export function DataHealthScreen() {
                 </h2>
                 <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
                   <Figure
-                    label={t('health.outbox')}
-                    value={data.queues.unprocessed_outbox}
-                  />
-                  <Figure
                     label={t('health.ledger')}
                     value={data.queues.idempotency_ledger_rows}
                   />

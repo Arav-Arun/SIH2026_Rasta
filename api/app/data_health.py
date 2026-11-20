@@ -49,8 +49,6 @@ class CoverageReport(BaseModel):
 
 
 class QueueHealth(BaseModel):
-    unprocessed_outbox: int
-    oldest_unprocessed_at: datetime | None
     idempotency_ledger_rows: int
     trips_reporting: int
     trips_stale: int
@@ -72,7 +70,12 @@ class DataHealthResponse(BaseModel):
 
 class DataHealthRepository(Protocol):
     async def report(
-        self, *, scope: WorkspaceScope, app_mode: str, ephemeral_credentials: bool
+        self,
+        *,
+        scope: WorkspaceScope,
+        app_mode: str,
+        ephemeral_credentials: bool,
+        active_sources: frozenset[str] | None = None,
     ) -> DataHealthResponse: ...
 
 
@@ -84,8 +87,19 @@ class PostgresDataHealthRepository:
         return db.connect(self._database_url)
 
     async def report(
-        self, *, scope: WorkspaceScope, app_mode: str, ephemeral_credentials: bool
+        self,
+        *,
+        scope: WorkspaceScope,
+        app_mode: str,
+        ephemeral_credentials: bool,
+        active_sources: frozenset[str] | None = None,
     ) -> DataHealthResponse:
+        """``active_sources`` names the adapters this deployment runs.
+
+        A source that was replaced, such as a recorded feed after the live one
+        was configured, keeps its old runs; without this it would sit on the
+        page as out of date forever. ``None`` lists every source that has run.
+        """
         scope.require("data_health:read")
         now = datetime.now(tz=UTC)
         districts = None if scope.district_ids is None else list(scope.district_ids)
@@ -103,6 +117,8 @@ class PostgresDataHealthRepository:
                 districts=districts,
                 now=now,
             )
+        if active_sources is not None:
+            sources = [item for item in sources if item.source in active_sources]
 
         notes: list[str] = []
         if any(item.state == "disabled" for item in sources):
@@ -302,14 +318,6 @@ class PostgresDataHealthRepository:
         districts: list[str] | None,
         now: datetime,
     ) -> QueueHealth:
-        outbox = connection.execute(
-            """
-            select count(*)::int as pending, min(available_at) as oldest
-            from public.event_outbox
-            where organization_id = %(org)s::uuid and processed_at is null
-            """,
-            {"org": organization_id},
-        ).fetchone()
         ledger = connection.execute(
             """
             select count(*)::int as rows
@@ -337,8 +345,6 @@ class PostgresDataHealthRepository:
         ).fetchone()
 
         return QueueHealth(
-            unprocessed_outbox=outbox["pending"],
-            oldest_unprocessed_at=outbox["oldest"],
             idempotency_ledger_rows=ledger["rows"],
             trips_reporting=trips["reporting"],
             trips_stale=trips["stale"],

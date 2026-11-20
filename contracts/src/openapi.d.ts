@@ -1834,8 +1834,6 @@ export interface components {
              * @description New network version when routable state changed.
              */
             network_version?: string | null;
-            /** Outbox Event Ids */
-            outbox_event_ids: string[];
             /**
              * Replayed
              * @default false
@@ -2293,16 +2291,12 @@ export interface components {
         QueueHealth: {
             /** Idempotency Ledger Rows */
             idempotency_ledger_rows: number;
-            /** Oldest Unprocessed At */
-            oldest_unprocessed_at: string | null;
             /** Trips Never Reported */
             trips_never_reported: number;
             /** Trips Reporting */
             trips_reporting: number;
             /** Trips Stale */
             trips_stale: number;
-            /** Unprocessed Outbox */
-            unprocessed_outbox: number;
         };
         /** ReceiptCreateRequest */
         ReceiptCreateRequest: {

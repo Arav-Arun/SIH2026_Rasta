@@ -393,7 +393,7 @@
       "noChange": "No road changed state.",
       "skipped": "Not applied: {outcome}",
       "networkVersion": "New network version",
-      "audit": "{audit} audit event(s), {outbox} queued notification(s).",
+      "audit": "{audit} audit event(s).",
       "backToQueue": "Back to the queue"
     },
     "error": {
@@ -854,7 +854,6 @@
     "recompute": "Re-run sources",
     "recomputed": "Scored {scored}, left {unscored} unscored with {model}.",
     "suggested": "{count, plural, one {# road where vehicles nearly stopped was put to dispatchers for an inspection; nothing was closed.} other {# roads where vehicles nearly stopped were put to dispatchers for an inspection; nothing was closed.}}",
-    "outbox": "Unprocessed events",
     "ledger": "Idempotency ledger",
     "reporting": "Trips reporting",
     "stale": "Trips late",
