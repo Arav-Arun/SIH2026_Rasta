@@ -39,7 +39,9 @@ class IdentityRepository(Protocol):
 class PostgresIdentityRepository:
     """Read identity using a direct database connection with service credentials."""
 
-    _PROFILE_QUERY = """
+    # One statement, so the lookup every request makes costs one round trip to
+    # the database rather than three. ``user_id`` is unique on profiles.
+    _IDENTITY_QUERY = """
         select
           p.id::text as profile_id,
           p.user_id::text as user_id,
@@ -48,50 +50,55 @@ class PostgresIdentityRepository:
           p.active,
           o.id::text as organization_id,
           o.name as organization_name,
-          o.mode::text as organization_mode
+          o.mode::text as organization_mode,
+          coalesce((
+            select json_agg(
+              json_build_object(
+                'grant_id', ra.id::text,
+                'role', ra.role::text,
+                'district_id', ra.district_id::text,
+                'valid_from', ra.valid_from,
+                'valid_to', ra.valid_to
+              )
+              order by ra.role, ra.district_id nulls first, ra.valid_from
+            )
+            from public.role_assignments as ra
+            where ra.profile_id = p.id
+              and ra.organization_id = p.organization_id
+              and ra.revoked_at is null
+              and ra.valid_from <= now()
+              and (ra.valid_to is null or ra.valid_to > now())
+              and (
+                ra.district_id is null
+                or exists (
+                  select 1
+                  from public.organization_districts as od
+                  where od.organization_id = ra.organization_id
+                    and od.district_id = ra.district_id
+                    and od.active = true
+                )
+              )
+          ), '[]'::json) as roles,
+          coalesce((
+            select json_agg(
+              json_build_object(
+                'id', d.id::text,
+                'state_code', d.state_code,
+                'code', d.code,
+                'name', d.name
+              )
+              order by d.state_code, d.name
+            )
+            from public.organization_districts as od
+            join public.districts as d on d.id = od.district_id
+            where od.organization_id = p.organization_id
+              and od.active = true
+          ), '[]'::json) as districts
         from public.profiles as p
         join public.organizations as o
           on o.id = p.organization_id
         where p.user_id = %s::uuid
         limit 1
-    """
-
-    _ROLES_QUERY = """
-        select
-          ra.id::text as grant_id,
-          ra.role::text as role,
-          ra.district_id::text as district_id,
-          ra.valid_from,
-          ra.valid_to
-        from public.role_assignments as ra
-        join public.profiles as p
-          on p.id = ra.profile_id
-         and p.organization_id = ra.organization_id
-        where p.user_id = %s::uuid
-          and ra.revoked_at is null
-          and ra.valid_from <= now()
-          and (ra.valid_to is null or ra.valid_to > now())
-          and (
-            ra.district_id is null
-            or exists (
-              select 1
-              from public.organization_districts as od
-              where od.organization_id = ra.organization_id
-                and od.district_id = ra.district_id
-                and od.active = true
-            )
-          )
-        order by ra.role, ra.district_id nulls first, ra.valid_from
-    """
-
-    _DISTRICTS_QUERY = """
-        select d.id::text as id, d.state_code, d.code, d.name
-        from public.organization_districts as od
-        join public.districts as d on d.id = od.district_id
-        join public.profiles as p on p.organization_id = od.organization_id
-        where p.user_id = %s::uuid
-          and od.active = true
-        order by d.state_code, d.name
     """
 
     def __init__(self, database_url: str) -> None:
@@ -100,16 +107,13 @@ class PostgresIdentityRepository:
     async def load_identity(self, user_id: str) -> IdentityRecord | None:
         with db.connect(self._database_url) as connection:
             profile_row = connection.execute(
-                self._PROFILE_QUERY,
+                self._IDENTITY_QUERY,
                 (user_id,),
             ).fetchone()
-            if profile_row is None:
-                return None
-
-            role_rows = connection.execute(self._ROLES_QUERY, (user_id,)).fetchall()
-            district_rows = connection.execute(
-                self._DISTRICTS_QUERY, (user_id,)
-            ).fetchall()
+        if profile_row is None:
+            return None
+        role_rows = profile_row["roles"]
+        district_rows = profile_row["districts"]
 
         profile = ProfileIdentity(
             id=profile_row["profile_id"],

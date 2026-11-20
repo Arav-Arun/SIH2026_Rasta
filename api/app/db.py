@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import os
 import threading
+import time
+import weakref
 from collections.abc import Iterator
 from contextlib import contextmanager
 
@@ -30,6 +32,33 @@ from psycopg_pool import ConnectionPool
 POOL_SIZE = int(os.environ.get("DATABASE_POOL_SIZE", "10"))
 #: A connection unused this long is closed, before a server or proxy drops it.
 MAX_IDLE_SECONDS = 120.0
+#: A connection handed back this recently is lent out again without first
+#: asking the server whether it is still there. That check is a round trip of
+#: its own, and on a busy page every request borrows a connection.
+RECENTLY_USED_SECONDS = 10.0
+
+#: When each pooled connection was last handed back.
+_returned_at: weakref.WeakKeyDictionary[psycopg.Connection, float] = (
+    weakref.WeakKeyDictionary()
+)
+
+
+def _mark_returned(connection: psycopg.Connection) -> None:
+    _returned_at[connection] = time.monotonic()
+
+
+def _check(connection: psycopg.Connection) -> None:
+    """Make sure a connection still works before it is lent out.
+
+    A connection the server closed while it sat in the pool is replaced here,
+    not discovered mid-request. One used moments ago is trusted as it is.
+    """
+
+    returned = _returned_at.get(connection)
+    if returned is not None and time.monotonic() - returned < RECENTLY_USED_SECONDS:
+        return
+    ConnectionPool.check_connection(connection)
+
 
 _pools: dict[str, ConnectionPool] = {}
 _lock = threading.Lock()
@@ -47,9 +76,8 @@ def _pool(database_url: str) -> ConnectionPool:
                 min_size=1,
                 max_size=max(POOL_SIZE, 1),
                 max_idle=MAX_IDLE_SECONDS,
-                # A connection the server closed while it sat in the pool is
-                # replaced before it is lent out, not discovered mid-request.
-                check=ConnectionPool.check_connection,
+                check=_check,
+                reset=_mark_returned,
                 kwargs={"row_factory": dict_row, "prepare_threshold": None},
                 name="rasta",
                 open=True,

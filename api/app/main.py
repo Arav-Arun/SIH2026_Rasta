@@ -265,7 +265,9 @@ def create_app(
     # JSON compresses well: the map's road network for one district is several
     # megabytes as sent and a tenth of that compressed, which is most of the
     # difference between a map that loads and one that does not on a phone.
-    app.add_middleware(GZipMiddleware, minimum_size=1024)
+    # Level 6 rather than the default 9: half the CPU on a small instance, for
+    # output about 2% larger.
+    app.add_middleware(GZipMiddleware, minimum_size=1024, compresslevel=6)
     # Request IDs wrap CORS and exception responses. CORS is intentionally
     # bearer-token friendly without cookies and never permits wildcard origins.
     app.add_middleware(

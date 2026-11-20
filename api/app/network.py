@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections import deque
+import threading
+from collections import OrderedDict, deque
 from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -29,6 +30,9 @@ from app.schemas import (
 )
 
 DEGREES_PER_METRE_AT_EQUATOR = 1.0 / 111_320.0
+#: Segment pages kept per process, most recently used first. One page of the
+#: whole pilot network is a few megabytes in memory.
+SEGMENT_CACHE_SIZE = 6
 OSM_ATTRIBUTION = "© OpenStreetMap contributors (ODbL)"
 
 Passability = Literal["open", "restricted", "closed", "unknown"]
@@ -222,13 +226,109 @@ class PostgresNetworkRepository:
           )
     """
 
+    # A digest of every column a segment page is built from, across the whole
+    # scope. If it has not changed, neither has any page, whatever its bounding
+    # box. Postgres reads a few thousand rows and sends back 32 characters,
+    # instead of the megabytes of geometry and state a page carries.
+    _FINGERPRINT = """
+        select md5(coalesce(string_agg(
+          concat_ws('|',
+            rs.id, rs.district_id, rs.from_node_id, rs.to_node_id, rs.length_m,
+            rs.road_class, rs.base_speed_kph, rs.max_weight_t, rs.network_version,
+            rs.source_mode, rs.metadata::text,
+            md5(extensions.st_asbinary(rs.geometry)),
+            scs.passability, scs.risk_level, scs.risk_score, scs.as_of,
+            scs.source_summary::text, scs.network_version, scs.updated_at,
+            b.bridges
+          ),
+          ',' order by rs.id
+        ), '')) as fingerprint
+        from public.road_segments as rs
+        left join public.segment_current_state as scs
+          on scs.segment_id = rs.id
+         and scs.organization_id = rs.organization_id
+        left join lateral (
+          select string_agg(
+            concat_ws('/', br.id, br.max_weight_t, br.status, br.verified_at,
+                      br.source_id, br.created_at),
+            ';' order by br.created_at
+          ) as bridges
+          from public.bridges as br
+          where br.segment_id = rs.id
+            and br.organization_id = rs.organization_id
+        ) as b on true
+    """
+
     def __init__(self, database_url: str) -> None:
         self._database_url = database_url
+        self._pages: OrderedDict[tuple[Any, ...], tuple[str, SegmentPage]] = (
+            OrderedDict()
+        )
+        self._pages_lock = threading.Lock()
 
     def _connect(self) -> AbstractContextManager[psycopg.Connection[Any]]:
         return db.connect(self._database_url)
 
+    @staticmethod
+    def _page_key(query: SegmentQuery) -> tuple[Any, ...]:
+        return (
+            query.organization_id,
+            tuple(sorted(query.district_ids))
+            if query.district_ids is not None
+            else None,
+            query.bbox.min_lon,
+            query.bbox.min_lat,
+            query.bbox.max_lon,
+            query.bbox.max_lat,
+            query.passability,
+            query.since,
+            query.simplify_m,
+            query.limit,
+        )
+
+    def _cached_page(
+        self, key: tuple[Any, ...], fingerprint: str
+    ) -> SegmentPage | None:
+        with self._pages_lock:
+            entry = self._pages.get(key)
+            if entry is None or entry[0] != fingerprint:
+                return None
+            self._pages.move_to_end(key)
+            return entry[1]
+
+    def _remember_page(
+        self, key: tuple[Any, ...], fingerprint: str, page: SegmentPage
+    ) -> None:
+        with self._pages_lock:
+            self._pages[key] = (fingerprint, page)
+            self._pages.move_to_end(key)
+            while len(self._pages) > SEGMENT_CACHE_SIZE:
+                self._pages.popitem(last=False)
+
     async def list_segments(self, query: SegmentQuery) -> SegmentPage:
+        """One bounded page of segments, reused while nothing in scope changes."""
+
+        key = self._page_key(query)
+        scope = {
+            "organization_id": query.organization_id,
+            "district_ids": list(query.district_ids)
+            if query.district_ids is not None
+            else None,
+        }
+        with self._connect() as connection:
+            fingerprint = connection.execute(
+                self._FINGERPRINT + self._SCOPE_WHERE, scope
+            ).fetchone()["fingerprint"]
+            cached = self._cached_page(key, fingerprint)
+            if cached is not None:
+                return cached
+            page = self._load_segments(connection, query)
+        self._remember_page(key, fingerprint, page)
+        return page
+
+    def _load_segments(
+        self, connection: psycopg.Connection[Any], query: SegmentQuery
+    ) -> SegmentPage:
         params: dict[str, Any] = {
             "organization_id": query.organization_id,
             "district_ids": list(query.district_ids)
@@ -255,47 +355,46 @@ class PostgresNetworkRepository:
               and (%(passability)s::text is null or scs.passability::text = %(passability)s::text)
               and (%(since)s::timestamptz is null or scs.updated_at > %(since)s::timestamptz)
         """
-        with self._connect() as connection:
-            rows = connection.execute(
-                self._SEGMENT_SELECT
-                + self._SCOPE_WHERE
-                + bbox_filter
-                + " order by rs.id limit %(limit)s",
-                params,
-            ).fetchall()
-            total_row = connection.execute(
-                """
-                select count(*) as total
-                from public.road_segments as rs
-                left join public.segment_current_state as scs
-                  on scs.segment_id = rs.id and scs.organization_id = rs.organization_id
-                """
-                + self._SCOPE_WHERE
-                + bbox_filter,
-                params,
-            ).fetchone()
-            coverage_row = connection.execute(
-                """
-                select
-                  extensions.st_xmin(extent)::float8 as min_lon,
-                  extensions.st_ymin(extent)::float8 as min_lat,
-                  extensions.st_xmax(extent)::float8 as max_lon,
-                  extensions.st_ymax(extent)::float8 as max_lat,
-                  segment_count,
-                  network_versions,
-                  district_ids
-                from (
-                  select
-                    extensions.st_extent(rs.geometry)::extensions.geometry as extent,
-                    count(*)::int as segment_count,
-                    array_remove(array_agg(distinct rs.network_version), null) as network_versions,
-                    array_remove(array_agg(distinct rs.district_id::text), null) as district_ids
-                  from public.road_segments as rs
-                """
-                + self._SCOPE_WHERE
-                + ") as scope",
-                params,
-            ).fetchone()
+        rows = connection.execute(
+            self._SEGMENT_SELECT
+            + self._SCOPE_WHERE
+            + bbox_filter
+            + " order by rs.id limit %(limit)s",
+            params,
+        ).fetchall()
+        total_row = connection.execute(
+            """
+            select count(*) as total
+            from public.road_segments as rs
+            left join public.segment_current_state as scs
+              on scs.segment_id = rs.id and scs.organization_id = rs.organization_id
+            """
+            + self._SCOPE_WHERE
+            + bbox_filter,
+            params,
+        ).fetchone()
+        coverage_row = connection.execute(
+            """
+            select
+              extensions.st_xmin(extent)::float8 as min_lon,
+              extensions.st_ymin(extent)::float8 as min_lat,
+              extensions.st_xmax(extent)::float8 as max_lon,
+              extensions.st_ymax(extent)::float8 as max_lat,
+              segment_count,
+              network_versions,
+              district_ids
+            from (
+              select
+                extensions.st_extent(rs.geometry)::extensions.geometry as extent,
+                count(*)::int as segment_count,
+                array_remove(array_agg(distinct rs.network_version), null) as network_versions,
+                array_remove(array_agg(distinct rs.district_id::text), null) as district_ids
+              from public.road_segments as rs
+            """
+            + self._SCOPE_WHERE
+            + ") as scope",
+            params,
+        ).fetchone()
 
         features = [
             SegmentFeature(
